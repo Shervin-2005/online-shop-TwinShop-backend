@@ -1,0 +1,6 @@
+@Twin_Shop__Web_API_HostAddress = http://localhost:5225
+
+GET {{Twin_Shop__Web_API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
