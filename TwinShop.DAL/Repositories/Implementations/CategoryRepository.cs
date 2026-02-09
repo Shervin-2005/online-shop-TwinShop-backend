@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ using TwinShop.DAL.Repositories.Interfaces;
 
 namespace TwinShop.DAL.Repositories.Implementations
 {
-    internal class CategoryRepository : ICategoryRepository
+    public class CategoryRepository : ICategoryRepository
     {
 
         private readonly AppDbContext _dbContext;
@@ -37,6 +38,17 @@ namespace TwinShop.DAL.Repositories.Implementations
             {
                 return false;
             }
+        }
+
+        public async Task<List<Category>> GetAllAsync()
+        {
+                return await _dbContext.Categories.ToListAsync();   
+        }
+
+        public async Task<List<Category>> GetByIdAsync(int CategoryId)
+        {
+            var categories = await _dbContext.Categories.Where(x => x.CategoryId == CategoryId).ToListAsync();
+            return categories;
         }
 
         public async Task<List<Category>> GetCategoriesByNameAsync(string CategoryName)
@@ -89,5 +101,6 @@ namespace TwinShop.DAL.Repositories.Implementations
                 return false;
             }
         }
+
     }
 }

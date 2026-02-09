@@ -33,6 +33,17 @@ namespace Twin_Shop__Web_API.Repositories.Implementations
             }
         }
 
+        public async Task<List<Product>> GetAllAsync()
+        {
+            return await _dbContext.Products.ToListAsync();
+        }
+
+        public async Task<List<Product>> GetByIdAsync(int ProductId)
+        {
+            var products = await _dbContext.Products.Where(x => x.ProductId == ProductId).ToListAsync();
+            return products;
+        }
+
         public async Task<List<Product>> GetProductsByBrandAsync(int brandId)
         {
          var products= await _dbContext.Products.Where(x=>x.BrandId == brandId).ToListAsync();

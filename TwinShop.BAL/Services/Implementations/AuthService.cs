@@ -1,6 +1,5 @@
 ﻿using Twin_Shop__Web_API.DTOs.Auth;
 using Twin_Shop__Web_API.Entities;
-using Twin_Shop__Web_API.Repositories.Interfaces;
 using Twin_Shop__Web_API.Services.Interfaces;
 using System.Security.Cryptography;
 using System.Text;
@@ -32,7 +31,7 @@ public class AuthService : IAuthService
                 PasswordHash = HashPassword(dto.Password),
                 Email = dto.Email
             };
-            await _userRepository.AddUser(user);
+            await _userRepository.AddUserAsync(user);
             return "Register Succsesfully!!";
         }
         catch (Exception ex)

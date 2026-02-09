@@ -1,21 +1,20 @@
 ﻿using AutoMapper;
 using Twin_Shop__Web_API.DTOs.Category;
 using Twin_Shop__Web_API.Entities;
-using Twin_Shop__Web_API.Repositories.Interfaces;
 using Twin_Shop__Web_API.Services.Interfaces;
 namespace Twin_Shop__Web_API.Services.Implementations;
 
 public class CategoryService : ICategoryService
 {
-    private readonly IGenericRepository<Category> _categoryRepository;
+    private readonly ICategoryRepository _categoryRepository;
     private readonly IMapper _mapper;
 
-    public CategoryService(IGenericRepository<Category> categoryRepository, IMapper mapper)
+
+    public CategoryService(ICategoryRepository categoryRepository, IMapper mapper)
     {
         _categoryRepository = categoryRepository;
         _mapper = mapper;
     }
-
     public async Task<List<CategoryDto>> GetAllCategoriesAsync()
     {
         var categories = await _categoryRepository.GetAllAsync();
@@ -33,8 +32,7 @@ public class CategoryService : ICategoryService
     public async Task<CategoryDto> CreateCategoryAsync(CreateCategoryDto dto)
     {
         var category = _mapper.Map<Category>(dto);
-        await _categoryRepository.AddAsync(category);
-        await _categoryRepository.SaveAsync();
+        await _categoryRepository.InsertAsync(category);
         return _mapper.Map<CategoryDto>(category);
     }
 }

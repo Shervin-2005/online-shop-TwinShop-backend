@@ -10,7 +10,7 @@ using TwinShop.DAL.Repositories.Interfaces;
 
 namespace TwinShop.DAL.Repositories.Implementations
 {
-    internal class BrandRepository : IBrandRepository
+    public class BrandRepository : IBrandRepository
     {
 
         private readonly AppDbContext _dbContext;
@@ -37,6 +37,12 @@ namespace TwinShop.DAL.Repositories.Implementations
             {
                 return false;
             }
+        }
+
+        public async Task<List<Brand>> GetByIdAsync(int brandId)
+        {
+            var brands = await _dbContext.Brands.Where(x => x.BrandId == brandId).ToListAsync();
+            return brands;
         }
 
         public async Task<bool> InsertAsync(Brand brand)
@@ -85,6 +91,11 @@ namespace TwinShop.DAL.Repositories.Implementations
             {
                 return false;
             }
+        }
+
+        async Task<List<Brand>> IBrandRepository.GetAllAsync()
+        {
+            return await _dbContext.Brands.ToListAsync();
         }
 
         async Task<List<Brand>> IBrandRepository.GetBrandsByCategoryAsync(int categoryId)
