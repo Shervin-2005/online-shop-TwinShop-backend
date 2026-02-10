@@ -39,9 +39,9 @@ namespace TwinShop.DAL.Repositories.Implementations
             }
         }
 
-        public async Task<List<Brand>> GetByIdAsync(int brandId)
+        public async Task<Brand> GetByIdAsync(int brandId)
         {
-            var brands = await _dbContext.Brands.Where(x => x.BrandId == brandId).ToListAsync();
+            var brands = await _dbContext.Brands.Where(x => x.BrandId == brandId).FirstOrDefaultAsync();
             return brands;
         }
 

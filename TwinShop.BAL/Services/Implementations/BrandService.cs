@@ -24,12 +24,25 @@ public class BrandService : IBrandService
         return _mapper.Map<List<BrandDto>>(brands);
     }
 
-    public async Task<BrandDto?> GetBrandByIdAsync(int id)
+    public async Task<BrandDto> GetBrandByIdAsync(int id)
     {
         var brand = await _brandRepository.GetByIdAsync(id);
-        if (brand == null) return null;
+        if (brand == null)
+           return null;
 
-        return _mapper.Map<BrandDto>(brand);
+        var bradbsDTO = new BrandDto
+        {
+            BrandId = brand.BrandId,
+            BrandName = brand.BrandName,
+            CategoryId = brand.CategoryId
+        };
+        //var bradbsDTO=brand.Select(x=>new BrandDto()
+        //{
+        //    BrandId=x.BrandId,
+        //    BrandName=x.BrandName,
+        //    CategoryId=x.CategoryId
+        //}).ToList();
+        return bradbsDTO;
     }
 
     public async Task<BrandDto> CreateBrandAsync(CreateBrandDto dto)

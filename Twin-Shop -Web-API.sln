@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36301.6
+# Visual Studio Version 18
+VisualStudioVersion = 18.2.11415.280 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Twin.Shop.API", "Twin-Shop -Web-API\Twin.Shop.API.csproj", "{EAD78523-9024-4925-94CF-2D6B694E757A}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwinShop.BLL", "TwinShop.BAL\TwinShop.BLL.csproj", "{8C2C8C41-2E3B-4530-8DDF-133917A8CA89}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwinShop.Shared", "TwinShop.Shared\TwinShop.Shared.csproj", "{2D8D4546-FC11-4954-9DD8-6079F0298B90}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shop.UI", "Shop.UI\Shop.UI.csproj", "{F722E4CF-8C0F-4DD0-AA12-B9FBA5217285}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{2D8D4546-FC11-4954-9DD8-6079F0298B90}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D8D4546-FC11-4954-9DD8-6079F0298B90}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D8D4546-FC11-4954-9DD8-6079F0298B90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F722E4CF-8C0F-4DD0-AA12-B9FBA5217285}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F722E4CF-8C0F-4DD0-AA12-B9FBA5217285}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F722E4CF-8C0F-4DD0-AA12-B9FBA5217285}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F722E4CF-8C0F-4DD0-AA12-B9FBA5217285}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

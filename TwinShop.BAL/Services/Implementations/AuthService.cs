@@ -43,9 +43,16 @@ public class AuthService : IAuthService
     public async Task<bool> LoginAsync(LoginDto dto)
     {
         var user = await _userRepository.GetByPhoneAsync(dto.PhoneNumber);
-        if (user == null) return false;
-
-        return VerifyPassword(dto.Password, user.PasswordHash);
+        if (user == null)
+        {
+            return false;
+        }
+        var result = VerifyPassword(dto.Password, user.PasswordHash);
+        if (!result)
+        {
+            return false;
+        }
+        return true;
     }
 
     private string HashPassword(string password)
