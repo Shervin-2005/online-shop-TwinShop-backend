@@ -11,5 +11,7 @@ namespace Twin_Shop__Web_API.Entities
         public string CategoryName { get; set; }
 
         public ICollection<Brand> Brands { get; set; } = new List<Brand>();
+        public bool IsDeleted { get; set; } = false;
+
     }
 }

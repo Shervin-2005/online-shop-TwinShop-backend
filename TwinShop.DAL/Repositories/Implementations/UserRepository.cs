@@ -15,7 +15,7 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> GetByPhoneAsync(string phone)
     {
-     var user=await _dbContext.Users.Where(x=>x.PhoneNumber==phone).FirstOrDefaultAsync();
+        var user = await _dbContext.Users.Where(x => x.PhoneNumber == phone).FirstOrDefaultAsync();
         return user;
     }
 
@@ -31,9 +31,26 @@ public class UserRepository : IUserRepository
         return result;
     }
 
-    public async Task AddUser(User user)
+    public async Task AddUserAsync(User user)
     {
-         _dbContext.Users.Add(user);
+        _dbContext.Users.Add(user);
         await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task<bool> ChangePasswordAsync(User user)
+    {
+        try
+        {
+            var existingUser = _dbContext.Users.FirstOrDefault(u => u.UserId == user.UserId);
+
+            existingUser.PasswordHash = user.PasswordHash;
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+
+        }
     }
 }
