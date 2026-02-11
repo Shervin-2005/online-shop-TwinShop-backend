@@ -14,7 +14,7 @@ namespace TwinShop.DAL.Repositories.Interfaces
         public Task<bool> UpdateAsync(Brand brand);
         public Task<List<Brand>> GetBrandsByNameAsync(string BrandName);
         public Task<List<Brand>> GetBrandsByCategoryAsync(int brandId);
-        public Task<List<Brand>> GetByIdAsync(int brandId);
+        public Task<Brand> GetByIdAsync(int brandId);
         public Task<List<Brand>> GetAllAsync();
 
     }
