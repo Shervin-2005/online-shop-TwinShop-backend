@@ -19,13 +19,10 @@ public class BrandsController : BaseController
         return Ok(brandsDto);
     }
 
-    [HttpGet]
+    [HttpGet("{id}")]
     public async Task<BrandDto> GetById(int id)
     {
         var brandDto = await _brandService.GetBrandByIdAsync(id);
-        if (brandDto == null)
-            return null;
-
         return brandDto!;
     }
 

@@ -24,7 +24,6 @@ public class AuthService : IAuthService
             {
                 return "This phone number already exists";
             }
-
             var user = new User
             {
                 PhoneNumber = dto.PhoneNumber,
