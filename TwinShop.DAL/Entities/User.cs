@@ -4,6 +4,7 @@ namespace Twin_Shop__Web_API.Entities
 {
     public class User
     {
+        [Key]
         public int UserId { get; set; }
 
         [StringLength(50)]

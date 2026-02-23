@@ -4,6 +4,7 @@ namespace Twin_Shop__Web_API.Entities
 {
     public class Brand
     {
+        [Key]
         public int BrandId { get; set; }
 
         [StringLength(50)]
@@ -16,6 +17,7 @@ namespace Twin_Shop__Web_API.Entities
         public Category Category { get; set; }
 
         public ICollection<Product> Products { get; set; } = new List<Product>();
+
         public bool IsDeleted { get; set; } = false;
 
     }
