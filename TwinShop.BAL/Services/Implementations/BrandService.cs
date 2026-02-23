@@ -27,22 +27,9 @@ public class BrandService : IBrandService
     public async Task<BrandDto> GetBrandByIdAsync(int id)
     {
         var brand = await _brandRepository.GetByIdAsync(id);
-        if (brand == null)
-           return null;
+        if (brand == null) return null;
 
-        var bradbsDTO = new BrandDto
-        {
-            BrandId = brand.BrandId,
-            BrandName = brand.BrandName,
-            CategoryId = brand.CategoryId
-        };
-        //var bradbsDTO=brand.Select(x=>new BrandDto()
-        //{
-        //    BrandId=x.BrandId,
-        //    BrandName=x.BrandName,
-        //    CategoryId=x.CategoryId
-        //}).ToList();
-        return bradbsDTO;
+        return _mapper.Map<BrandDto>(brand);
     }
 
     public async Task<BrandDto> CreateBrandAsync(CreateBrandDto dto)

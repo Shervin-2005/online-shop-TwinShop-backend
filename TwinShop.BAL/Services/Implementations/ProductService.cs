@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using Twin_Shop__Web_API.DTOs.Category;
 using Twin_Shop__Web_API.DTOs.Product;
 using Twin_Shop__Web_API.Entities;
 using Twin_Shop__Web_API.Repositories.Interfaces;
 using Twin_Shop__Web_API.Services.Interfaces;
+using TwinShop.DAL.Repositories.Implementations;
 namespace Twin_Shop__Web_API.Services.Implementations;
 
 public class ProductService : IProductService
@@ -16,13 +18,6 @@ public class ProductService : IProductService
         _productRepository =  productRepository;
         _mapper = mapper;
     }
-
-    public async Task<List<ProductDto>> GetAllProductsAsync(int BrandId)
-    {
-        var products = await _productRepository.GetProductsByBrandAsync(BrandId);
-        return _mapper.Map<List<ProductDto>>(products);
-    }
-
     public async Task<ProductDto?> GetProductByIdAsync(int id)
     {
         var product = await _productRepository.GetByIdAsync(id);
@@ -38,8 +33,9 @@ public class ProductService : IProductService
         return _mapper.Map<ProductDto>(product);
     }
 
-    public Task<List<ProductDto>> GetAllProductsAsync()
+    public async Task<List<ProductDto>> GetAllProductsAsync()
     {
-        throw new NotImplementedException();
+        var products = await _productRepository.GetAllAsync();
+        return _mapper.Map<List<ProductDto>>(products);
     }
 }
