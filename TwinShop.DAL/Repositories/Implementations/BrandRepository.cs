@@ -1,9 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Twin_Shop__Web_API.Data;
 using Twin_Shop__Web_API.Entities;
 using TwinShop.DAL.Repositories.Interfaces;
@@ -12,7 +7,6 @@ namespace TwinShop.DAL.Repositories.Implementations
 {
     public class BrandRepository : IBrandRepository
     {
-
         private readonly AppDbContext _dbContext;
 
         public BrandRepository(AppDbContext dbContext)
@@ -31,7 +25,6 @@ namespace TwinShop.DAL.Repositories.Implementations
                 entry.Property(x => x.IsDeleted).IsModified = true;
                 await _dbContext.SaveChangesAsync();
                 return true;
-
             }
             catch (Exception ex)
             {
@@ -41,27 +34,19 @@ namespace TwinShop.DAL.Repositories.Implementations
 
         public async Task<Brand> GetByIdAsync(int brandId)
         {
-            var brands = await _dbContext.Brands.Where(x => x.BrandId == brandId).FirstOrDefaultAsync();
-            return brands;
+            var brand = await _dbContext.Brands.Where(x => x.BrandId == brandId).FirstOrDefaultAsync();
+            return brand;
         }
 
         public async Task<bool> InsertAsync(Brand brand)
         {
             try
             {
-                brand = new Brand
-                {
-                    BrandId = brand.BrandId,
-                    CategoryId = brand.CategoryId,
-                    BrandName = brand.BrandName,
-                    Category = brand.Category
-                };
                 _dbContext.Brands.Add(brand);
                 await _dbContext.SaveChangesAsync();
                 return true;
-
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 return false;
             }
@@ -71,48 +56,40 @@ namespace TwinShop.DAL.Repositories.Implementations
         {
             try
             {
-                brand = new Brand
-                {
-                    BrandId = brand.BrandId,
-                    BrandName = brand.BrandName,
-                    Category = brand.Category,
-                    CategoryId = brand.CategoryId
-                };
-                _dbContext.Attach(brand);
-                var entry = _dbContext.Entry(brand);
-                entry.Property(x => x.BrandId).IsModified = true;
-                entry.Property(x => x.BrandName).IsModified = true;
-                entry.Property(x => x.Category).IsModified = true;
-                entry.Property(x => x.CategoryId).IsModified = true;
+                var existing = await _dbContext.Brands.FindAsync(brand.BrandId);
+                if (existing == null) return false;
+
+                existing.BrandName = brand.BrandName;
+                existing.CategoryId = brand.CategoryId;
+                await _dbContext.SaveChangesAsync();
                 return true;
             }
-
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 return false;
             }
         }
 
-        async Task<List<Brand>> IBrandRepository.GetAllAsync()
+        public async Task<List<Brand>>GetAllAsync()
         {
             return await _dbContext.Brands.ToListAsync();
         }
 
-        async Task<List<Brand>> IBrandRepository.GetBrandsByCategoryAsync(int categoryId)
+        public async Task<List<Brand?>> GetBrandsByCategoryAsync(int categoryId)
         {
             var brands = await _dbContext.Brands.Where(x => x.CategoryId == categoryId).ToListAsync();
             return brands;
         }
 
-        async Task<List<Brand>> IBrandRepository.GetBrandsByNameAsync(string BrandName)
+        public async Task<List<Brand?>>GetBrandsByNameAsync(string brandName)
         {
-            var result = await _dbContext.Brands.Where(x => x.BrandName!.Contains(BrandName) && x.IsDeleted == false).Select(x => new Brand
+            var brands = await _dbContext.Brands.Where(x => x.BrandName.Contains(brandName) && x.IsDeleted == false).Select(x => new Brand
             {
-                BrandId = x.BrandId,
+                BrandName = x.BrandName,
                 Category = x.Category,
                 CategoryId = x.CategoryId
             }).ToListAsync();
-            return result;
+            return brands;
         }
     }
 }

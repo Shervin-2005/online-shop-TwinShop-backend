@@ -4,6 +4,7 @@ namespace Twin_Shop__Web_API.Entities
 {
     public class Category
     {
+        [Key]
         public int CategoryId { get; set; }
 
         [StringLength(50)]

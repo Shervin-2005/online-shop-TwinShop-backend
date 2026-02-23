@@ -1,56 +1,58 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Numerics;
 using Twin_Shop__Web_API.Data;
 using Twin_Shop__Web_API.Entities;
-using Twin_Shop__Web_API.Repositories.Implementations;
+using TwinShop.DAL.Repositories.Interfaces;
 
-public class UserRepository : IUserRepository
+namespace TwinShop.DAL.Repositories.Implementations
 {
-    readonly private AppDbContext _dbContext;
-
-    public UserRepository(AppDbContext dbContext)
+    public class UserRepository : IUserRepository
     {
-        _dbContext = dbContext;
-    }
+        readonly private AppDbContext _dbContext;
 
-    public async Task<User?> GetByPhoneAsync(string phone)
-    {
-        var user = await _dbContext.Users.Where(x => x.PhoneNumber == phone).FirstOrDefaultAsync();
-        return user;
-    }
-
-    public async Task<User?> GetByEmailAsync(string email)
-    {
-        var user = await _dbContext.Users.Where(x => x.Email == email).FirstOrDefaultAsync();
-        return user;
-    }
-
-    public async Task<bool> PhoneExistsAsync(string phone)
-    {
-        var result = await _dbContext.Users.Where(x => x.PhoneNumber == phone).AnyAsync();
-        return result;
-    }
-
-    public async Task AddUserAsync(User user)
-    {
-        _dbContext.Users.Add(user);
-        await _dbContext.SaveChangesAsync();
-    }
-
-    public async Task<bool> ChangePasswordAsync(User user)
-    {
-        try
+        public UserRepository(AppDbContext dbContext)
         {
-            var existingUser = _dbContext.Users.FirstOrDefault(u => u.UserId == user.UserId);
-
-            existingUser.PasswordHash = user.PasswordHash;
-
-            return true;
+            _dbContext = dbContext;
         }
-        catch (Exception ex)
-        {
-            return false;
 
+        public async Task<User?> GetByPhoneAsync(string phone)
+        {
+            var user = await _dbContext.Users.Where(x => x.PhoneNumber == phone).FirstOrDefaultAsync();
+            return user;
+        }
+
+        public async Task<User?> GetByEmailAsync(string email)
+        {
+            var user = await _dbContext.Users.Where(x => x.Email == email).FirstOrDefaultAsync();
+            return user;
+        }
+
+        public async Task<bool> PhoneExistsAsync(string phone)
+        {
+            var result = await _dbContext.Users.Where(x => x.PhoneNumber == phone).AnyAsync();
+            return result;
+        }
+
+        public async Task AddUserAsync(User user)
+        {
+            _dbContext.Users.Add(user);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<bool> ChangePasswordAsync(User user)
+        {
+            try
+            {
+                var existingUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserId == user.UserId);
+
+                existingUser.PasswordHash = user.PasswordHash;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+
+            }
         }
     }
+
 }
