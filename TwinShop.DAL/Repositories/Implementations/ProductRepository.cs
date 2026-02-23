@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Twin_Shop__Web_API.Data;
 using Twin_Shop__Web_API.Entities;
-using Twin_Shop__Web_API.Repositories.Interfaces;
+using TwinShop.DAL.Repositories.Interfaces;
 
-namespace Twin_Shop__Web_API.Repositories.Implementations
+namespace TwinShop.DAL.Repositories.Implementations
 {
     public class ProductRepository : IProductRepository
     {
@@ -25,7 +25,6 @@ namespace Twin_Shop__Web_API.Repositories.Implementations
                 entry.Property(x => x.IsDeleted).IsModified = true;
                 await _dbContext.SaveChangesAsync();
                 return true;
-
             }
             catch (Exception ex)
             { 
@@ -38,21 +37,21 @@ namespace Twin_Shop__Web_API.Repositories.Implementations
             return await _dbContext.Products.ToListAsync();
         }
 
-        public async Task<List<Product>> GetByIdAsync(int ProductId)
+        public async Task<Product?> GetByIdAsync(int ProductId)
         {
-            var products = await _dbContext.Products.Where(x => x.ProductId == ProductId).ToListAsync();
-            return products;
+            var product = await _dbContext.Products.Where(x => x.ProductId == ProductId).FirstOrDefaultAsync();
+            return product;
         }
 
         public async Task<List<Product>> GetProductsByBrandAsync(int brandId)
         {
-         var products= await _dbContext.Products.Where(x=>x.BrandId == brandId).ToListAsync();
+            var products= await _dbContext.Products.Where(x=>x.BrandId == brandId).ToListAsync();
             return products;
         }
 
-        public async Task<List<Product>> GetProductsByNameAsync(string ProductName)
+        public async Task<List<Product?>> GetProductsByNameAsync(string ProductName)
         {
-                var result = await _dbContext.Products.Where(x => x.ProductName!.Contains(ProductName) && x.IsDeleted == false).Select(x => new Product
+                var products = await _dbContext.Products.Where(x => x.ProductName.Contains(ProductName) && x.IsDeleted == false).Select(x => new Product
                 {
                     BrandId = x.BrandId,
                     Description = x.Description,
@@ -61,27 +60,16 @@ namespace Twin_Shop__Web_API.Repositories.Implementations
                     ProductId = x.ProductId,
                     Brand = x.Brand
                 }).ToListAsync();
-                return result;
+                return products;
         }
 
         public async Task<bool> InsertAsync(Product product)
         {
             try
             {
-                product = new Product
-                {
-                    BrandId = product.BrandId,
-                    Description = product.Description,
-                    ImageUrl = product.ImageUrl,
-                    Price = product.Price,
-                    ProductId = product.ProductId,
-                    Brand = product.Brand,
-                    ProductName = product.ProductName
-                };
                 _dbContext.Products.Add(product);
                 await _dbContext.SaveChangesAsync();
-                return true;
-                 
+                return true;    
             }
             catch(Exception ex)
             {
@@ -93,28 +81,18 @@ namespace Twin_Shop__Web_API.Repositories.Implementations
         {
             try
             {
-                product = new Product
-                {
-                    ProductId = product.ProductId,
-                    BrandId = product.BrandId,
-                    Description = product.Description,
-                    ImageUrl = product.ImageUrl,
-                    Price = product.Price,
-                    Brand = product.Brand,
-                    ProductName = product.ProductName
-                };
-                _dbContext.Attach(product);
-                var entry=_dbContext.Entry(product);
-                entry.Property(x=> x.ProductId).IsModified=true;
-                entry.Property(x => x.BrandId).IsModified = true;
-                entry.Property(x => x.Description).IsModified = true;
-                entry.Property(x => x.ImageUrl).IsModified = true;
-                entry.Property(x => x.Price).IsModified = true;
-                entry.Property(x => x.Brand).IsModified = true;
-                entry.Property(x => x.ProductName).IsModified = true;
+                var existing = await _dbContext.Products.FindAsync(product.ProductId);
+                if (existing == null) return false;
+
+                existing.ProductName = product.ProductName;
+                existing.Description = product.Description;
+                existing.ImageUrl = product.ImageUrl;
+                existing.Price = product.Price;
+                existing.BrandId = product.BrandId;
+                
+                await _dbContext.SaveChangesAsync();
                return true;
             }
-
             catch (Exception ex) 
             {
                 return false;

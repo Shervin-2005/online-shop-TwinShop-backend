@@ -1,10 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Twin_Shop__Web_API.Data;
 using Twin_Shop__Web_API.Entities;
 using TwinShop.DAL.Repositories.Interfaces;
@@ -13,7 +7,6 @@ namespace TwinShop.DAL.Repositories.Implementations
 {
     public class CategoryRepository : ICategoryRepository
     {
-
         private readonly AppDbContext _dbContext;
 
         public CategoryRepository(AppDbContext dbContext)
@@ -45,17 +38,17 @@ namespace TwinShop.DAL.Repositories.Implementations
                 return await _dbContext.Categories.ToListAsync();   
         }
 
-        public async Task<List<Category>> GetByIdAsync(int CategoryId)
+        public async Task<Category> GetByIdAsync(int CategoryId)
         {
-            var categories = await _dbContext.Categories.Where(x => x.CategoryId == CategoryId).ToListAsync();
-            return categories;
+            var category = await _dbContext.Categories.Where(x => x.CategoryId == CategoryId).FirstAsync();
+            return category;
         }
 
-        public async Task<List<Category>> GetCategoriesByNameAsync(string CategoryName)
+        public async Task<List<Category?>> GetCategoriesByNameAsync(string CategoryName)
         {
-            var result = await _dbContext.Categories.Where(x => x.CategoryName!.Contains(CategoryName) && x.IsDeleted == false).Select(x => new Category
+            var result = await _dbContext.Categories.Where(x => x.CategoryName.Contains(CategoryName) && x.IsDeleted == false).Select(x => new Category
             {
-                CategoryId = x.CategoryId
+                CategoryName = x.CategoryName,
             }).ToListAsync();
             return result;
         }
@@ -64,12 +57,7 @@ namespace TwinShop.DAL.Repositories.Implementations
         {
             try
             {
-                category = new Category
-                {
-                    CategoryId = category.CategoryId,
-                    CategoryName = category.CategoryName
-                };
-                _dbContext.Categories.Add(category);
+                _dbContext.Add(category);
                 await _dbContext.SaveChangesAsync();
                 return true;
 
@@ -84,23 +72,16 @@ namespace TwinShop.DAL.Repositories.Implementations
         {
             try
             {
-                category= new Category
-                {
-                    CategoryId = category.CategoryId,
-                    CategoryName = category.CategoryName
-                };
-                _dbContext.Attach(category);
-                var entry = _dbContext.Entry(category);
-                entry.Property(x => x.CategoryId).IsModified = true;
-                entry.Property(x => x.CategoryName).IsModified = true;
+                var existing = await _dbContext.Categories.FindAsync(category.CategoryId);
+                if (existing == null) return false;
+                existing.CategoryName = category.CategoryName;
+                await _dbContext.SaveChangesAsync();
                 return true;
             }
-
             catch (Exception ex)
             {
                 return false;
             }
         }
-
     }
 }
