@@ -2,67 +2,70 @@
 using Twin_Shop__Web_API.Entities;
 using Twin_Shop__Web_API.Services.Interfaces;
 using System.Security.Cryptography;
+using TwinShop.DAL.Repositories.Interfaces;
 using System.Text;
-
-
-public class AuthService : IAuthService
+namespace Twin_Shop__Web_API.Services.Implementations
 {
-
-    private readonly IUserRepository _userRepository;
-
-    public AuthService(IUserRepository userRepository)
+    public class AuthService : IAuthService
     {
-        _userRepository = userRepository;
-    }
 
-    public async Task<string> RegisterAsync(RegisterDto dto)
-    {
-        try
+        private readonly IUserRepository _userRepository;
+
+        public AuthService(IUserRepository userRepository)
         {
-            var result = await _userRepository.PhoneExistsAsync(dto.PhoneNumber);
-            if (result)
+            _userRepository = userRepository;
+        }
+
+        public async Task<string> RegisterAsync(RegisterDto dto)
+        {
+            try
             {
-                return "This phone number already exists";
+                var result = await _userRepository.PhoneExistsAsync(dto.PhoneNumber);
+                if (result)
+                {
+                    return "This phone number already exists";
+                }
+                var user = new User
+                {
+                    PhoneNumber = dto.PhoneNumber,
+                    PasswordHash = HashPassword(dto.Password),
+                    Email = dto.Email
+                };
+                await _userRepository.AddUserAsync(user);
+                return "Register Succsesfully!!";
             }
-            var user = new User
+            catch (Exception ex)
             {
-                PhoneNumber = dto.PhoneNumber,
-                PasswordHash = HashPassword(dto.Password),
-                Email = dto.Email
-            };
-            await _userRepository.AddUserAsync(user);
-            return "Register Succsesfully!!";
+                return "Something went wrong 😖";
+            }
         }
-        catch (Exception ex)
-        {
-            return "Something went wrong 😖";
-        }
-    }
 
-    public async Task<bool> LoginAsync(LoginDto dto)
-    {
-        var user = await _userRepository.GetByPhoneAsync(dto.PhoneNumber);
-        if (user == null)
+        public async Task<bool> LoginAsync(LoginDto dto)
         {
-            return false;
+            var user = await _userRepository.GetByPhoneAsync(dto.PhoneNumber);
+            if (user == null)
+            {
+                return false;
+            }
+            var result = VerifyPassword(dto.Password, user.PasswordHash);
+            if (!result)
+            {
+                return false;
+            }
+            return true;
         }
-        var result = VerifyPassword(dto.Password, user.PasswordHash);
-        if (!result)
+
+        private string HashPassword(string password)
         {
-            return false;
+            using var sha256 = SHA256.Create();
+            var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+            return Convert.ToBase64String(bytes);
         }
-        return true;
-    }
 
-    private string HashPassword(string password)
-    {
-        using var sha256 = SHA256.Create();
-        var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-        return Convert.ToBase64String(bytes);
-    }
-
-    private bool VerifyPassword(string password, string hash)
-    {
-        return HashPassword(password) == hash;
+        private bool VerifyPassword(string password, string hash)
+        {
+            return HashPassword(password) == hash;
+        }
     }
 }
+

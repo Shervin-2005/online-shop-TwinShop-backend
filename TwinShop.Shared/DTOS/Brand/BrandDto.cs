@@ -4,6 +4,7 @@ namespace Twin_Shop__Web_API.DTOs.Brand
 {
     public class BrandDto
     {
+        [Key]
         public int BrandId { get; set; }
         public string BrandName { get; set; }
         public int CategoryId { get; set; }

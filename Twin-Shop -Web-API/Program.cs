@@ -1,7 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Twin_Shop__Web_API.Data;
-using Twin_Shop__Web_API.Repositories.Implementations;
-using Twin_Shop__Web_API.Repositories.Interfaces;
 using Twin_Shop__Web_API.Services.Interfaces;
 using Twin_Shop__Web_API.Services.Implementations;
 using TwinShop.DAL.Repositories.Interfaces;
@@ -23,16 +21,11 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICategoryRepository,CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
-builder.Services.AddAutoMapper(cfg => { },typeof(Program).Assembly);
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-
-
-
+builder.Services.AddAutoMapper(cfg => { }, typeof(Program).Assembly);
 builder.Services.AddControllers();
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 
 var app = builder.Build();
 
