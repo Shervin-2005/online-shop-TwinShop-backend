@@ -3,7 +3,6 @@ using Twin_Shop__Web_API.Controllers;
 using Twin_Shop__Web_API.DTOs.Auth;
 using Twin_Shop__Web_API.Services.Interfaces;
  
-
 public class AuthController : BaseController
 {
     private readonly IAuthService _authService;

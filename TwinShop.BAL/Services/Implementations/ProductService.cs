@@ -1,10 +1,8 @@
 ﻿using AutoMapper;
-using Twin_Shop__Web_API.DTOs.Category;
 using Twin_Shop__Web_API.DTOs.Product;
 using Twin_Shop__Web_API.Entities;
-using Twin_Shop__Web_API.Repositories.Interfaces;
 using Twin_Shop__Web_API.Services.Interfaces;
-using TwinShop.DAL.Repositories.Implementations;
+using TwinShop.DAL.Repositories.Interfaces;
 namespace Twin_Shop__Web_API.Services.Implementations;
 
 public class ProductService : IProductService

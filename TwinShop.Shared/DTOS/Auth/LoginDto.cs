@@ -13,6 +13,6 @@ namespace Twin_Shop__Web_API.DTOs.Auth
 
         [Required]
         [StringLength(12)]
-        public string Password { get; set; }
+        public string Password { get; set;}
     }
 }

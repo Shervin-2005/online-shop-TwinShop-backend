@@ -13,13 +13,13 @@ public class BrandsController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IEnumerable<BrandDto>> GetAll()
     {
         var brandsDto = await _brandService.GetAllBrandsAsync();
-        return Ok(brandsDto);
+        return brandsDto;
     }
 
-    [HttpGet("{id}")]
+    [HttpGet]
     public async Task<BrandDto> GetById(int id)
     {
         var brandDto = await _brandService.GetBrandByIdAsync(id);
@@ -27,12 +27,9 @@ public class BrandsController : BaseController
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CreateBrandDto dto)
+    public async Task<BrandDto> Create(CreateBrandDto dto)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         var createdBrand = await _brandService.CreateBrandAsync(dto);
-        return CreatedAtAction(nameof(GetById), new { id = createdBrand.BrandId }, createdBrand);
+        return createdBrand;
     }
 }
