@@ -4,6 +4,7 @@ using Twin_Shop__Web_API.Services.Interfaces;
 using Twin_Shop__Web_API.Services.Implementations;
 using TwinShop.DAL.Repositories.Interfaces;
 using TwinShop.DAL.Repositories.Implementations;
+using Shop.UI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,10 @@ var connectionString =
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
+builder.Services.AddHttpClient<HttpClientHelper>(client =>
+{
+    client.BaseAddress = new Uri(RouteConstants.BaseUrl);
+});
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IBrandService, BrandService> ();
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
