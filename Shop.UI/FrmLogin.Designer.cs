@@ -28,98 +28,114 @@
         /// </summary>
         private void InitializeComponent()
         {
-            button1 = new Button();
+            btnAllBrands = new Button();
             lblPhone = new Label();
             txtPhone = new TextBox();
             txtPassword = new TextBox();
             lblPassword = new Label();
-            button2 = new Button();
+            btnLogin = new Button();
+            dataGridShowBrands = new DataGridView();
+            ((System.ComponentModel.ISupportInitialize)dataGridShowBrands).BeginInit();
             SuspendLayout();
             // 
-            // button1
+            // btnAllBrands
             // 
-            button1.Location = new Point(274, 214);
-            button1.Margin = new Padding(4);
-            button1.Name = "button1";
-            button1.Size = new Size(129, 41);
-            button1.TabIndex = 0;
-            button1.Text = "btnLogin";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            btnAllBrands.Location = new Point(-4, 165);
+            btnAllBrands.Margin = new Padding(4);
+            btnAllBrands.Name = "btnAllBrands";
+            btnAllBrands.Size = new Size(246, 41);
+            btnAllBrands.TabIndex = 0;
+            btnAllBrands.Text = " Show All Brands";
+            btnAllBrands.UseVisualStyleBackColor = true;
+            btnAllBrands.Click += button1_Click;
             // 
             // lblPhone
             // 
             lblPhone.AutoSize = true;
-            lblPhone.Location = new Point(469, 81);
+            lblPhone.Location = new Point(456, 39);
             lblPhone.Margin = new Padding(4, 0, 4, 0);
             lblPhone.Name = "lblPhone";
-            lblPhone.Size = new Size(49, 28);
+            lblPhone.Size = new Size(39, 21);
             lblPhone.TabIndex = 1;
             lblPhone.Text = "تلفن";
             // 
             // txtPhone
             // 
-            txtPhone.Location = new Point(226, 75);
+            txtPhone.Location = new Point(226, 31);
             txtPhone.Margin = new Padding(4);
             txtPhone.Name = "txtPhone";
-            txtPhone.Size = new Size(208, 34);
+            txtPhone.Size = new Size(208, 29);
             txtPhone.TabIndex = 2;
+            txtPhone.TextChanged += txtPhone_TextChanged;
             // 
             // txtPassword
             // 
-            txtPassword.Location = new Point(226, 117);
+            txtPassword.Location = new Point(226, 68);
             txtPassword.Margin = new Padding(4);
             txtPassword.Name = "txtPassword";
-            txtPassword.Size = new Size(208, 34);
+            txtPassword.Size = new Size(208, 29);
             txtPassword.TabIndex = 2;
+            txtPassword.TextChanged += txtPassword_TextChanged;
             // 
             // lblPassword
             // 
             lblPassword.AutoSize = true;
-            lblPassword.Location = new Point(456, 120);
+            lblPassword.Location = new Point(445, 76);
             lblPassword.Margin = new Padding(4, 0, 4, 0);
             lblPassword.Name = "lblPassword";
-            lblPassword.Size = new Size(62, 28);
+            lblPassword.Size = new Size(50, 21);
             lblPassword.TabIndex = 1;
             lblPassword.Text = "پسورد";
             // 
-            // button2
+            // btnLogin
             // 
-            button2.Location = new Point(87, 185);
-            button2.Margin = new Padding(4);
-            button2.Name = "button2";
-            button2.Size = new Size(129, 41);
-            button2.TabIndex = 0;
-            button2.Text = "btnLogin";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
+            btnLogin.Location = new Point(305, 115);
+            btnLogin.Margin = new Padding(4);
+            btnLogin.Name = "btnLogin";
+            btnLogin.Size = new Size(129, 41);
+            btnLogin.TabIndex = 0;
+            btnLogin.Text = "Login";
+            btnLogin.UseVisualStyleBackColor = true;
+            btnLogin.Click += button2_Click;
+            // 
+            // dataGridShowBrands
+            // 
+            dataGridShowBrands.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridShowBrands.Location = new Point(456, 139);
+            dataGridShowBrands.Name = "dataGridShowBrands";
+            dataGridShowBrands.Size = new Size(240, 150);
+            dataGridShowBrands.TabIndex = 3;
+            dataGridShowBrands.CellContentClick += dataGridShowBrands_CellContentClick;
             // 
             // FrmLogin
             // 
-            AutoScaleDimensions = new SizeF(11F, 28F);
+            AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(717, 369);
+            Controls.Add(dataGridShowBrands);
             Controls.Add(txtPassword);
             Controls.Add(txtPhone);
             Controls.Add(lblPassword);
             Controls.Add(lblPhone);
-            Controls.Add(button2);
-            Controls.Add(button1);
+            Controls.Add(btnLogin);
+            Controls.Add(btnAllBrands);
             Font = new Font("Segoe UI", 12F);
             Margin = new Padding(4);
             Name = "FrmLogin";
             Text = "FrmLogin";
+            ((System.ComponentModel.ISupportInitialize)dataGridShowBrands).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
 
-        private Button button1;
+        private Button btnAllBrands;
         private Label lblPhone;
         private TextBox txtPhone;
         private TextBox txtPassword;
         private Label lblPassword;
-        private Button button2;
+        private Button btnLogin;
+        private DataGridView dataGridShowBrands;
     }
 }

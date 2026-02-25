@@ -10,7 +10,7 @@ namespace Twin_Shop__Web_API.Entities
         [StringLength(50)]
         [Required]
         public string BrandName { get; set; }
-
+    
         public int CategoryId { get; set; }
 
         [Required]

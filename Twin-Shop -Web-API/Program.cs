@@ -1,13 +1,9 @@
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Twin_Shop__Web_API.Data;
-using Twin_Shop__Web_API.Services.Implementations;
 using Twin_Shop__Web_API.Services.Interfaces;
-using TwinShop.BLL.Profiles;
-using TwinShop.DAL.Repositories.Implementations;
+using Twin_Shop__Web_API.Services.Implementations;
 using TwinShop.DAL.Repositories.Interfaces;
-using Shop.UI;
+using TwinShop.DAL.Repositories.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,10 +14,7 @@ var connectionString =
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-builder.Services.AddHttpClient<HttpClientHelper>(client =>
-{
-    client.BaseAddress = new Uri(RouteConstants.BaseUrl);
-});
+builder.Services.AddHttpClient();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IBrandService, BrandService> ();
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
@@ -30,15 +23,9 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICategoryRepository,CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-
-builder.Services.AddAutoMapper(typeof(CategoryProfile));
-builder.Services.AddAutoMapper(typeof(BrandProfile));
-builder.Services.AddAutoMapper(typeof(ProductProfile));
-
-builder.Services.AddControllers(); 
-
+builder.Services.AddAutoMapper(cfg => { }, typeof(Program).Assembly);
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();

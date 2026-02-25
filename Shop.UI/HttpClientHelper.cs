@@ -1,38 +1,33 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Shop.UI
 {
     public class HttpClientHelper
     {
-        HttpClient client;
-        public HttpClientHelper()
+        private readonly HttpClient _client;
+        public HttpClientHelper(HttpClient client)
         {
-            client=new HttpClient();
-            client.BaseAddress = new Uri(RouteConstants.BaseUrl);
+            _client=client;
+            _client.BaseAddress = new Uri(RouteConstants.BaseUrl);
         }
 
         public async Task<T> GetAsync<T>(string route)
         {
-            var response = await client.GetAsync(route);
+            var response = await _client.GetAsync(route);
             string content = await response.Content.ReadAsStringAsync();
-            var resilt = JsonConvert.DeserializeObject<T>(content);
-            return resilt!;
+            var result = JsonConvert.DeserializeObject<T>(content);
+            return result!;
         }
+
         public async Task<Tout> PostAsync<Tout, Tin>(string route, Tin data)
         {
             string json = JsonConvert.SerializeObject(data);
             StringContent stringContent = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await client.PostAsync(route, stringContent);
+            var response = await _client.PostAsync(route, stringContent);
             string content = await response.Content.ReadAsStringAsync();
-            var resilt = JsonConvert.DeserializeObject<Tout>(content);
-            return resilt!;
+            var result = JsonConvert.DeserializeObject<Tout>(content);
+            return result!;
         }
-
-
     }
 }
