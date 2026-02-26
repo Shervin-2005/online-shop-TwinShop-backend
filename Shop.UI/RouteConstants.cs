@@ -5,6 +5,6 @@ namespace Shop.UI
     {
         public const string BaseUrl = "https://localhost:7231/";
         public const string LoginRoute = "api/Auth/Login";
-        public const string GetBrandById = "api/Brands/GetById";
+        public const string GetBrandAll = "api/Brands/GetAll";
     }
 }

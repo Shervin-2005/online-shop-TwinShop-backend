@@ -9,7 +9,6 @@ namespace Shop.UI
         public HttpClientHelper(HttpClient client)
         {
             _client = client;
-            _client.BaseAddress = new Uri(RouteConstants.BaseUrl);
         }
 
         public async Task<T> GetAsync<T>(string route)

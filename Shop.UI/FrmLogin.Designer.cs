@@ -33,7 +33,9 @@
             txtPhone = new TextBox();
             txtPassword = new TextBox();
             lblPassword = new Label();
-            button2 = new Button();
+            btnAllBrands = new Button();
+            dataGridBrands = new DataGridView();
+            ((System.ComponentModel.ISupportInitialize)dataGridBrands).BeginInit();
             SuspendLayout();
             // 
             // button1
@@ -84,32 +86,42 @@
             lblPassword.TabIndex = 1;
             lblPassword.Text = "پسورد";
             // 
-            // button2
+            // btnAllBrands
             // 
-            button2.Location = new Point(87, 185);
-            button2.Margin = new Padding(4);
-            button2.Name = "button2";
-            button2.Size = new Size(129, 41);
-            button2.TabIndex = 0;
-            button2.Text = "btnLogin";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
+            btnAllBrands.Location = new Point(87, 185);
+            btnAllBrands.Margin = new Padding(4);
+            btnAllBrands.Name = "btnAllBrands";
+            btnAllBrands.Size = new Size(129, 41);
+            btnAllBrands.TabIndex = 0;
+            btnAllBrands.Text = "All Brands";
+            btnAllBrands.UseVisualStyleBackColor = true;
+            btnAllBrands.Click += button2_Click;
+            // 
+            // dataGridBrands
+            // 
+            dataGridBrands.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridBrands.Location = new Point(456, 165);
+            dataGridBrands.Name = "dataGridBrands";
+            dataGridBrands.Size = new Size(240, 150);
+            dataGridBrands.TabIndex = 3;
             // 
             // FrmLogin
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(717, 369);
+            Controls.Add(dataGridBrands);
             Controls.Add(txtPassword);
             Controls.Add(txtPhone);
             Controls.Add(lblPassword);
             Controls.Add(lblPhone);
-            Controls.Add(button2);
+            Controls.Add(btnAllBrands);
             Controls.Add(button1);
             Font = new Font("Segoe UI", 12F);
             Margin = new Padding(4);
             Name = "FrmLogin";
             Text = "FrmLogin";
+            ((System.ComponentModel.ISupportInitialize)dataGridBrands).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -121,6 +133,7 @@
         private TextBox txtPhone;
         private TextBox txtPassword;
         private Label lblPassword;
-        private Button button2;
+        private Button btnAllBrands;
+        private DataGridView dataGridBrands;
     }
 }
