@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Twin_Shop__Web_API.DTOs.Auth;
+﻿using Twin_Shop__Web_API.DTOs.Auth;
 using Twin_Shop__Web_API.DTOs.Brand;
+
 
 namespace Shop.UI
 {
@@ -50,6 +42,11 @@ namespace Shop.UI
             {
                 MessageBox.Show(result.BrandName);
             }
+        }
+
+        private void txtPassword_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

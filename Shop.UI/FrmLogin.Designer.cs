@@ -53,7 +53,7 @@
             lblPhone.Location = new Point(469, 81);
             lblPhone.Margin = new Padding(4, 0, 4, 0);
             lblPhone.Name = "lblPhone";
-            lblPhone.Size = new Size(49, 28);
+            lblPhone.Size = new Size(39, 21);
             lblPhone.TabIndex = 1;
             lblPhone.Text = "تلفن";
             // 
@@ -62,7 +62,7 @@
             txtPhone.Location = new Point(226, 75);
             txtPhone.Margin = new Padding(4);
             txtPhone.Name = "txtPhone";
-            txtPhone.Size = new Size(208, 34);
+            txtPhone.Size = new Size(208, 29);
             txtPhone.TabIndex = 2;
             // 
             // txtPassword
@@ -70,8 +70,9 @@
             txtPassword.Location = new Point(226, 117);
             txtPassword.Margin = new Padding(4);
             txtPassword.Name = "txtPassword";
-            txtPassword.Size = new Size(208, 34);
+            txtPassword.Size = new Size(208, 29);
             txtPassword.TabIndex = 2;
+            txtPassword.TextChanged += txtPassword_TextChanged;
             // 
             // lblPassword
             // 
@@ -79,7 +80,7 @@
             lblPassword.Location = new Point(456, 120);
             lblPassword.Margin = new Padding(4, 0, 4, 0);
             lblPassword.Name = "lblPassword";
-            lblPassword.Size = new Size(62, 28);
+            lblPassword.Size = new Size(50, 21);
             lblPassword.TabIndex = 1;
             lblPassword.Text = "پسورد";
             // 
@@ -96,7 +97,7 @@
             // 
             // FrmLogin
             // 
-            AutoScaleDimensions = new SizeF(11F, 28F);
+            AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(717, 369);
             Controls.Add(txtPassword);
