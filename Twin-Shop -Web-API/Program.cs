@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Twin_Shop__Web_API.Data;
 using Twin_Shop__Web_API.Services.Implementations;
 using Twin_Shop__Web_API.Services.Interfaces;
@@ -16,6 +15,7 @@ var connectionString =
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
+builder.Services.AddHttpClient();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IBrandService, BrandService> ();
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();

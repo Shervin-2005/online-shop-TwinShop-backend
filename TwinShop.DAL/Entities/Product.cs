@@ -11,11 +11,14 @@ namespace Twin_Shop__Web_API.Entities
         [Required]
         public string ProductName { get; set; }
 
+
         public decimal? Price { get; set; }
+
 
         [StringLength(2000)]
         [Required]
         public string Description { get; set; }
+
 
         [Required]
         public string ImageUrl { get; set; }
