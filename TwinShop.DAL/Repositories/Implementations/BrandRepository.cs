@@ -16,20 +16,16 @@ namespace TwinShop.DAL.Repositories.Implementations
 
         public async Task<bool> DeleteAsync(int id)
         {
-            try
-            {
-                var brand = new Brand { BrandId = id };
-                _dbContext.Attach(brand);
-                brand.IsDeleted = true;
-                var entry = _dbContext.Entry(brand);
-                entry.Property(x => x.IsDeleted).IsModified = true;
-                await _dbContext.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception ex)
-            {
+            var brand = await _dbContext.Brands.FindAsync(id);
+            if (brand == null)
                 return false;
-            }
+
+            brand.IsDeleted = true;
+
+            _dbContext.Entry(brand).Property(c => c.IsDeleted).IsModified = true;
+
+            await _dbContext.SaveChangesAsync();
+            return true;
         }
 
         public async Task<Brand> GetByIdAsync(int brandId)
@@ -54,8 +50,6 @@ namespace TwinShop.DAL.Repositories.Implementations
 
         public async Task<bool> UpdateAsync(Brand brand)
         {
-            try
-            {
                 var existing = await _dbContext.Brands.FindAsync(brand.BrandId);
                 if (existing == null) return false;
 
@@ -63,11 +57,6 @@ namespace TwinShop.DAL.Repositories.Implementations
                 existing.CategoryId = brand.CategoryId;
                 await _dbContext.SaveChangesAsync();
                 return true;
-            }
-            catch(Exception ex)
-            {
-                return false;
-            }
         }
 
         public async Task<List<Brand>>GetAllAsync()
@@ -75,9 +64,9 @@ namespace TwinShop.DAL.Repositories.Implementations
             return await _dbContext.Brands.ToListAsync();
         }
 
-        public async Task<List<Brand?>> GetBrandsByCategoryAsync(int categoryId)
+        public async Task<List<Brand?>> GetBrandsByCategoryNameAsync(string categoryName)
         {
-            var brands = await _dbContext.Brands.Where(x => x.CategoryId == categoryId).ToListAsync();
+            var brands = await _dbContext.Brands.Where(x => x.CategoryName == categoryName).ToListAsync();
             return brands;
         }
 
@@ -86,7 +75,7 @@ namespace TwinShop.DAL.Repositories.Implementations
             var brands = await _dbContext.Brands.Where(x => x.BrandName.Contains(brandName) && x.IsDeleted == false).Select(x => new Brand
             {
                 BrandName = x.BrandName,
-                Category = x.Category,
+                Category = x.Category, 
                 CategoryId = x.CategoryId
             }).ToListAsync();
             return brands;

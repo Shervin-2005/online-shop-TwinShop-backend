@@ -4,8 +4,6 @@ namespace Twin_Shop__Web_API.DTOs.Brand
 {
     public class BrandDto
     {
-        [Key]
-        public int BrandId { get; set; }
         public string BrandName { get; set; }
         public int CategoryId { get; set; }
     }
@@ -19,5 +17,21 @@ namespace Twin_Shop__Web_API.DTOs.Brand
 
         [Required]
         public int CategoryId { get; set; }
+    }
+    public class DeleteBrandDto
+    {
+        [Required]
+        public int BrandId { get; set; }
+    }
+
+    public class UpdateBrandDto
+    {
+        [Required]
+        [StringLength(50)]
+        public string BrandName { get; set; }
+
+        [Required]
+        public int CategoryId { get; set; }
+
     }
 }
