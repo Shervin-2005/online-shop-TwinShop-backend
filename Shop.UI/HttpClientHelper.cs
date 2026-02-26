@@ -15,8 +15,8 @@ namespace Shop.UI
         {
             var response = await _client.GetAsync(route);
             string content = await response.Content.ReadAsStringAsync();
-            var resilt = JsonConvert.DeserializeObject<T>(content);
-            return resilt!;
+            var result = JsonConvert.DeserializeObject<T>(content);
+            return result!;
         }
         public async Task<Tout> PostAsync<Tout, Tin>(string route, Tin data)
         {
@@ -26,6 +26,10 @@ namespace Shop.UI
             string content = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<Tout>(content);
             return result!;
+        }
+        public async Task<bool>DeleteAsync(string route)
+        {
+         
         }
 
 

@@ -40,6 +40,14 @@
             lblEmail = new Label();
             btnGetUserByPhone = new Button();
             btnGetUserByEmail = new Button();
+            btnGetBrandById = new Button();
+            btnDeleteBrand = new Button();
+            btnGetBrandsByName = new Button();
+            btnGetBrandByCategoryName = new Button();
+            btnUpdateBrand = new Button();
+            btnCreateBrand = new Button();
+            lblNameOrId = new Label();
+            txtNameOrId = new TextBox();
             ((System.ComponentModel.ISupportInitialize)dataGridView).BeginInit();
             SuspendLayout();
             // 
@@ -96,7 +104,7 @@
             btnAllBrands.Location = new Point(1, 6);
             btnAllBrands.Margin = new Padding(4);
             btnAllBrands.Name = "btnAllBrands";
-            btnAllBrands.Size = new Size(94, 41);
+            btnAllBrands.Size = new Size(94, 52);
             btnAllBrands.TabIndex = 0;
             btnAllBrands.Text = "All Brands";
             btnAllBrands.UseVisualStyleBackColor = true;
@@ -105,9 +113,9 @@
             // dataGridView
             // 
             dataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView.Location = new Point(344, 16);
+            dataGridView.Location = new Point(649, 256);
             dataGridView.Name = "dataGridView";
-            dataGridView.Size = new Size(638, 408);
+            dataGridView.Size = new Size(618, 186);
             dataGridView.TabIndex = 3;
             dataGridView.CellContentClick += dataGridView_CellContentClick;
             // 
@@ -162,11 +170,102 @@
             btnGetUserByEmail.UseVisualStyleBackColor = true;
             btnGetUserByEmail.Click += btnGetUserByEmail_Click;
             // 
+            // btnGetBrandById
+            // 
+            btnGetBrandById.Location = new Point(103, 6);
+            btnGetBrandById.Margin = new Padding(4);
+            btnGetBrandById.Name = "btnGetBrandById";
+            btnGetBrandById.Size = new Size(94, 52);
+            btnGetBrandById.TabIndex = 9;
+            btnGetBrandById.Text = "Get Brand By ID";
+            btnGetBrandById.UseVisualStyleBackColor = true;
+            btnGetBrandById.Click += btnGetBrandById_Click;
+            // 
+            // btnDeleteBrand
+            // 
+            btnDeleteBrand.Location = new Point(205, 6);
+            btnDeleteBrand.Margin = new Padding(4);
+            btnDeleteBrand.Name = "btnDeleteBrand";
+            btnDeleteBrand.Size = new Size(94, 52);
+            btnDeleteBrand.TabIndex = 10;
+            btnDeleteBrand.Text = "Delete Brand";
+            btnDeleteBrand.UseVisualStyleBackColor = true;
+            btnDeleteBrand.Click += btnDeleteBrand_Click;
+            // 
+            // btnGetBrandsByName
+            // 
+            btnGetBrandsByName.Location = new Point(307, 6);
+            btnGetBrandsByName.Margin = new Padding(4);
+            btnGetBrandsByName.Name = "btnGetBrandsByName";
+            btnGetBrandsByName.Size = new Size(94, 52);
+            btnGetBrandsByName.TabIndex = 11;
+            btnGetBrandsByName.Text = "Get Brands By Name";
+            btnGetBrandsByName.UseVisualStyleBackColor = true;
+            btnGetBrandsByName.Click += btnGetBrandByName_Click;
+            // 
+            // btnGetBrandByCategoryName
+            // 
+            btnGetBrandByCategoryName.Location = new Point(409, 6);
+            btnGetBrandByCategoryName.Margin = new Padding(4);
+            btnGetBrandByCategoryName.Name = "btnGetBrandByCategoryName";
+            btnGetBrandByCategoryName.Size = new Size(131, 52);
+            btnGetBrandByCategoryName.TabIndex = 12;
+            btnGetBrandByCategoryName.Text = "Get Brand By Category Name";
+            btnGetBrandByCategoryName.UseVisualStyleBackColor = true;
+            btnGetBrandByCategoryName.Click += btnGetBrandByCategoryName_Click;
+            // 
+            // btnUpdateBrand
+            // 
+            btnUpdateBrand.Location = new Point(548, 6);
+            btnUpdateBrand.Margin = new Padding(4);
+            btnUpdateBrand.Name = "btnUpdateBrand";
+            btnUpdateBrand.Size = new Size(94, 52);
+            btnUpdateBrand.TabIndex = 13;
+            btnUpdateBrand.Text = "Update Brand";
+            btnUpdateBrand.UseVisualStyleBackColor = true;
+            // 
+            // btnCreateBrand
+            // 
+            btnCreateBrand.Location = new Point(650, 6);
+            btnCreateBrand.Margin = new Padding(4);
+            btnCreateBrand.Name = "btnCreateBrand";
+            btnCreateBrand.Size = new Size(94, 52);
+            btnCreateBrand.TabIndex = 14;
+            btnCreateBrand.Text = "Create Brand";
+            btnCreateBrand.UseVisualStyleBackColor = true;
+            btnCreateBrand.Click += btnCreateBrand_Click;
+            // 
+            // lblNameOrId
+            // 
+            lblNameOrId.AutoSize = true;
+            lblNameOrId.Location = new Point(1174, 465);
+            lblNameOrId.Margin = new Padding(4, 0, 4, 0);
+            lblNameOrId.Name = "lblNameOrId";
+            lblNameOrId.Size = new Size(93, 21);
+            lblNameOrId.TabIndex = 15;
+            lblNameOrId.Text = "Name Or ID";
+            // 
+            // txtNameOrId
+            // 
+            txtNameOrId.Location = new Point(1044, 462);
+            txtNameOrId.Margin = new Padding(4);
+            txtNameOrId.Name = "txtNameOrId";
+            txtNameOrId.Size = new Size(122, 29);
+            txtNameOrId.TabIndex = 16;
+            // 
             // FrmLogin
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1300, 537);
+            Controls.Add(txtNameOrId);
+            Controls.Add(lblNameOrId);
+            Controls.Add(btnCreateBrand);
+            Controls.Add(btnUpdateBrand);
+            Controls.Add(btnGetBrandByCategoryName);
+            Controls.Add(btnGetBrandsByName);
+            Controls.Add(btnDeleteBrand);
+            Controls.Add(btnGetBrandById);
             Controls.Add(btnGetUserByEmail);
             Controls.Add(btnGetUserByPhone);
             Controls.Add(txtEmail);
@@ -203,5 +302,13 @@
         private Label lblEmail;
         private Button btnGetUserByPhone;
         private Button btnGetUserByEmail;
+        private Button btnGetBrandById;
+        private Button btnDeleteBrand;
+        private Button btnGetBrandsByName;
+        private Button btnGetBrandByCategoryName;
+        private Button btnUpdateBrand;
+        private Button btnCreateBrand;
+        private Label lblNameOrId;
+        private TextBox txtNameOrId;
     }
 }

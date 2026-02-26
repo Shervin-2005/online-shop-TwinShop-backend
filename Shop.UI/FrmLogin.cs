@@ -110,6 +110,72 @@ namespace Shop.UI
                 dataGridView.DataSource = new List<UserDto> { result };
             }
         }
+
+        private async void btnGetBrandById_Click(object sender, EventArgs e)
+        {
+
+            int id = int.Parse(txtNameOrId.Text);
+            var url = $"{RouteConstants.GetById}?id={id}";
+            var result = await _client.GetAsync<BrandDto>(url);
+            if (result == null)
+            {
+                MessageBox.Show("برندی وجود ندارد");
+            }
+            else
+            {
+                dataGridView.DataSource = new List<BrandDto> { result };
+            }
+        }
+
+        private async void btnDeleteBrand_Click(object sender, EventArgs e)
+        {
+            int id = int.Parse(txtNameOrId.Text);
+            var url = $"{RouteConstants.Delete}?id={id}";
+            var result = await _client.DeleteAsync(url);
+            if (result)
+            {
+                MessageBox.Show("Brand has been deleted!");
+            }
+            else
+            {
+                MessageBox.Show("Brand has not been deleted or its not here!");
+            }
+        }
+
+        private async void btnGetBrandByName_Click(object sender, EventArgs e)
+        {
+            string name = txtNameOrId.Text;
+            var url = $"{RouteConstants.GetBrandsByName}?name={name}";
+            var result = await _client.GetAsync<List<BrandDto>>(url);
+            if (result == null)
+            {
+                MessageBox.Show("برندی وجود ندارد");
+            }
+            else
+            {
+                dataGridView.DataSource = result;
+            }
+        }
+
+        private async void btnGetBrandByCategoryName_Click(object sender, EventArgs e)
+        {
+            string categoryName = txtNameOrId.Text;
+            var url = $"{RouteConstants.GetBrandsByCategoryName}?categoryName={categoryName}";
+            var result = await _client.GetAsync<List<BrandDto>>(url);
+            if (result == null)
+            {
+                MessageBox.Show("برندی وجود ندارد");
+            }
+            else
+            {
+                dataGridView.DataSource = result;
+            }
+        }
+
+        private async void btnCreateBrand_Click(object sender, EventArgs e)
+        {
+            
+        }
     }
 }
 

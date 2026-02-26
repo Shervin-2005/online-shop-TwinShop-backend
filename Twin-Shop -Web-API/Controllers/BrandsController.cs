@@ -49,14 +49,14 @@ public class BrandsController : BaseController
     }
 
     [HttpGet]
-    public async Task<List<BrandDto>>GetBrandsByNameAsync(string name)
+    public async Task<List<BrandDto>>GetBrandsByName(string name)
     {
         var brands=await _brandService.GetBrandByNameAsync(name);
         return brands!;
     }
 
     [HttpGet]
-    public async Task<List<BrandDto?>> GetBrandsByCategoryNameAsync(string categoryName)
+    public async Task<List<BrandDto?>> GetBrandsByCategoryName(string categoryName)
     {
         var brands = await _brandService.GetBrandsByCategoryNameAsync(categoryName);
         return brands!;
