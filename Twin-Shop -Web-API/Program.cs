@@ -1,4 +1,3 @@
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Twin_Shop__Web_API.Data;
@@ -27,6 +26,7 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddAutoMapper(typeof(CategoryProfile));
+builder.Services.AddAutoMapper(typeof(Auth_Profile));
 builder.Services.AddAutoMapper(typeof(BrandProfile));
 builder.Services.AddAutoMapper(typeof(ProductProfile));
 

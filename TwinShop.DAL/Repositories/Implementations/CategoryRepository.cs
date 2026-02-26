@@ -16,21 +16,16 @@ namespace TwinShop.DAL.Repositories.Implementations
 
         public async Task<bool> DeleteAsync(int id)
         {
-            try
-            {
-                var category = new Category { CategoryId = id };
-                _dbContext.Attach(category);
-                category.IsDeleted = true;
-                var entry = _dbContext.Entry(category);
-                entry.Property(x => x.IsDeleted).IsModified = true;
-                await _dbContext.SaveChangesAsync();
-                return true;
+            var category = await _dbContext.Categories.FindAsync(id);
+            if (category == null)
+            return false; 
+            
+            category.IsDeleted = true;
 
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
+            _dbContext.Entry(category).Property(c => c.IsDeleted).IsModified = true;
+
+            await _dbContext.SaveChangesAsync();
+            return true;
         }
 
         public async Task<List<Category>> GetAllAsync()

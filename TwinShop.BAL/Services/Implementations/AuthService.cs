@@ -1,19 +1,24 @@
-﻿using Twin_Shop__Web_API.DTOs.Auth;
+﻿using System.Security.Cryptography;
+using System.Text;
+using AutoMapper;
+using Twin_Shop__Web_API.DTOs.Auth;
 using Twin_Shop__Web_API.Entities;
 using Twin_Shop__Web_API.Services.Interfaces;
-using System.Security.Cryptography;
 using TwinShop.DAL.Repositories.Interfaces;
-using System.Text;
+using TwinShop.Shared.DTOS.Auth;
 namespace Twin_Shop__Web_API.Services.Implementations
 {
     public class AuthService : IAuthService
     {
 
         private readonly IUserRepository _userRepository;
+        private readonly IMapper _mapper;
 
-        public AuthService(IUserRepository userRepository)
+
+        public AuthService(IUserRepository userRepository, IMapper mapper)
         {
             _userRepository = userRepository;
+            _mapper = mapper;
         }
 
         public async Task<string> RegisterAsync(RegisterDto dto)
@@ -65,6 +70,17 @@ namespace Twin_Shop__Web_API.Services.Implementations
         private bool VerifyPassword(string password, string hash)
         {
             return HashPassword(password) == hash;
+        }
+
+        public async Task<UserDto> GetByEmailAsync(string email)
+        {
+            var user= await _userRepository.GetByEmailAsync(email);
+            return _mapper.Map<UserDto>(user);
+        }
+        public async Task<UserDto> GetByPhoneAsync(string phoneNumber)
+        {
+            var user =await _userRepository.GetByPhoneAsync(phoneNumber);
+            return _mapper.Map<UserDto>(user);
         }
     }
 }
