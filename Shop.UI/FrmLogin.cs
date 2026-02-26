@@ -1,6 +1,7 @@
 ﻿
 using Twin_Shop__Web_API.DTOs.Auth;
 using Twin_Shop__Web_API.DTOs.Brand;
+using TwinShop.Shared.DTOS.Auth;
 
 
 namespace Shop.UI
@@ -16,8 +17,6 @@ namespace Shop.UI
 
         private async void button1_Click(object sender, EventArgs e)
         {
-
-            
             LoginDto loginDto = new LoginDto()
             {
                 PhoneNumber = txtPhone.Text,
@@ -43,7 +42,7 @@ namespace Shop.UI
             }
             else
             {
-                dataGridBrands.DataSource = result;
+                dataGridView.DataSource = result;
             }
         }
 
@@ -51,5 +50,66 @@ namespace Shop.UI
         {
 
         }
+
+        private void FrmLogin_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private async void btnSignin_Click(object sender, EventArgs e)
+        {
+            RegisterDto registerDto = new RegisterDto()
+            {
+                PhoneNumber = txtPhone.Text,
+                Password = txtPassword.Text,
+                Email = txtEmail.Text
+            };
+            var result = await _client.PostAsync<bool, RegisterDto>(RouteConstants.RegisterRoute, registerDto);
+            if (result == true)
+            {
+                MessageBox.Show("welcome");
+            }
+            else
+            {
+                MessageBox.Show("اطلاعات درست نیست");
+            }
+        }
+
+        private async void btnGetUserByPhone_Click(object sender, EventArgs e)
+        {
+            string phoneNumber = txtPhone.Text;
+            var url = $"{RouteConstants.GetbyPhoneNumber}?phoneNumber={phoneNumber}";
+            var result = await _client.GetAsync<UserDto>(url);
+            if (result == null)
+            {
+                MessageBox.Show(" وجود ندارد");
+            }
+            else
+            {
+                dataGridView.DataSource = new List<UserDto> { result };
+            }
+
+        }
+
+        private void dataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private async void btnGetUserByEmail_Click(object sender, EventArgs e)
+        {
+            string email = txtEmail.Text;
+            var url = $"{RouteConstants.GetbyEmail}?email={email}";
+            var result = await _client.GetAsync<UserDto>(url);
+            if (result == null)
+            {
+                MessageBox.Show(" وجود ندارد");
+            }
+            else
+            {
+                dataGridView.DataSource = new List<UserDto> { result };
+            }
+        }
     }
 }
+

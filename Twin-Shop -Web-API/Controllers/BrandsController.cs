@@ -1,10 +1,7 @@
-﻿using Microsoft.AspNetCore.Components.Web;
+﻿
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Twin_Shop__Web_API.Controllers;
 using Twin_Shop__Web_API.DTOs.Brand;
-using Twin_Shop__Web_API.Entities;
-using Twin_Shop__Web_API.Services.Implementations;
 using Twin_Shop__Web_API.Services.Interfaces;
 
 public class BrandsController : BaseController

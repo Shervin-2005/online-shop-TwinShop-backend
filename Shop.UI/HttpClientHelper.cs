@@ -24,8 +24,8 @@ namespace Shop.UI
             StringContent stringContent = new StringContent(json, Encoding.UTF8, "application/json");
             var response = await _client.PostAsync(route, stringContent);
             string content = await response.Content.ReadAsStringAsync();
-            var resilt = JsonConvert.DeserializeObject<Tout>(content);
-            return resilt!;
+            var result = JsonConvert.DeserializeObject<Tout>(content);
+            return result!;
         }
 
 
