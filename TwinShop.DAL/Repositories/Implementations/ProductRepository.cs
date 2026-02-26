@@ -16,20 +16,16 @@ namespace TwinShop.DAL.Repositories.Implementations
 
         public async Task<bool> DeleteAsync(int id)
         {
-            try
-            {
-                var product = new Product { ProductId = id };
-                _dbContext.Attach(product);
-                product.IsDeleted = true;
-                var entry = _dbContext.Entry(product);
-                entry.Property(x => x.IsDeleted).IsModified = true;
-                await _dbContext.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception ex)
-            { 
-            return false;
-            }
+            var product = await _dbContext.Products.FindAsync(id);
+            if (product == null)
+                return false;
+
+            product.IsDeleted = true;
+
+            _dbContext.Entry(product).Property(c => c.IsDeleted).IsModified = true;
+
+            await _dbContext.SaveChangesAsync();
+            return true;
         }
 
         public async Task<List<Product>> GetAllAsync()
@@ -43,9 +39,15 @@ namespace TwinShop.DAL.Repositories.Implementations
             return product;
         }
 
-        public async Task<List<Product>> GetProductsByBrandAsync(int brandId)
+        public async Task<List<Product>> GetProductsByBrandNameAsync(string brandName)
         {
-            var products= await _dbContext.Products.Where(x=>x.BrandId == brandId).ToListAsync();
+            var products= await _dbContext.Products.Where(x=>x.BrandName == brandName).ToListAsync();
+            return products;
+        }
+
+        public async Task<List<Product>> GetProductsByCategoryNameAsync(string categoryName)
+        {
+            var products = await _dbContext.Products.Where(x => x.CategoryName == categoryName).ToListAsync();
             return products;
         }
 

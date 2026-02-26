@@ -20,6 +20,10 @@ namespace Twin_Shop__Web_API.Entities
         [Required]
         public string ImageUrl { get; set; }
 
+        public string BrandName { get; set; }
+
+        public string CategoryName { get; set; }
+
         public int BrandId { get; set; }
 
         public Brand Brand { get; set; }

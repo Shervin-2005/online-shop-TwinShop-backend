@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using Twin_Shop__Web_API.DTOs.Brand;
 using Twin_Shop__Web_API.DTOs.Category;
 using Twin_Shop__Web_API.Entities;
 using Twin_Shop__Web_API.Services.Interfaces;
+using TwinShop.DAL.Repositories.Implementations;
 using TwinShop.DAL.Repositories.Interfaces;
 namespace Twin_Shop__Web_API.Services.Implementations
 {
@@ -35,6 +37,27 @@ namespace Twin_Shop__Web_API.Services.Implementations
             var category = _mapper.Map<Category>(dto);
             await _categoryRepository.InsertAsync(category);
             return _mapper.Map<CategoryDto>(category);
+        }
+
+        public async Task<bool> DeleteCategoryAsync(int id)
+        {
+            var category = await _categoryRepository.GetByIdAsync(id);
+            if (category == null)
+                return false;
+
+            return await _categoryRepository.DeleteAsync(id);
+        }
+
+        public async Task<bool> UpdateCategoryAsync(UpdateCategoryDto dto)
+        {
+            var category = _mapper.Map<Category>(dto);
+            return await _categoryRepository.UpdateAsync(category);
+        }
+
+        public async Task<List<CategoryDto?>> GetCategoriesByNameAsync(string name)
+        {
+            var categories = await _categoryRepository.GetCategoriesByNameAsync(name);
+            return _mapper.Map<List<CategoryDto>>(categories)!;
         }
     }
 }

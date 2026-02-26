@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Twin_Shop__Web_API.Controllers;
 using Twin_Shop__Web_API.DTOs.Brand;
+using Twin_Shop__Web_API.Entities;
+using Twin_Shop__Web_API.Services.Implementations;
 using Twin_Shop__Web_API.Services.Interfaces;
 
 public class BrandsController : BaseController
@@ -31,5 +35,33 @@ public class BrandsController : BaseController
     {
         var createdBrand = await _brandService.CreateBrandAsync(dto);
         return createdBrand;
+    }
+
+    [HttpDelete]
+    public async Task<bool> Delete(int id)
+    {
+        var result = await _brandService.DeleteBrandAsync(id);
+        return result;
+    }
+
+    [HttpPut]
+    public async Task<bool> Update(UpdateBrandDto dto)
+    {
+        var result = await _brandService.UpdateBrandAsync(dto);
+        return result;
+    }
+
+    [HttpGet]
+    public async Task<List<BrandDto>>GetBrandsByNameAsync(string name)
+    {
+        var brands=await _brandService.GetBrandByNameAsync(name);
+        return brands!;
+    }
+
+    [HttpGet]
+    public async Task<List<BrandDto?>> GetBrandsByCategoryNameAsync(string categoryName)
+    {
+        var brands = await _brandService.GetBrandsByCategoryNameAsync(categoryName);
+        return brands!;
     }
 }
