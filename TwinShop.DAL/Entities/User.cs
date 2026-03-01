@@ -17,15 +17,15 @@ namespace Twin_Shop__Web_API.Entities
 
         [Phone]
         [StringLength(15)]
-        [Required]
+        [Required(ErrorMessage ="Phone number is required")]
         public string PhoneNumber { get; set; }
 
         [StringLength(100)]
-        [EmailAddress]
+        [EmailAddress(ErrorMessage ="Invalid email address")]
         public string? Email { get; set; }
 
-        [Required]
-        [StringLength(100)]
+        [Required(ErrorMessage ="Password is required")]
+        [StringLength(100,MinimumLength=6,ErrorMessage ="Password must be at least 6 characters long")]
         public string PasswordHash { get; set; }
     }
 }
