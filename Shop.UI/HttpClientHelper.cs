@@ -5,11 +5,10 @@ namespace Shop.UI
 {
     public class HttpClientHelper
     {
-        private readonly HttpClient _client;
+       private readonly HttpClient _client;
         public HttpClientHelper(HttpClient client)
         {
-            _client=client;
-            _client.BaseAddress = new Uri(RouteConstants.BaseUrl);
+            _client = client;
         }
 
         public async Task<T> GetAsync<T>(string route)
@@ -19,7 +18,6 @@ namespace Shop.UI
             var result = JsonConvert.DeserializeObject<T>(content);
             return result!;
         }
-
         public async Task<Tout> PostAsync<Tout, Tin>(string route, Tin data)
         {
             string json = JsonConvert.SerializeObject(data);
@@ -29,5 +27,16 @@ namespace Shop.UI
             var result = JsonConvert.DeserializeObject<Tout>(content);
             return result!;
         }
+        public async Task<bool> DeleteAsync(string route)
+        {
+            var response = await _client.DeleteAsync(route);
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            return false;
+        }
+
+
     }
 }

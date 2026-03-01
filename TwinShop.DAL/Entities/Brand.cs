@@ -14,7 +14,6 @@ namespace Twin_Shop__Web_API.Entities
         [StringLength(50)]
         public string CategoryName { get; set; }
 
-    
         public int CategoryId { get; set; }
 
         [Required]
