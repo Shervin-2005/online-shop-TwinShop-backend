@@ -34,15 +34,15 @@ namespace TwinShop.DAL.Repositories.Implementations
         public async Task<User?> GetByEmailAsync(string email)
         {
             try
-            {
+             {
                 var user = await _dbContext.Users.Where(x => x.Email == email).FirstOrDefaultAsync();
                 return user;
-            }
-           catch(Exception ex)
-            {
+             }
+            catch(Exception ex)
+             {
                 _logger.LogError(ex, "Error getting user by email: {Email}", email);
                 throw new Exception("Failed to get user by email", ex);
-            }
+             }
         }
 
         public async Task<bool> PhoneExistsAsync(string phone)

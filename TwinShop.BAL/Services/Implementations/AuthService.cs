@@ -4,6 +4,7 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 using Twin_Shop__Web_API.DTOs.Auth;
+using Twin_Shop__Web_API.DTOs.Product;
 using Twin_Shop__Web_API.Entities;
 using Twin_Shop__Web_API.Services.Interfaces;
 using TwinShop.DAL.Repositories.Interfaces;
@@ -91,12 +92,13 @@ namespace Twin_Shop__Web_API.Services.Implementations
             try
             {
                 var user = await _userRepository.GetByEmailAsync(email);
-                if (user == null)
+                if (user != null) return _mapper.Map<UserDto>(user);
+                else
                 {
-                    _logger.LogWarning("User not found with email: {Email}", email);
-                    return null;
+                    _logger.LogError("No user found with this email: {Email}", email);
+                    throw new Exception("No user found with email");
                 }
-                return _mapper.Map<UserDto>(user);
+                
             }
             catch (Exception ex)
             {
@@ -110,12 +112,13 @@ namespace Twin_Shop__Web_API.Services.Implementations
             try
             {
                 var user = await _userRepository.GetByPhoneAsync(phoneNumber);
-                if (user == null)
+                if (user != null) return _mapper.Map<UserDto>(user);
+                else
                 {
                     _logger.LogWarning("User not found with phone number: {PhoneNumber}", phoneNumber);
-                    return null;
+                    throw new Exception("User not found with phone number");
                 }
-                return _mapper.Map<UserDto>(user);
+               
             }
             catch (Exception ex)
             {
