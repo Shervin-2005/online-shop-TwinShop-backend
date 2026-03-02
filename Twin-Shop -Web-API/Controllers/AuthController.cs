@@ -7,36 +7,86 @@ using TwinShop.Shared.DTOS.Auth;
 public class AuthController : BaseController
 {
     private readonly IAuthService _authService;
+    private readonly ILogger<AuthController> _logger;
 
-    public AuthController(IAuthService authService)
+    public AuthController(IAuthService authService,ILogger<AuthController> logger)
     {
         _authService = authService;
+        _logger = logger;
     }
 
     [HttpPost]
-    public async Task<string> Register(RegisterDto dto)
+    public async Task<IActionResult> Register([FromBody]RegisterDto dto)
     {
-        var result = await _authService.RegisterAsync(dto);
-        return result;
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        try
+        {
+            var result = await _authService.RegisterAsync(dto);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while registering user.");
+
+            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+
+        }
+
     }
 
     [HttpPost]
-    public async Task<bool> Login(LoginDto dto)
+    public async Task<IActionResult> Login([FromBody] LoginDto dto)
     {
-        var result= await _authService.LoginAsync(dto);
-        return result;
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        try
+        {
+            var result = await _authService.LoginAsync(dto);
+            return Ok(result);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while logging in user.");
+
+            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+
+        }
+
     }
 
     [HttpGet]
-    public async Task<UserDto> GetbyEmail(string email)
+    public async Task<IActionResult> GetbyEmail(string email)
     {
-        var user = await _authService.GetByEmailAsync(email);
-        return user;
+        try
+        {
+            var user = await _authService.GetByEmailAsync(email);
+            if(user==null) return NotFound(new { message = "User not found" });
+            return Ok(user);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while retrieving user by email.");
+            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+        }
     }
     [HttpGet]
-    public async Task<UserDto> GetbyPhoneNumber(string phoneNumber)
+    public async Task<IActionResult> GetbyPhoneNumber(string phoneNumber)
     {
-        var user = await _authService.GetByPhoneAsync(phoneNumber);
-        return user;
+        try
+        {
+            var user = await _authService.GetByPhoneAsync(phoneNumber);
+            if(user==null) return NotFound(new { message = "User not found" });
+            return Ok(user);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while retrieving user by phonenumber.");
+            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+        }
     }
 }

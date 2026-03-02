@@ -2,63 +2,137 @@
 using Microsoft.AspNetCore.Mvc;
 using Twin_Shop__Web_API.Controllers;
 using Twin_Shop__Web_API.DTOs.Brand;
+using Twin_Shop__Web_API.Services.Implementations;
 using Twin_Shop__Web_API.Services.Interfaces;
 
 public class BrandsController : BaseController
 {
     private readonly IBrandService _brandService;
-
-    public BrandsController(IBrandService brandService)
+    private readonly ILogger<BrandsController> _logger;
+    public BrandsController(IBrandService brandService,ILogger<BrandsController> logger)
     {
         _brandService = brandService;
+        _logger = logger;
     }
 
     [HttpGet]
-    public async Task<IEnumerable<BrandDto>> GetAll()
+    public async Task<IActionResult> GetAll()
     {
-        var brandsDto = await _brandService.GetAllBrandsAsync();
-        return brandsDto;
+        try
+        {
+            var brandsDto = await _brandService.GetAllBrandsAsync();
+            if (brandsDto == null) return NotFound(new { message = "Brands not found" });
+            return Ok(brandsDto);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while getting brands.");
+            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+        }
     }
 
     [HttpGet]
-    public async Task<BrandDto> GetById(int id)
+    public async Task<IActionResult> GetById(int id)
     {
-        var brandDto = await _brandService.GetBrandByIdAsync(id);
-        return brandDto!;
+        try
+        {
+            var brandDto = await _brandService.GetBrandByIdAsync(id);
+            if (brandDto == null) return NotFound(new { message = "Brand not found" });
+            return Ok(brandDto)!;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while getting brand by id.");
+            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+        }
     }
 
     [HttpPost]
-    public async Task<BrandDto> Create(CreateBrandDto dto)
+    public async Task<IActionResult> Create([FromBody]CreateBrandDto dto)
     {
-        var createdBrand = await _brandService.CreateBrandAsync(dto);
-        return createdBrand;
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        try
+        {
+            var createdBrand = await _brandService.CreateBrandAsync(dto);
+            return Ok(createdBrand);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while creating brand.");
+
+            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+        }
     }
 
     [HttpDelete]
-    public async Task<bool> Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        var result = await _brandService.DeleteBrandAsync(id);
-        return result;
+        try
+        {
+            var result = await _brandService.DeleteBrandAsync(id);
+            if (result) return Ok("Brand deleted successfully.");
+            else return NotFound(new { message = "Brand not found" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while deleting brand.");
+            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+        }
     }
 
     [HttpPut]
-    public async Task<bool> Update(UpdateBrandDto dto)
+    public async Task<IActionResult> Update([FromBody]UpdateBrandDto dto)
     {
-        var result = await _brandService.UpdateBrandAsync(dto);
-        return result;
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        try
+        {
+            var result = await _brandService.UpdateBrandAsync(dto);            
+            if (result) return Ok("Brand Updated successfully.");
+            else return NotFound(new { message = "Brand not found." });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while updating brand.");
+
+            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+        }
     }
 
     [HttpGet]
-    public async Task<List<BrandDto>>GetBrandsByName(string name)
+    public async Task<IActionResult>GetBrandsByName(string name)
     {
-        var brands=await _brandService.GetBrandByNameAsync(name);
-        return brands!;
+        try
+        {
+            var brands = await _brandService.GetBrandByNameAsync(name);
+            if (brands == null) return NotFound(new { message = "Brands not found" });
+            return Ok(brands);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while getting brands by name.");
+            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+        }
     }
 
     [HttpGet]
-    public async Task<List<BrandDto?>> GetBrandsByCategoryName(string categoryName)
+    public async Task<IActionResult> GetBrandsByCategoryName(string categoryName)
     {
-        var brands = await _brandService.GetBrandsByCategoryNameAsync(categoryName);
-        return brands!;
+        try
+        {
+            var brands = await _brandService.GetBrandsByCategoryNameAsync(categoryName);
+            if (brands == null) return NotFound(new { message = "Brands not found" });
+            return Ok(brands);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while getting brands by category name.");
+            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
+        }
     }
 }
