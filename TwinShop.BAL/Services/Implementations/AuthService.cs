@@ -1,80 +1,117 @@
-﻿using AutoMapper;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
-using Twin_Shop__Web_API.DTOs.Auth;
-using Twin_Shop__Web_API.DTOs.Product;
-using Twin_Shop__Web_API.Entities;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Twin_Shop__Web_API.Services.Interfaces;
+using TwinShop.BLL.Services.Interfaces;
 using TwinShop.DAL.Repositories.Interfaces;
+using TwinShop.Shared;
+using TwinShop.Shared.DTOS;
 using TwinShop.Shared.DTOS.Auth;
+using TwinShop.Shared.ErrorHandling;
+using TwinShop.Shared.Mappers;
+using TwinShop.Shared.ViewModels;
 
 namespace Twin_Shop__Web_API.Services.Implementations
 {
     public class AuthService : IAuthService
     {
         private readonly IUserRepository _userRepository;
-        private readonly IMapper _mapper;
-        private readonly ILogger<AuthService> _logger;
+        private readonly IErrorService _errorService;
+        private readonly IVerificationCodeService _verificationCodeService;
 
-        public AuthService(IUserRepository userRepository, IMapper mapper,ILogger<AuthService> logger)
+        public AuthService(IUserRepository userRepository, IErrorService errorService, IVerificationCodeService verificationCodeService)
         {
             _userRepository = userRepository;
-            _mapper = mapper;
-            _logger = logger;
+            _errorService = errorService;
+            _verificationCodeService = verificationCodeService;
         }
 
-        public async Task<string> RegisterAsync(RegisterDto dto)
+        public async Task<OperationResult> RegisterAsync(UserViewModel userView)
         {
             try
             {
-                var result = await _userRepository.PhoneExistsAsync(dto.PhoneNumber);
-                if (result)
+                if (!userView.IsValid)
                 {
-                    return "This phone number already exists";
+                    return OperationResult.Failed(userView.ErrorMessage);
                 }
-                var user = new User
+
+                UserDto userDto = UserMapper.ToUserDTO(userView);
+                userDto.PasswordHash = HashPassword(userDto.PasswordHash);
+                var isPhoneExist = await _userRepository.PhoneExistsAsync(userDto.PhoneNumber);
+
+                if (isPhoneExist.Success)
                 {
-                    PhoneNumber = dto.PhoneNumber,
-                    PasswordHash = HashPassword(dto.Password),
-                    Email = dto.Email
-                };
-                await _userRepository.AddUserAsync(user);
-                return "Register Successfully!!";
+                    return OperationResult.Failed(Messages.PhoneNumberAlreadyExist);
+                }
+                var isUserAdded = await _userRepository.AddUserAsync(userDto);
+
+                if (!isUserAdded.Success)
+                {
+                    return OperationResult.Failed(Messages.FailedSignUp1);
+                }
+
+                return OperationResult.SuccessedResult(true, Messages.SuccessSignUp1);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while registering the user: {PhoneNumber}", dto.PhoneNumber);
-                return "Something went wrong 😖";
+                var error = ex!.ExceptionToErrorDTO("BLL-AuthService");
+                var result = await _errorService.LogErrorAsync(error);
+                return OperationResult.Failed(result.Message!);
             }
         }
 
-        public async Task<bool> LoginAsync(LoginDto dto)
+        public async Task<OperationResult> LoginWithPasswordAsync(UserViewModel userView)
         {
             try
             {
-                var user = await _userRepository.GetByPhoneAsync(dto.PhoneNumber);
-                if (user == null)
-                {
-                    _logger.LogWarning("User not found with phone number: {PhoneNumber}", dto.PhoneNumber);
-                    return false;
-                }
-                var result = VerifyPassword(dto.Password, user.PasswordHash);
-                if (!result)
-                {
-                    _logger.LogInformation("Invalid password for user: {PhoneNumber}", dto.PhoneNumber);
-                    return false;
-                }
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while logging in the user: {PhoneNumber}", dto.PhoneNumber);
-                return false;
-            }
-        }
+                var user = await _userRepository.GetByPhoneAsync(userView.PhoneNumber);
 
+                if (!user.Success)
+                {
+                    return OperationResult.Failed(Messages.userNotLoginWithThisPhoneNumber);
+                }
+                var isVerified = await _userRepository
+                    .VerifyPassword(user.Data.PasswordHash, HashPassword(userView.Password!));
+
+                if (!isVerified.Success)
+                {
+                    return OperationResult.Failed(Messages.FailedLogin);
+                }
+                return OperationResult.SuccessedResult();
+              
+            }
+            catch(Exception ex)
+            {
+                var error = ex!.ExceptionToErrorDTO("BLL-AuthService");
+                var result = await _errorService.LogErrorAsync(error);
+                return OperationResult.Failed(result.Message!);
+            }
+    }
+
+        public async Task<OperationResult> LoginWithVerificationCodeAsync(UserViewModel userView)
+        {
+            var user = await _userRepository.GetByPhoneAsync(userView.PhoneNumber);
+
+            if (!user.Success)
+            {
+                return OperationResult.Failed(Messages.userNotLoginWithThisPhoneNumber);
+            }
+            //باید sms بیاد
+            var isVerified = await _userRepository
+                .VerifyPassword(user.Data.PasswordHash, HashPassword(userView.Password!));
+
+            if (!isVerified.Success)
+            {
+                if (!isVerified.Success)
+                {
+                    var error = isVerified.Exception!.ExceptionToErrorDTO(isVerified.Message!);
+                    var result = await _errorService.LogErrorAsync(error);
+                    return OperationResult.Failed(result.Message!.ErrorMessage());
+                }
+                return OperationResult.Failed(Messages.userNotLoginWithThisPhoneNumber);
+            }
+            return OperationResult.SuccessedResult();
+        }
         private string HashPassword(string password)
         {
             using var sha256 = SHA256.Create();
@@ -82,49 +119,41 @@ namespace Twin_Shop__Web_API.Services.Implementations
             return Convert.ToBase64String(bytes);
         }
 
-        private bool VerifyPassword(string password, string hash)
+     
+
+        public async Task<OperationResult<UserDto>> GetByEmailAsync(string email)
         {
-            return HashPassword(password) == hash;
+            var result = await _userRepository.GetByEmailAsync(email);
+            if (!result.Success)
+            {
+                if (!result.Success)
+                {
+                    var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
+                    var result1 = await _errorService.LogErrorAsync(error);
+                    return OperationResult<UserDto>.Failed(result1.Message!.ErrorMessage());
+                }
+                return OperationResult<UserDto>.Failed();
+            }
+            return OperationResult<UserDto>.SuccessedResult(result.Data);
+
         }
 
-        public async Task<UserDto> GetByEmailAsync(string email)
+        public async Task<OperationResult<UserDto>> GetByPhoneAsync(string phoneNumber)
         {
-            try
+            var result = await _userRepository.GetByPhoneAsync(phoneNumber);
+            if (!result.Success)
             {
-                var user = await _userRepository.GetByEmailAsync(email);
-                if (user != null) return _mapper.Map<UserDto>(user);
-                else
+                if (!result.Success)
                 {
-                    _logger.LogError("No user found with this email: {Email}", email);
-                    throw new Exception("No user found with email");
+                    var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
+                    var result1 = await _errorService.LogErrorAsync(error);
+                    return OperationResult<UserDto>.Failed(result1.Message!.ErrorMessage());
                 }
-                
+                return OperationResult<UserDto>.Failed();
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while retrieving user by email: {Email}", email);
-                throw; 
-            }
+            return OperationResult<UserDto>.SuccessedResult(result.Data);
         }
 
-        public async Task<UserDto> GetByPhoneAsync(string phoneNumber)
-        {
-            try
-            {
-                var user = await _userRepository.GetByPhoneAsync(phoneNumber);
-                if (user != null) return _mapper.Map<UserDto>(user);
-                else
-                {
-                    _logger.LogWarning("User not found with phone number: {PhoneNumber}", phoneNumber);
-                    throw new Exception("User not found with phone number");
-                }
-               
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while retrieving user by phone number: {PhoneNumber}", phoneNumber);
-                throw; 
-            }
-        }
+       
     }
 }

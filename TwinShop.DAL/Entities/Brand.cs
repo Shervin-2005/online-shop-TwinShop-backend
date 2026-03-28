@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.CompilerServices;
 
 namespace Twin_Shop__Web_API.Entities
 {
@@ -7,19 +9,23 @@ namespace Twin_Shop__Web_API.Entities
         [Key]
         public int BrandId { get; set; }
 
-        [StringLength(50, ErrorMessage = "Brand name must be between 1 and 50 characters.")]
-        [Required(ErrorMessage = "Brand name is required.")]
+
+        [Column(TypeName = "nvarchar")]
+        [StringLength(100)]
+        [Required]
         public string BrandName { get; set; }
 
-        [StringLength(50, ErrorMessage = "Category name must be between 1 and 50 characters.")]
+        
+        [Required]
+        public string MainImage {  get; set; }
+
+        [StringLength(50)]
+        [Required]
         public string CategoryName { get; set; }
 
-        [Range(1, int.MaxValue, ErrorMessage = "Category ID must be a positive integer.")]
-        [Required(ErrorMessage = "Category ID is required.")]
-        public int CategoryId { get; set; }
-
-        [Required(ErrorMessage = "Category object is required.")]
         public Category Category { get; set; }
+
+        public int CategoryId { get; set; }
 
         public ICollection<Product> Products { get; set; } = new List<Product>();
 

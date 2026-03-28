@@ -1,173 +1,161 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Twin_Shop__Web_API.Data;
+using Twin_Shop__Web_API.DTOs.Brand;
+using Twin_Shop__Web_API.DTOs.Product;
 using Twin_Shop__Web_API.Entities;
 using TwinShop.DAL.Repositories.Interfaces;
+using TwinShop.Shared;
 
 namespace TwinShop.DAL.Repositories.Implementations
 {
     public class BrandRepository : IBrandRepository
     {
         private readonly AppDbContext _dbContext;
-        private readonly ILogger<BrandRepository> _logger;
 
-        public BrandRepository(AppDbContext dbContext, ILogger<BrandRepository> logger)
+        public BrandRepository(AppDbContext dbContext)
         {
             _dbContext = dbContext;
-            _logger = logger;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<OperationResult> DeleteAsync(int id)
         {
             try
             {
-                var brand = await _dbContext.Brands.FindAsync(id);
-                if (brand == null)
-                {
-                    _logger.LogWarning("Brand not found with ID: {Id}", id);
-                    return false;
-                }
-
+                var brand = new Brand { BrandId = id };
+                _dbContext.Attach(brand);
                 brand.IsDeleted = true;
-
-                _dbContext.Entry(brand).Property(c => c.IsDeleted).IsModified = true;
-
+                _dbContext.Entry(brand).Property(b => b.IsDeleted).IsModified = true;
                 await _dbContext.SaveChangesAsync();
-                return true;
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError(ex, "Error deleting brand with ID: {Id}", id);
-                throw new Exception("Failed to delete brand", ex);
+                return OperationResult.SuccessedResult();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error deleting brand with ID: {Id}", id);
-                throw;
+                return OperationResult.Failed(GetType().Name, ex);
             }
         }
 
-        public async Task<Brand> GetByIdAsync(int brandId)
+        public async Task<OperationResult<BrandDto>> GetByIdAsync(int brandId)
         {
             try
             {
-                var brand = await _dbContext.Brands.Where(x => x.BrandId == brandId && !x.IsDeleted).FirstOrDefaultAsync();
-                return brand;
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError(ex, "Error getting brand by ID: {BrandId}", brandId);
-                throw new Exception("Failed to get brand by ID", ex);
+                var brand = await _dbContext.Brands.AsNoTracking().Where(b => b.BrandId == brandId && b.IsDeleted == false).
+                    Select(b => new BrandDto
+                    {
+                       BrandName = b.BrandName,
+                       MainImage = b.MainImage,
+                       CategoryName = b.CategoryName,
+                       CategoryId = b.CategoryId,
+                    }).FirstAsync();
+                return OperationResult<BrandDto>.SuccessedResult(brand);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error getting brand by ID: {BrandId}", brandId);
-                throw;
+                return OperationResult<BrandDto>.Failed(GetType().Name, ex);
             }
         }
 
-        public async Task<bool> InsertAsync(Brand brand)
+        public async Task<OperationResult> InsertAsync(BrandDto brandDto)
         {
             try
             {
+                Brand brand = new Brand
+                {
+
+                    BrandName = brandDto.BrandName,
+                    MainImage = brandDto.MainImage,
+                    CategoryName = brandDto.CategoryName,
+                    CategoryId =brandDto.CategoryId,
+                    IsDeleted=brandDto.IsDeleted,
+                };
                 _dbContext.Brands.Add(brand);
                 await _dbContext.SaveChangesAsync();
-                return true;
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError(ex, "Error inserting brand: {Brand}", brand);
-                throw new Exception("Failed to insert brand", ex);
+                return OperationResult.SuccessedResult();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error inserting brand: {Brand}", brand);
-                throw;
+                return OperationResult.Failed(GetType().Name, ex);
             }
         }
 
-        public async Task<bool> UpdateAsync(Brand brand)
+        public async Task<OperationResult> UpdateAsync(BrandDto brandDto, int id)
         {
             try
             {
-                var existing = await _dbContext.Brands.FindAsync(brand.BrandId);
-                if (existing == null)
-                {
-                    _logger.LogWarning("Brand not found with ID: {BrandId}", brand.BrandId);
-                    return false;
-                }
+                var existing = await _dbContext.Brands.Where(b => b.BrandId == id).FirstAsync();
 
-                existing.BrandName = brand.BrandName;
-                existing.CategoryId = brand.CategoryId;
-
+                existing.BrandName = brandDto.BrandName;
+                existing.MainImage = brandDto.MainImage;
+                existing.CategoryName = brandDto.CategoryName;
+                existing.CategoryId = brandDto.CategoryId;
+                existing.IsDeleted = brandDto.IsDeleted;
                 await _dbContext.SaveChangesAsync();
-                return true;
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError(ex, "Error updating brand: {Brand}", brand);
-                throw new Exception("Failed to update brand", ex);
+                return OperationResult.SuccessedResult(); ;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error updating brand: {Brand}", brand);
-                throw;
+                return OperationResult.Failed(GetType().Name, ex);
             }
         }
 
-        public async Task<List<Brand>> GetAllAsync()
+        public async Task<OperationResult<List<BrandDto>>> GetAllAsync()
         {
             try
             {
-                return await _dbContext.Brands.ToListAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError(ex, "Error getting all brands");
-                throw new Exception("Failed to get all brands", ex);
+                var brands = await _dbContext.Brands.AsNoTracking()
+                    .Where(b => b.IsDeleted == false).Select(b => new BrandDto
+                    {
+                        BrandName = b.BrandName,
+                        MainImage = b.MainImage,
+                        CategoryName = b.CategoryName,
+                        CategoryId = b.CategoryId,
+                    }).ToListAsync();
+                return OperationResult<List<BrandDto>>.SuccessedResult(brands);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error getting all brands");
-                throw;
+                return OperationResult<List<BrandDto>>.Failed(GetType().Name, ex);
             }
         }
 
-        public async Task<List<Brand>> GetBrandsByCategoryNameAsync(string categoryName)
+        public async Task<OperationResult<List<BrandDto>>> GetBrandsByCategoryNameAsync(string categoryName)
         {
             try
             {
-                var brands = await _dbContext.Brands.Where(x => x.CategoryName == categoryName).ToListAsync();
-                return brands;
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError(ex, "Error getting brands by category name: {CategoryName}", categoryName);
-                throw new Exception("Failed to get brands by category name", ex);
+                var brands = await _dbContext.Brands.AsNoTracking().Where(b => b.CategoryName == categoryName && b.IsDeleted == false)
+                   .Select(b => new BrandDto
+                   {
+                       BrandName = b.BrandName,
+                       MainImage = b.MainImage,
+                       CategoryName = b.CategoryName,
+                       CategoryId = b.CategoryId,
+                   }).ToListAsync();
+                return OperationResult<List<BrandDto>>.SuccessedResult(brands);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error getting brands by category name: {CategoryName}", categoryName);
-                throw;
+                return OperationResult<List<BrandDto>>.Failed(GetType().Name, ex);
             }
         }
 
-        public async Task<List<Brand>> GetBrandsByNameAsync(string brandName)
+        public async Task<OperationResult<List<BrandDto>>> GetBrandsByNameAsync(string brandName)
         {
+
             try
             {
-                var brands = await _dbContext.Brands.Where(x => x.BrandName.Contains(brandName) && !x.IsDeleted).ToListAsync();
-                return brands;
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError(ex, "Error getting brands by name: {BrandName}", brandName);
-                throw new Exception("Failed to get brands by name", ex);
+                var brands = await _dbContext.Brands.AsNoTracking().Where(b => b.BrandName == brandName && b.IsDeleted == false)
+                   .Select(b => new BrandDto
+                   {
+                       BrandName = b.BrandName,
+                       MainImage = b.MainImage,
+                       CategoryName = b.CategoryName,
+                       CategoryId = b.CategoryId,
+                   }).ToListAsync();
+                return OperationResult<List<BrandDto>>.SuccessedResult(brands);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error getting brands by name: {BrandName}", brandName);
-                throw;
+                return OperationResult<List<BrandDto>>.Failed(GetType().Name, ex);
             }
         }
     }

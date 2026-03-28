@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Twin_Shop__Web_API.Entities;
+using TwinShop.DAL.Entities;
 
 namespace Twin_Shop__Web_API.Data
 {
@@ -13,6 +14,7 @@ namespace Twin_Shop__Web_API.Data
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<User>Users { get; set; }
+        public DbSet<ErrorLog> ErrorLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

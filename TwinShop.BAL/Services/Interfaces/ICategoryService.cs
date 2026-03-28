@@ -1,17 +1,19 @@
 ﻿using Twin_Shop__Web_API.DTOs.Category;
 using Twin_Shop__Web_API.Entities;
+using TwinShop.Shared;
+using TwinShop.Shared.ViewModels;
 
 
 namespace Twin_Shop__Web_API.Services.Interfaces
 {
     public interface ICategoryService
     {
-        Task<List<CategoryDto>> GetAllCategoriesAsync();
-        Task<CategoryDto?> GetCategoryByIdAsync(int id);
-        Task<List<CategoryDto?>> GetCategoriesByNameAsync(string name);
-        Task<CategoryDto> CreateCategoryAsync(CreateCategoryDto dto);
-        Task<bool> DeleteCategoryAsync(int id);
-        Task<bool> UpdateCategoryAsync(UpdateCategoryDto dto);
+        Task<OperationResult<List<CategoryDto>>> GetAllCategoriesAsync();
+        Task<OperationResult<CategoryDto>> GetCategoryByIdAsync(int id);
+        Task<OperationResult<List<CategoryDto>>> GetCategoriesByNameAsync(string name);
+        Task<OperationResult> CreateCategoryAsync(CategoryViewModel categoryView);
+        Task<OperationResult> DeleteCategoryAsync(int id);
+        Task<OperationResult> UpdateCategoryAsync(CategoryViewModel categoryViewModel, int id);
 
     }
 }

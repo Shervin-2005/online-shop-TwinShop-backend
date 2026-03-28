@@ -1,114 +1,111 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Twin_Shop__Web_API.DTOs.Category;
+using Twin_Shop__Web_API.DTOs.Product;
 using Twin_Shop__Web_API.Entities;
 using Twin_Shop__Web_API.Services.Interfaces;
+using TwinShop.BLL.Services.Interfaces;
+using TwinShop.DAL.Repositories.Implementations;
 using TwinShop.DAL.Repositories.Interfaces;
+using TwinShop.Shared;
+using TwinShop.Shared.DTOS;
+using TwinShop.Shared.ErrorHandling;
+using TwinShop.Shared.Mappers;
+using TwinShop.Shared.ViewModels;
 namespace Twin_Shop__Web_API.Services.Implementations
 {
     public class CategoryService : ICategoryService
     {
         private readonly ICategoryRepository _categoryRepository;
-        private readonly IMapper _mapper;
-        private readonly ILogger<CategoryService> _logger;
-
-
-        public CategoryService(ICategoryRepository categoryRepository, IMapper mapper, ILogger<CategoryService> logger)
+        private readonly IErrorService _errorService;
+        public CategoryService(ICategoryRepository categoryRepository,IErrorService errorService)
         {
             _categoryRepository = categoryRepository;
-            _mapper = mapper;
-            _logger = logger;
+            _errorService = errorService;
         }
-        public async Task<List<CategoryDto>> GetAllCategoriesAsync()
+        public async Task<OperationResult<List<CategoryDto>>> GetAllCategoriesAsync()
         {
-            try
+            var result = await _categoryRepository.GetAllAsync();
+            if (!result.Success)
             {
-                var categories = await _categoryRepository.GetAllAsync();
-                return _mapper.Map<List<CategoryDto>>(categories);
+                var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
+                var resulterror = await _errorService.LogErrorAsync(error);
+                return OperationResult<List<CategoryDto>>.Failed(resulterror.Message!.ErrorMessage());
             }
-            catch (Exception ex)
-            {   
-                _logger.LogError(ex, "Error occurred while getting all categories.");
-                throw;
-            }
+            return result;
         }
 
-        public async Task<CategoryDto?> GetCategoryByIdAsync(int id)
+        public async Task<OperationResult<CategoryDto>> GetCategoryByIdAsync(int id)
         {
-            try
+            var result = await _categoryRepository.GetByIdAsync(id);
+            if (!result.Success)
             {
-                var category = await _categoryRepository.GetByIdAsync(id);
-                if (category != null) return _mapper.Map<CategoryDto>(category);
-                  else
-                  {
-                    _logger.LogError("No category found with CategoryId: {CategoryId}", id);
-                    throw new Exception("No category found with the provided CategoryId");
-                  }
+                var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
+                var resultError = await _errorService.LogErrorAsync(error);
+                return OperationResult<CategoryDto>.Failed(resultError.Message!.ErrorMessage());
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while getting category by ID: {Id}", id);
-                throw;
-            }
+            return result;
 
         }
 
-        public async Task<CategoryDto> CreateCategoryAsync(CreateCategoryDto dto)
+        public async Task<OperationResult> CreateCategoryAsync(CategoryViewModel categoryView)
         {
-            try
+            if (!categoryView.IsValid)
+                return OperationResult.Failed(categoryView.ErrorMessage);
+            //نوشتن نحوه اضافه کردن عکس با حسین
+            CategoryDto categoryDto = categoryView.ToCategoryDTO();
+            var result = await _categoryRepository.InsertAsync(categoryDto);
+            if (!result.Success)
             {
-                var category = _mapper.Map<Category>(dto);
-                await _categoryRepository.InsertAsync(category);
-                return _mapper.Map<CategoryDto>(category);
+                var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
+                var result1 = await _errorService.LogErrorAsync(error);
+                return OperationResult.Failed(result1.Message!.ErrorMessage());
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while creating a new category.");
-                throw;
-            }
+            return OperationResult.SuccessedResult(true, Messages.CategoryAdded);
         }
 
-        public async Task<bool> DeleteCategoryAsync(int id)
+        public async Task<OperationResult> DeleteCategoryAsync(int id)
         {
-            try
+            var result = await _categoryRepository.DeleteAsync(id);
+            if (!result.Success)
             {
-                var category = await _categoryRepository.GetByIdAsync(id);
-                if (category != null) return await _categoryRepository.DeleteAsync(id);
-                else return false;
+                var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
+                var errorResult = await _errorService.LogErrorAsync(error);
+                return OperationResult.Failed(errorResult.Message!.ErrorMessage());
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while deleting category by ID: {Id}", id);
-                throw;
-            }
+            return OperationResult.SuccessedResult(true, Messages.DeleteCategory);
         }
 
-        public async Task<bool> UpdateCategoryAsync(UpdateCategoryDto dto)
+        public async Task<OperationResult> UpdateCategoryAsync(CategoryViewModel categoryViewModel,int id )
         {
-            try
+            if (!categoryViewModel.IsValid)
+                return OperationResult.Failed(categoryViewModel.ErrorMessage);
+            if (categoryViewModel.MainImage!.Contains(Messages.Url))
             {
-                var category = _mapper.Map<Category>(dto);
-                return await _categoryRepository.UpdateAsync(category);
+                CategoryDto categoryDto = categoryViewModel.ToCategoryDTO();
+                var resultUpdate = await _categoryRepository.UpdateAsync(categoryDto, id);
+                if (!resultUpdate.Success)
+                {
+                    var error = resultUpdate.Exception!.ExceptionToErrorDTO(resultUpdate.Message!);
+                    var eroorResult = await _errorService.LogErrorAsync(error);
+                    return eroorResult;
+                }
+                return OperationResult.SuccessedResult(true, Messages.update);
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while updating category.");
-                throw;
-            }
+            return OperationResult.SuccessedResult(true, Messages.update);
         }
+        
 
-        public async Task<List<CategoryDto?>> GetCategoriesByNameAsync(string name)
+        public async Task<OperationResult<List<CategoryDto>>> GetCategoriesByNameAsync(string name)
         {
-            try
+            var result = await _categoryRepository.GetCategoriesByNameAsync(name);
+            if (!result.Success)
             {
-                var categories = await _categoryRepository.GetCategoriesByNameAsync(name);
-                return _mapper.Map<List<CategoryDto>>(categories)!;
+                var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
+                var errorResult = await _errorService.LogErrorAsync(error);
+                return OperationResult<List<CategoryDto>>.Failed(errorResult.Message!.ErrorMessage());
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while getting categories by name: {Name}", name);
-                throw;
-            }
+            return OperationResult<List<CategoryDto>>.SuccessedResult(result.Data);
         }
     }
 }

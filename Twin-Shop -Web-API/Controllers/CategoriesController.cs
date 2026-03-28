@@ -5,110 +5,59 @@ using Twin_Shop__Web_API.DTOs.Category;
 using Twin_Shop__Web_API.DTOs.Product;
 using Twin_Shop__Web_API.Services.Implementations;
 using Twin_Shop__Web_API.Services.Interfaces;
-using TwinShop.BLL.Profiles;
+using TwinShop.Shared;
+using TwinShop.Shared.ViewModels;
 
 public class CategoriesController : BaseController
 {
     private readonly ICategoryService _categoryService;
-    private readonly ILogger<CategoriesController> _logger;
 
-    public CategoriesController(ICategoryService categoryService,ILogger<CategoriesController> logger)
+    public CategoriesController(ICategoryService categoryService)
     {
         _categoryService = categoryService;
-        _logger = logger;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<OperationResult> GetAll()
     {
-        try
-        {
-            var categoriesDto = await _categoryService.GetAllCategoriesAsync();
-            if (categoriesDto == null) return NotFound(new { message = "Categories not found" });
-            return Ok(categoriesDto);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while getting categories.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
-        }
+        var result = await _categoryService.GetAllCategoriesAsync();
+        return result;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<OperationResult> GetById(int id)
     {
-       
-        try
-        {
-            var categoryDto = await _categoryService.GetCategoryByIdAsync(id);
-            if (categoryDto == null) return NotFound(new { message = "Category not found" });
-            return Ok(categoryDto)!;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while getting category by id.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
-        }
+        var result = await _categoryService.GetCategoryByIdAsync(id);
+        return result;
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody]CreateCategoryDto dto)
+    public async Task<OperationResult> Create([FromBody]CategoryViewModel categoryView)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-        try
-        {
-            var createdCategory = await _categoryService.CreateCategoryAsync(dto);
-            return Ok(createdCategory);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while creating category.");
-
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
-        }
-
+        var result = await _categoryService.CreateCategoryAsync(categoryView);
+        return result;
     }
 
     [HttpDelete]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<OperationResult> Delete(int id)
     {
-        try
-        {
-            var result = await _categoryService.DeleteCategoryAsync(id);
-            if (result) return Ok("Category deleted successfully.");
-            else return NotFound(new { message = "Category not found" });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while deleting category.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
-        }
+        var result = await _categoryService.DeleteCategoryAsync(id);
+        return result;
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update([FromBody]UpdateCategoryDto dto)
+    public async Task<OperationResult> Update([FromBody]CategoryViewModel categoryView,int id)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-        try
-        {
-            var result = await _categoryService.UpdateCategoryAsync(dto);
-            if (result) return Ok("Category Updated successfully.");
-            else return NotFound(new { message = "Category not found." });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while updating category.");
-
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
-        }
+        var result = await _categoryService.UpdateCategoryAsync(categoryView, id);
+        return result;
     }
- 
+    [HttpGet]
+   public async Task<OperationResult> GetCategoriesByNameAsync(string name)
+    {
+        var result=await _categoryService.GetCategoriesByNameAsync(name);
+        return result;
+    }
 
-   
+
+
 }

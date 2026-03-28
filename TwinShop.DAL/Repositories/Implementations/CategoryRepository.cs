@@ -1,156 +1,131 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Twin_Shop__Web_API.Data;
+using Twin_Shop__Web_API.DTOs.Category;
+using Twin_Shop__Web_API.DTOs.Product;
 using Twin_Shop__Web_API.Entities;
 using TwinShop.DAL.Repositories.Interfaces;
+using TwinShop.Shared;
 
 namespace TwinShop.DAL.Repositories.Implementations
 {
     public class CategoryRepository : ICategoryRepository
     {
         private readonly AppDbContext _dbContext;
-        private readonly ILogger<CategoryRepository> _logger;
 
-        public CategoryRepository(AppDbContext dbContext, ILogger<CategoryRepository> logger)
+
+        public CategoryRepository(AppDbContext dbContext)
         {
             _dbContext = dbContext;
-            _logger = logger;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<OperationResult> DeleteAsync(int id)
         {
             try
             {
-                var category = await _dbContext.Categories.FindAsync(id);
-                if (category == null)
+                var category = new Category { CategoryId = id };
+                _dbContext.Attach(category);
+                category.IsDeleted= true;
+                _dbContext.Entry(category).Property(c => c.IsDeleted).IsModified=true;
+                 await _dbContext.SaveChangesAsync();
+                return OperationResult.SuccessedResult();       
+            }
+           
+            catch (Exception ex)
+            {
+                return OperationResult.Failed(GetType().Name, ex);
+            }
+        }
+
+        public async Task<OperationResult<List<CategoryDto>>> GetAllAsync()
+        {
+            try
+            {
+                var categories = await _dbContext.Products.AsNoTracking()
+                    .Where(c => c.IsDeleted == false).Select(c => new CategoryDto
+                    {
+                        CategoryName = c.CategoryName,
+                        MainImage = c.MainImage,
+
+                    }).ToListAsync();
+                return OperationResult<List<CategoryDto>>.SuccessedResult(categories);
+            }
+            catch (Exception ex)
+            {
+                return OperationResult<List<CategoryDto>>.Failed(GetType().Name, ex);
+            }
+        }
+        public async Task<OperationResult<CategoryDto>> GetByIdAsync(int CategoryId)
+        {
+            try
+            {
+                var category = await _dbContext.Categories.AsNoTracking().Where(c => c.CategoryId == CategoryId && c.IsDeleted == false).
+                    Select(c => new CategoryDto
+                    {
+                        CategoryName = c.CategoryName,
+                        MainImage = c.MainImage,
+
+                    }).FirstAsync();
+                return OperationResult<CategoryDto>.SuccessedResult(category);
+            }
+            catch (Exception ex)
+            {
+                return OperationResult<CategoryDto>.Failed(GetType().Name, ex);
+            }
+        }
+
+        public async Task<OperationResult<List<CategoryDto>>> GetCategoriesByNameAsync(string CategoryName)
+        {
+            try
+            {
+                var categories = await _dbContext.Categories.AsNoTracking().Where(c => c.CategoryName == CategoryName && c.IsDeleted == false)
+                    .Select(c => new CategoryDto
+                    {
+                        CategoryName = c.CategoryName,
+                        MainImage = c.MainImage,
+                    }).ToListAsync();
+                return OperationResult<List<CategoryDto>>.SuccessedResult(categories);
+            }
+            catch (Exception ex)
+            {
+                return OperationResult<List<CategoryDto>>.Failed(GetType().Name, ex);
+            }
+        }
+
+        public async Task<OperationResult> InsertAsync(CategoryDto categoryDto)
+        {
+            try
+            {
+                Category category = new Category
                 {
-                    _logger.LogWarning("Category not found with ID: {Id}", id);
-                    return false;
-                }
-
-                category.IsDeleted = true;
-
-                _dbContext.Entry(category).Property(c => c.IsDeleted).IsModified = true;
-
-                await _dbContext.SaveChangesAsync();
-                return true;
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError(ex, "Error deleting category with ID: {Id}", id);
-                throw new Exception("Failed to delete category", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Unexpected error deleting category with ID: {Id}", id);
-                throw;
-            }
-        }
-
-        public async Task<List<Category>> GetAllAsync()
-        {
-            try
-            {
-                return await _dbContext.Categories.ToListAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError(ex, "Error getting all categories");
-                throw new Exception("Failed to get all categories", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Unexpected error getting all categories");
-                throw;
-            }
-        }
-
-        public async Task<Category> GetByIdAsync(int CategoryId)
-        {
-            try
-            {
-                var category = await _dbContext.Categories.Where(x => x.CategoryId == CategoryId).FirstOrDefaultAsync();
-                return category;
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError(ex, "Error getting category by ID: {CategoryId}", CategoryId);
-                throw new Exception("Failed to get category by ID", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Unexpected error getting category by ID: {CategoryId}", CategoryId);
-                throw;
-            }
-        }
-
-        public async Task<List<Category>> GetCategoriesByNameAsync(string CategoryName)
-        {
-            try
-            {
-                var result = await _dbContext.Categories.Where(x => x.CategoryName.Contains(CategoryName) && !x.IsDeleted).Select(x => new Category
-                {
-                    CategoryName = x.CategoryName,
-                }).ToListAsync();
-                return result;
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError(ex, "Error getting categories by name: {CategoryName}", CategoryName);
-                throw new Exception("Failed to get categories by name", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Unexpected error getting categories by name: {CategoryName}", CategoryName);
-                throw;
-            }
-        }
-
-        public async Task<bool> InsertAsync(Category category)
-        {
-            try
-            {
+                    CategoryName = categoryDto.CategoryName,
+                    MainImage = categoryDto.MainImage,
+                };
                 _dbContext.Categories.Add(category);
                 await _dbContext.SaveChangesAsync();
-                return true;
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError(ex, "Error inserting category: {Category}", category);
-                throw new Exception("Failed to insert category", ex);
+                return OperationResult.SuccessedResult();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error inserting category: {Category}", category);
-                throw;
+                return OperationResult.Failed(GetType().Name, ex);
             }
         }
 
-        public async Task<bool> UpdateAsync(Category category)
+        public async Task<OperationResult> UpdateAsync(CategoryDto categoryDto,int id)
         {
             try
             {
-                var existing = await _dbContext.Categories.FindAsync(category.CategoryId);
-                if (existing == null)
-                {
-                    _logger.LogWarning("Category not found with ID: {CategoryId}", category.CategoryId);
-                    return false;
-                }
+                var existing = await _dbContext.Categories.Where(c => c.CategoryId == id).FirstAsync();
 
-                existing.CategoryName = category.CategoryName;
-
+               existing.CategoryName = categoryDto.CategoryName;
+                existing.MainImage= categoryDto.MainImage;
+                existing.IsDeleted = categoryDto.IsDeleted;
                 await _dbContext.SaveChangesAsync();
-                return true;
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError(ex, "Error updating category: {Category}", category);
-                throw new Exception("Failed to update category", ex);
+                return OperationResult.SuccessedResult(); ;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error updating category: {Category}", category);
-                throw;
+                return OperationResult.Failed(GetType().Name, ex);
             }
         }
     }

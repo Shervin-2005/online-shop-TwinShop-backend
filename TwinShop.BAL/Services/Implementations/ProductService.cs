@@ -3,138 +3,130 @@ using Microsoft.Extensions.Logging;
 using Twin_Shop__Web_API.DTOs.Product;
 using Twin_Shop__Web_API.Entities;
 using Twin_Shop__Web_API.Services.Interfaces;
+using TwinShop.BLL.Services.Interfaces;
+using TwinShop.DAL.Repositories.Implementations;
 using TwinShop.DAL.Repositories.Interfaces;
+using TwinShop.Shared;
+using TwinShop.Shared.DTOS;
+using TwinShop.Shared.ErrorHandling;
+using TwinShop.Shared.Mappers;
+using TwinShop.Shared.ViewModels;
 namespace Twin_Shop__Web_API.Services.Implementations;
 
 public class ProductService : IProductService
 {
     private readonly IProductRepository _productRepository;
-    private readonly IMapper _mapper;
-    private readonly ILogger<ProductService> _logger;
+    private readonly IErrorService _errorService;
 
-    public ProductService(IProductRepository productRepository, IMapper mapper,ILogger<ProductService> logger)
+    public ProductService(IErrorService errorService,IProductRepository productRepository)
     {
-        _productRepository =  productRepository;
-        _mapper = mapper;
-        _logger = logger;
+        _errorService = errorService;
+        _productRepository =  productRepository;   
     }
-    public async Task<ProductDto?> GetProductByIdAsync(int id)
+    public async Task<OperationResult<ProductDto>> GetProductByIdAsync(int id)
     {
-        try
+        var result = await _productRepository.GetByIdAsync(id);
+        if (!result.Success)
         {
-            var product = await _productRepository.GetByIdAsync(id);
-            if (product != null) return _mapper.Map<ProductDto>(product);
-            else
+            var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
+            var resultError = await _errorService.LogErrorAsync(error);
+            return OperationResult<ProductDto>.Failed(resultError.Message!.ErrorMessage());
+        }
+        return result;
+    }
+
+    public async Task<OperationResult> CreateProductAsync(ProductViewModel productView)
+    {
+        if(!productView.IsValid)
+            return OperationResult.Failed(productView.ErrorMessage);
+        //نوشتن نحوه اضافه کردن عکس با حسین
+        ProductDto productDto = productView.ToProductDTO();
+            var result= await _productRepository.InsertAsync(productDto);
+        if (!result.Success)
             {
-                _logger.LogError("No Product found with ProductId: {ProductId}", id);
-                throw new Exception("No product found with the provided ProductId");
+                var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
+                var result1 = await _errorService.LogErrorAsync(error);
+                return OperationResult.Failed(result1.Message!.ErrorMessage());
             }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error occurred while getting product by ID: {Id}", id);
-            throw;
-        }
+        return OperationResult.SuccessedResult(true, Messages.ProductAdded);
     }
 
-    public async Task<ProductDto> CreateProductAsync(CreateProductDto dto)
+    public async Task<OperationResult<List<ProductDto>>> GetAllProductsAsync()
     {
-        try
+        var result = await _productRepository.GetAllAsync();
+        if (!result.Success)
         {
-            var product = _mapper.Map<Product>(dto);
-            await _productRepository.InsertAsync(product);
-            return _mapper.Map<ProductDto>(product);
+            var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
+            var resulterror = await _errorService.LogErrorAsync(error);
+            return OperationResult<List<ProductDto>>.Failed(resulterror.Message!.ErrorMessage());
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error occurred while creating a new product.");
-            throw;
-        }
+        return result;
     }
 
-    public async Task<List<ProductDto>> GetAllProductsAsync()
+    public async Task<OperationResult> DeleteProductAsync(int id)
     {
-        try
+        var result = await _productRepository.DeleteAsync(id);
+        if (!result.Success)
         {
-            var products = await _productRepository.GetAllAsync();
-            return _mapper.Map<List<ProductDto>>(products);
+            var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
+            var errorResult = await _errorService.LogErrorAsync(error);
+            return OperationResult.Failed(errorResult.Message!.ErrorMessage());
         }
-        catch (Exception ex)
+        return OperationResult.SuccessedResult(true, Messages.DeleteProduct);
+    }   
+    
+
+    public async Task<OperationResult> UpdateProductAsync(ProductViewModel productView, int id)
+    {
+        if (!productView.IsValid)
+            return OperationResult.Failed(productView.ErrorMessage);
+        if (productView.MainImage!.Contains(Messages.Url))
         {
-            _logger.LogError(ex, "Error occurred while getting all products.");
-            throw;
+            ProductDto productDto = productView.ToProductDTO();
+            var resultUpdate = await _productRepository.UpdateAsync(productDto,id);
+            if (!resultUpdate.Success)
+            {
+                var error = resultUpdate.Exception!.ExceptionToErrorDTO(resultUpdate.Message!);
+                var eroorResult = await _errorService.LogErrorAsync(error);
+                return eroorResult;
+            }
+            return OperationResult.SuccessedResult(true, Messages.update);
         }
+        return OperationResult.SuccessedResult(true, Messages.update);
+    }
+    public async Task<OperationResult<List<ProductDto>>> GetProductsByNameAsync(string name)
+    {
+        var result = await _productRepository.GetProductsByNameAsync(name);
+        if (!result.Success)
+        {
+            var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
+            var errorResult = await _errorService.LogErrorAsync(error);
+            return OperationResult<List<ProductDto>>.Failed(errorResult.Message!.ErrorMessage());
+        }
+        return OperationResult<List<ProductDto>>.SuccessedResult(result.Data);
     }
 
-    public async Task<bool> DeleteProductAsync(int id)
+    public async Task<OperationResult<List<ProductDto>>> GetProductsByBrandNameAsync(string brandName)
     {
-        try
+        var result = await _productRepository.GetProductsByBrandNameAsync(brandName);
+        if (!result.Success)
         {
-            var product = await _productRepository.GetByIdAsync(id);
-            if (product != null) return await _productRepository.DeleteAsync(id);
-            else return false;
+            var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
+            var errorResult = await _errorService.LogErrorAsync(error);
+            return OperationResult<List<ProductDto>>.Failed(errorResult.Message!.ErrorMessage());
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error occurred while deleting product by ID: {Id}", id);
-            throw;
-        }
+        return OperationResult<List<ProductDto>>.SuccessedResult(result.Data);
     }
 
-    public async Task<bool> UpdateProductAsync(UpdateProductDto dto)
+    public async Task<OperationResult<List<ProductDto>>> GetProductsByCategoryNameAsync(string categoryName)
     {
-        try
+        var result = await _productRepository.GetProductsByCategoryNameAsync(categoryName);
+        if (!result.Success)
         {
-            var product = _mapper.Map<Product>(dto);
-            return await _productRepository.UpdateAsync(product);
+            var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
+            var errorResult = await _errorService.LogErrorAsync(error);
+            return OperationResult<List<ProductDto>>.Failed(errorResult.Message!.ErrorMessage());
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error occurred while updating product.");
-            throw;
-        }
-    }
-    public async Task<List<ProductDto>> GetProductsByNameAsync(string name)
-    {
-        try
-        {
-            var products = await _productRepository.GetProductsByNameAsync(name);
-            return _mapper.Map<List<ProductDto>>(products)!;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error occurred while getting products by name: {Name}", name);
-            throw;
-        }
-    }
-
-    public async Task<List<ProductDto>> GetProductsByBrandNameAsync(string brandName)
-    {
-        try
-        {
-            var products = await _productRepository.GetProductsByBrandNameAsync(brandName);
-            return _mapper.Map<List<ProductDto>>(products)!;
-        }
-        catch (Exception ex)
-        {
-            // Log the exception using ILogger
-            _logger.LogError(ex, "Error occurred while getting products by brand name: {BrandName}", brandName);
-            throw;
-        }
-
-    }
-
-    public async Task<List<ProductDto>> GetProductsByCategoryNameAsync(string categoryName)
-    {
-        try
-        {
-            var products = await _productRepository.GetProductsByCategoryNameAsync(categoryName);
-            return _mapper.Map<List<ProductDto>>(products)!;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error occurred while getting products by category name: {CategoryName}", categoryName);
-            throw;
-        }
+        return OperationResult<List<ProductDto>>.SuccessedResult(result.Data);
     }
 }

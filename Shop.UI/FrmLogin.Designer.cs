@@ -1,6 +1,6 @@
 ﻿namespace Shop.UI
 {
-    partial class FrmLogin
+    partial class FormLogin
     {
         /// <summary>
         /// Required designer variable.
@@ -33,27 +33,18 @@
             txtPhone = new TextBox();
             txtPassword = new TextBox();
             lblPassword = new Label();
-            btnAllBrands = new Button();
+            lblSignin = new Label();
+            label1 = new Label();
+            lblMessage = new Label();
+            lblAllBrands = new Label();
             dataGridView = new DataGridView();
-            btnSignin = new Button();
-            txtEmail = new TextBox();
-            lblEmail = new Label();
-            btnGetUserByPhone = new Button();
-            btnGetUserByEmail = new Button();
-            btnGetBrandById = new Button();
-            btnDeleteBrand = new Button();
-            btnGetBrandsByName = new Button();
-            btnGetBrandByCategoryName = new Button();
-            btnUpdateBrand = new Button();
-            btnCreateBrand = new Button();
-            lblNameOrId = new Label();
-            txtNameOrId = new TextBox();
+            btnAllBrands = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView).BeginInit();
             SuspendLayout();
             // 
             // btnLogin
             // 
-            btnLogin.Location = new Point(989, 145);
+            btnLogin.Location = new Point(57, 243);
             btnLogin.Margin = new Padding(4);
             btnLogin.Name = "btnLogin";
             btnLogin.Size = new Size(102, 41);
@@ -65,224 +56,118 @@
             // lblPhone
             // 
             lblPhone.AutoSize = true;
-            lblPhone.Location = new Point(1232, 16);
+            lblPhone.Location = new Point(13, 84);
             lblPhone.Margin = new Padding(4, 0, 4, 0);
             lblPhone.Name = "lblPhone";
-            lblPhone.Size = new Size(67, 28);
+            lblPhone.Size = new Size(116, 21);
             lblPhone.TabIndex = 1;
-            lblPhone.Text = "Phone";
+            lblPhone.Text = "Phone Number";
+            lblPhone.Click += lblPhone_Click;
             // 
             // txtPhone
             // 
-            txtPhone.Location = new Point(989, 10);
+            txtPhone.Location = new Point(13, 116);
             txtPhone.Margin = new Padding(4);
             txtPhone.Name = "txtPhone";
-            txtPhone.Size = new Size(208, 34);
+            txtPhone.Size = new Size(208, 29);
             txtPhone.TabIndex = 2;
             // 
             // txtPassword
             // 
-            txtPassword.Location = new Point(989, 52);
+            txtPassword.Location = new Point(12, 186);
             txtPassword.Margin = new Padding(4);
             txtPassword.Name = "txtPassword";
-            txtPassword.Size = new Size(208, 34);
+            txtPassword.Size = new Size(208, 29);
             txtPassword.TabIndex = 2;
             txtPassword.TextChanged += txtPassword_TextChanged;
             // 
             // lblPassword
             // 
             lblPassword.AutoSize = true;
-            lblPassword.Location = new Point(1219, 55);
+            lblPassword.Location = new Point(13, 154);
             lblPassword.Margin = new Padding(4, 0, 4, 0);
             lblPassword.Name = "lblPassword";
-            lblPassword.Size = new Size(97, 28);
+            lblPassword.Size = new Size(78, 21);
             lblPassword.TabIndex = 1;
             lblPassword.Text = "PassWord";
             // 
-            // btnAllBrands
+            // lblSignin
             // 
-            btnAllBrands.Location = new Point(1, 6);
-            btnAllBrands.Margin = new Padding(4);
-            btnAllBrands.Name = "btnAllBrands";
-            btnAllBrands.Size = new Size(94, 104);
-            btnAllBrands.TabIndex = 0;
-            btnAllBrands.Text = "All Brands";
-            btnAllBrands.UseVisualStyleBackColor = true;
-            btnAllBrands.Click += button2_Click;
+            lblSignin.AutoSize = true;
+            lblSignin.Font = new Font("Segoe UI", 8F);
+            lblSignin.ForeColor = Color.DodgerBlue;
+            lblSignin.Location = new Point(12, 288);
+            lblSignin.Name = "lblSignin";
+            lblSignin.Size = new Size(125, 26);
+            lblSignin.TabIndex = 4;
+            lblSignin.Text = "don't have an acount?!\r\n sign in now";
+            lblSignin.Click += label1_Click;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(46, 41);
+            label1.Name = "label1";
+            label1.Size = new Size(0, 21);
+            label1.TabIndex = 5;
+            // 
+            // lblMessage
+            // 
+            lblMessage.AutoSize = true;
+            lblMessage.Font = new Font("Segoe UI", 10F);
+            lblMessage.ForeColor = Color.IndianRed;
+            lblMessage.Location = new Point(12, 9);
+            lblMessage.Name = "lblMessage";
+            lblMessage.Size = new Size(45, 19);
+            lblMessage.TabIndex = 6;
+            lblMessage.Text = "label2";
+            // 
+            // lblAllBrands
+            // 
+            lblAllBrands.AutoSize = true;
+            lblAllBrands.Location = new Point(731, 27);
+            lblAllBrands.Name = "lblAllBrands";
+            lblAllBrands.Size = new Size(108, 21);
+            lblAllBrands.TabIndex = 7;
+            lblAllBrands.Text = "Get All Brands";
             // 
             // dataGridView
             // 
             dataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView.Location = new Point(660, 377);
+            dataGridView.Location = new Point(639, 51);
             dataGridView.Name = "dataGridView";
-            dataGridView.RowHeadersWidth = 51;
-            dataGridView.Size = new Size(618, 186);
-            dataGridView.TabIndex = 3;
-            dataGridView.CellContentClick += dataGridView_CellContentClick;
+            dataGridView.Size = new Size(294, 310);
+            dataGridView.TabIndex = 8;
             // 
-            // btnSignin
+            // btnAllBrands
             // 
-            btnSignin.Location = new Point(1095, 145);
-            btnSignin.Margin = new Padding(4);
-            btnSignin.Name = "btnSignin";
-            btnSignin.Size = new Size(102, 41);
-            btnSignin.TabIndex = 4;
-            btnSignin.Text = "Sign In";
-            btnSignin.UseVisualStyleBackColor = true;
-            btnSignin.Click += btnSignin_Click;
+            btnAllBrands.Location = new Point(743, 367);
+            btnAllBrands.Name = "btnAllBrands";
+            btnAllBrands.Size = new Size(96, 62);
+            btnAllBrands.TabIndex = 9;
+            btnAllBrands.Text = "Get All Brands";
+            btnAllBrands.UseVisualStyleBackColor = true;
+            btnAllBrands.Click += btnAllBrands_Click;
             // 
-            // txtEmail
+            // FormLogin
             // 
-            txtEmail.Location = new Point(989, 89);
-            txtEmail.Margin = new Padding(4);
-            txtEmail.Name = "txtEmail";
-            txtEmail.Size = new Size(208, 34);
-            txtEmail.TabIndex = 6;
-            // 
-            // lblEmail
-            // 
-            lblEmail.AutoSize = true;
-            lblEmail.Location = new Point(1219, 92);
-            lblEmail.Margin = new Padding(4, 0, 4, 0);
-            lblEmail.Name = "lblEmail";
-            lblEmail.Size = new Size(59, 28);
-            lblEmail.TabIndex = 5;
-            lblEmail.Text = "Email";
-            // 
-            // btnGetUserByPhone
-            // 
-            btnGetUserByPhone.Location = new Point(989, 194);
-            btnGetUserByPhone.Margin = new Padding(4);
-            btnGetUserByPhone.Name = "btnGetUserByPhone";
-            btnGetUserByPhone.Size = new Size(102, 112);
-            btnGetUserByPhone.TabIndex = 7;
-            btnGetUserByPhone.Text = "Find With Phone";
-            btnGetUserByPhone.UseVisualStyleBackColor = true;
-            btnGetUserByPhone.Click += btnGetUserByPhone_Click;
-            // 
-            // btnGetUserByEmail
-            // 
-            btnGetUserByEmail.Location = new Point(1095, 194);
-            btnGetUserByEmail.Margin = new Padding(4);
-            btnGetUserByEmail.Name = "btnGetUserByEmail";
-            btnGetUserByEmail.Size = new Size(102, 112);
-            btnGetUserByEmail.TabIndex = 8;
-            btnGetUserByEmail.Text = "Find With Email";
-            btnGetUserByEmail.UseVisualStyleBackColor = true;
-            btnGetUserByEmail.Click += btnGetUserByEmail_Click;
-            // 
-            // btnGetBrandById
-            // 
-            btnGetBrandById.Location = new Point(103, 6);
-            btnGetBrandById.Margin = new Padding(4);
-            btnGetBrandById.Name = "btnGetBrandById";
-            btnGetBrandById.Size = new Size(94, 104);
-            btnGetBrandById.TabIndex = 9;
-            btnGetBrandById.Text = "Get Brand By ID";
-            btnGetBrandById.UseVisualStyleBackColor = true;
-            btnGetBrandById.Click += btnGetBrandById_Click;
-            // 
-            // btnDeleteBrand
-            // 
-            btnDeleteBrand.Location = new Point(205, 6);
-            btnDeleteBrand.Margin = new Padding(4);
-            btnDeleteBrand.Name = "btnDeleteBrand";
-            btnDeleteBrand.Size = new Size(94, 104);
-            btnDeleteBrand.TabIndex = 10;
-            btnDeleteBrand.Text = "Delete Brand";
-            btnDeleteBrand.UseVisualStyleBackColor = true;
-            btnDeleteBrand.Click += btnDeleteBrand_Click;
-            // 
-            // btnGetBrandsByName
-            // 
-            btnGetBrandsByName.Location = new Point(307, 6);
-            btnGetBrandsByName.Margin = new Padding(4);
-            btnGetBrandsByName.Name = "btnGetBrandsByName";
-            btnGetBrandsByName.Size = new Size(94, 104);
-            btnGetBrandsByName.TabIndex = 11;
-            btnGetBrandsByName.Text = "Get Brands By Name";
-            btnGetBrandsByName.UseVisualStyleBackColor = true;
-            btnGetBrandsByName.Click += btnGetBrandByName_Click;
-            // 
-            // btnGetBrandByCategoryName
-            // 
-            btnGetBrandByCategoryName.Location = new Point(409, 6);
-            btnGetBrandByCategoryName.Margin = new Padding(4);
-            btnGetBrandByCategoryName.Name = "btnGetBrandByCategoryName";
-            btnGetBrandByCategoryName.Size = new Size(131, 104);
-            btnGetBrandByCategoryName.TabIndex = 12;
-            btnGetBrandByCategoryName.Text = "Get Brand By Category Name";
-            btnGetBrandByCategoryName.UseVisualStyleBackColor = true;
-            btnGetBrandByCategoryName.Click += btnGetBrandByCategoryName_Click;
-            // 
-            // btnUpdateBrand
-            // 
-            btnUpdateBrand.Location = new Point(548, 6);
-            btnUpdateBrand.Margin = new Padding(4);
-            btnUpdateBrand.Name = "btnUpdateBrand";
-            btnUpdateBrand.Size = new Size(94, 104);
-            btnUpdateBrand.TabIndex = 13;
-            btnUpdateBrand.Text = "Update Brand";
-            btnUpdateBrand.UseVisualStyleBackColor = true;
-            btnUpdateBrand.Click += btnUpdateBrand_Click;
-            // 
-            // btnCreateBrand
-            // 
-            btnCreateBrand.Location = new Point(650, 6);
-            btnCreateBrand.Margin = new Padding(4);
-            btnCreateBrand.Name = "btnCreateBrand";
-            btnCreateBrand.Size = new Size(94, 104);
-            btnCreateBrand.TabIndex = 14;
-            btnCreateBrand.Text = "Create Brand";
-            btnCreateBrand.UseVisualStyleBackColor = true;
-            btnCreateBrand.Click += btnCreateBrand_Click;
-            // 
-            // lblNameOrId
-            // 
-            lblNameOrId.AutoSize = true;
-            lblNameOrId.Location = new Point(1185, 586);
-            lblNameOrId.Margin = new Padding(4, 0, 4, 0);
-            lblNameOrId.Name = "lblNameOrId";
-            lblNameOrId.Size = new Size(115, 28);
-            lblNameOrId.TabIndex = 15;
-            lblNameOrId.Text = "Name Or ID";
-            // 
-            // txtNameOrId
-            // 
-            txtNameOrId.Location = new Point(1055, 583);
-            txtNameOrId.Margin = new Padding(4);
-            txtNameOrId.Name = "txtNameOrId";
-            txtNameOrId.Size = new Size(122, 34);
-            txtNameOrId.TabIndex = 16;
-            // 
-            // FrmLogin
-            // 
-            AutoScaleDimensions = new SizeF(11F, 28F);
+            AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1391, 663);
-            Controls.Add(txtNameOrId);
-            Controls.Add(lblNameOrId);
-            Controls.Add(btnCreateBrand);
-            Controls.Add(btnUpdateBrand);
-            Controls.Add(btnGetBrandByCategoryName);
-            Controls.Add(btnGetBrandsByName);
-            Controls.Add(btnDeleteBrand);
-            Controls.Add(btnGetBrandById);
-            Controls.Add(btnGetUserByEmail);
-            Controls.Add(btnGetUserByPhone);
-            Controls.Add(txtEmail);
-            Controls.Add(lblEmail);
-            Controls.Add(btnSignin);
+            ClientSize = new Size(1028, 513);
+            Controls.Add(btnAllBrands);
             Controls.Add(dataGridView);
+            Controls.Add(lblAllBrands);
+            Controls.Add(lblMessage);
+            Controls.Add(label1);
+            Controls.Add(lblSignin);
             Controls.Add(txtPassword);
             Controls.Add(txtPhone);
             Controls.Add(lblPassword);
             Controls.Add(lblPhone);
-            Controls.Add(btnAllBrands);
             Controls.Add(btnLogin);
             Font = new Font("Segoe UI", 12F);
             Margin = new Padding(4);
-            Name = "FrmLogin";
+            Name = "FormLogin";
             Text = "FrmLogin";
             Load += FrmLogin_Load;
             ((System.ComponentModel.ISupportInitialize)dataGridView).EndInit();
@@ -297,20 +182,11 @@
         private TextBox txtPhone;
         private TextBox txtPassword;
         private Label lblPassword;
-        private Button btnAllBrands;
+        private Label lblSignin;
+        private Label label1;
+        private Label lblMessage;
+        private Label lblAllBrands;
         private DataGridView dataGridView;
-        private Button btnSignin;
-        private TextBox txtEmail;
-        private Label lblEmail;
-        private Button btnGetUserByPhone;
-        private Button btnGetUserByEmail;
-        private Button btnGetBrandById;
-        private Button btnDeleteBrand;
-        private Button btnGetBrandsByName;
-        private Button btnGetBrandByCategoryName;
-        private Button btnUpdateBrand;
-        private Button btnCreateBrand;
-        private Label lblNameOrId;
-        private TextBox txtNameOrId;
+        private Button btnAllBrands;
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 
 namespace Twin_Shop__Web_API.Entities
 {
@@ -7,31 +9,45 @@ namespace Twin_Shop__Web_API.Entities
         [Key]
         public int ProductId { get; set; }
 
-        [StringLength(100,ErrorMessage ="Product name must be between 1 and 100 characters")]
-        [Required(ErrorMessage ="Product name is required")]
+        [Column(TypeName = "nvarchar")]
+        [StringLength(100)]
+        [Required]
         public string ProductName { get; set; }
 
-        [Range(0.01,double.MaxValue,ErrorMessage="Price must be a positive number")]
-        public decimal? Price { get; set; }
+        [Range(0,int.MaxValue)]
+        [Required]
+        public int InitialPrice { get; set; }
 
-        [StringLength(2000,ErrorMessage ="Description must be between 1 and 2000 characters")]
-        [Required(ErrorMessage ="Description is required")]
+        [Range(0, int.MaxValue)]
+        [Required]
+        public int SecondryPrice { get; set; }
+
+        [Column(TypeName = "nvarchar")]
+        [StringLength(2000)]
+        [Required]
         public string Description { get; set; }
 
-        [Url(ErrorMessage = "Invalid image URL.")]
-        [Required(ErrorMessage = "Image URL is required.")]
-        public string ImageUrl { get; set; }
+        [Required]
+        public string MainImage { get; set; }
 
-        [StringLength(50, ErrorMessage = "Brand name must be between 1 and 50 characters.")]
+        public int SoldNumber { get; set; } = 0;
+
+        [Required]
+        public int NumberInStorage {  get; set; }
+
+        [StringLength(50)]
+        [Required]
         public string BrandName { get; set; }
 
-        [StringLength(50, ErrorMessage = "Category name must be between 1 and 50 characters.")]
+        [StringLength(50)]
+        [Required]
         public string CategoryName { get; set; }
 
-        [Required(ErrorMessage = "Brand ID is required.")]
-        public int BrandId { get; set; }
+        public int AveScoreOfUsers { get; set; }
 
         public Brand Brand { get; set; }
+
+        public int BrandId { get; set; }
 
         public bool IsDeleted { get; set;} = false;
 

@@ -1,3 +1,5 @@
+using Shop.UI.Http;
+
 namespace Shop.UI
 {
     internal static class Program
@@ -17,7 +19,7 @@ namespace Shop.UI
             };
             var helper = new HttpClientHelper(http);
 
-            Application.Run(new FrmLogin(helper));
+            Application.Run(new FormLogin(helper));
 
         }
     }

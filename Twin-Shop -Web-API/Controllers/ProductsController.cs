@@ -1,153 +1,73 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Twin_Shop__Web_API.Controllers;
 using Twin_Shop__Web_API.DTOs.Product;
+using Twin_Shop__Web_API.Entities;
 using Twin_Shop__Web_API.Services.Interfaces;
+using TwinShop.Shared;
+using TwinShop.Shared.ViewModels;
 
 public class ProductsController : BaseController
 {
     private readonly IProductService _productService;
-    private readonly ILogger<ProductsController> _logger;
 
-    public ProductsController(IProductService productService,ILogger<ProductsController> logger)
+    public ProductsController(IProductService productService)
     {
         _productService = productService;
-        _logger = logger;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<OperationResult> GetAll()
     {
-        try
-        {
-            var productsDto = await _productService.GetAllProductsAsync();
-            if (productsDto == null) return NotFound(new { message = "Products not found" });
-            return Ok(productsDto);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while getting products.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
-        } 
+        var result = await _productService.GetAllProductsAsync();
+        return result;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<OperationResult> GetById(int id)
     {
-        try
-        {
-            var productDto = await _productService.GetProductByIdAsync(id);
-            if (productDto == null) return NotFound(new { message = "Product not found" });
-            return Ok(productDto)!;
-        }
-        catch(Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while getting product by id.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
-
-        }
-    }
+            var result = await _productService.GetProductByIdAsync(id);
+            return result;
+    } 
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody]CreateProductDto dto)
+    public async Task<OperationResult> Create([FromBody] ProductViewModel productView)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-        try
-        {
-            var createdProduct = await _productService.CreateProductAsync(dto);
-            return Ok(createdProduct);
-        }
-        catch(Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while creating product.");
-
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
-        }
+        var result = await _productService.CreateProductAsync(productView);
+        return result;
     }
 
     [HttpDelete]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<OperationResult> Delete(int id)
     {
-        try
-        {
-            var result = await _productService.DeleteProductAsync(id);
-            if (result) return Ok("Product deleted successfully.");
-            else return NotFound(new { message = "Product not found" });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while deleting product.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
-        }
+        var result = await _productService.DeleteProductAsync(id);
+        return result;
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update([FromBody]UpdateProductDto dto)
+    public async Task<OperationResult> Update([FromBody]ProductViewModel productView,int id)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-        try
-        {
-            var result = await _productService.UpdateProductAsync(dto);
-            if (result) return Ok("Product Updated successfully.");
-            else return NotFound(new { message = "Product not found." });
-        }
-        catch(Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while updating product.");
 
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
-        }
+        var result = await _productService.UpdateProductAsync(productView,id);
+        return result;
     }
     [HttpGet]
-    public async Task<IActionResult> GetProductsByNameAsync(string name)
+    public async Task<OperationResult<List<ProductDto>>> GetProductsByNameAsync(string name)
     {
-        try
-        {
-            var products = await _productService.GetProductsByNameAsync(name);
-            if(products == null) return NotFound(new { message = "Products not found" });
-            return Ok(products);
-        }
-        catch(Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while getting products by name.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
-        }
+        var result = await _productService.GetProductsByNameAsync(name);
+        return result;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetProductsByBrandNameAsync(string brandName)
+    public async Task<OperationResult<List<ProductDto>>> GetProductsByBrandNameAsync(string brandName)
     {
-        try
-        {
-            var products = await _productService.GetProductsByBrandNameAsync(brandName);
-            if (products == null) return NotFound(new { message = "Products not found" });
-            return Ok(products);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while getting products by brnad name.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
-        }
+        var result = await _productService.GetProductsByBrandNameAsync(brandName);
+        return result;
     }
-
+     
     [HttpGet]
-    public async Task<IActionResult> GetProductsByCategoryNameAsync(string categoryName)
+    public async Task<OperationResult<List<ProductDto>>> GetProductsByCategoryNameAsync(string categoryName)
     {
-        try
-        {
-            var products = await _productService.GetProductsByCategoryNameAsync(categoryName);
-            if (products == null) return NotFound(new { message = "Products not found" });
-            return Ok(products);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while getting products by category name.");
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "Internal server error" });
-        }
+        var result = await _productService.GetProductsByCategoryNameAsync(categoryName);
+        return result;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Twin_Shop__Web_API.Entities
 {
@@ -7,25 +8,27 @@ namespace Twin_Shop__Web_API.Entities
         [Key]
         public int UserId { get; set; }
 
+        [Column(TypeName = "nvarchar")]
         [StringLength(50)]
         public string? FirstName { get; set; }
 
-
+        [Column(TypeName = "nvarchar")]
         [StringLength(50)]
         public string? LastName { get; set; }
 
+        public string ProflileImage { get; set; } = "defalut Image";
 
-        [Phone]
-        [StringLength(15)]
-        [Required(ErrorMessage ="Phone number is required")]
+        [Column(TypeName = "char")]
+        [StringLength(11)]
+        [Required]
         public string PhoneNumber { get; set; }
 
-        [StringLength(100)]
-        [EmailAddress(ErrorMessage ="Invalid email address")]
+        [Column(TypeName = "varchar")]
+        [StringLength(30)]
         public string? Email { get; set; }
 
-        [Required(ErrorMessage ="Password is required")]
-        [StringLength(100,MinimumLength=6,ErrorMessage ="Password must be at least 6 characters long")]
+        [StringLength(100)]
+        [Required]
         public string PasswordHash { get; set; }
     }
 }

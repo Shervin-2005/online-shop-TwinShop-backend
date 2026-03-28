@@ -1,127 +1,126 @@
-﻿using AutoMapper;
+﻿using System.Collections.Generic;
+using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Twin_Shop__Web_API.DTOs.Brand;
+using Twin_Shop__Web_API.DTOs.Product;
 using Twin_Shop__Web_API.Entities;
 using Twin_Shop__Web_API.Services.Interfaces;
+using TwinShop.BLL.Services.Interfaces;
+using TwinShop.DAL.Repositories.Implementations;
 using TwinShop.DAL.Repositories.Interfaces;
+using TwinShop.Shared;
+using TwinShop.Shared.DTOS;
+using TwinShop.Shared.ErrorHandling;
+using TwinShop.Shared.Mappers;
+using TwinShop.Shared.ViewModels;
 namespace Twin_Shop__Web_API.Services.Implementations
 {
     public class BrandService : IBrandService
     {
         private readonly IBrandRepository _brandRepository;
-        private readonly IMapper _mapper;
-        private readonly ILogger<BrandService> _logger;
+        private readonly IErrorService _errorService;
 
-        public BrandService(IBrandRepository brandRepository, IMapper mapper,ILogger<BrandService> logger)
+        public BrandService(IErrorService errorService, IBrandRepository brandRepository)
         {
             _brandRepository = brandRepository;
-            _mapper = mapper;
-            _logger = logger;
+            _errorService = errorService;
         }
 
-        public async Task<List<BrandDto>> GetAllBrandsAsync()
+        public async Task<OperationResult<List<BrandDto>>> GetAllBrandsAsync()
         {
-            try
+            var result = await _brandRepository.GetAllAsync();
+            if (!result.Success)
             {
-                var brands = await _brandRepository.GetAllAsync();
-                return _mapper.Map<List<BrandDto>>(brands);
+                var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
+                var resulterror = await _errorService.LogErrorAsync(error);
+                return OperationResult<List<BrandDto>>.Failed(resulterror.Message!.ErrorMessage());
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while getting all brands.");
-                throw;
-            }
+            return result;
         }
 
-        public async Task<BrandDto> GetBrandByIdAsync(int id)
+        public async Task<OperationResult<BrandDto>> GetBrandByIdAsync(int id)
         {
-            try
+            var result = await _brandRepository.GetByIdAsync(id);
+            if (!result.Success)
             {
-                var brand = await _brandRepository.GetByIdAsync(id);
-                if (brand != null) return _mapper.Map<BrandDto>(brand);
-                else
+                var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
+                var resultError = await _errorService.LogErrorAsync(error);
+                return OperationResult<BrandDto>.Failed(resultError.Message!.ErrorMessage());
+            }
+            return result;
+        }
+        
+
+        public async Task<OperationResult> CreateBrandAsync(BrandViewModel brandView)
+        {
+            if (!brandView.IsValid)
+                return OperationResult.Failed(brandView.ErrorMessage);
+            //نوشتن نحوه اضافه کردن عکس با حسین
+            BrandDto brandDto = brandView.ToBrandDTO();
+            var result = await _brandRepository.InsertAsync(brandDto);
+            if (!result.Success)
+            {
+                var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
+                var result1 = await _errorService.LogErrorAsync(error);
+                return OperationResult.Failed(result1.Message!.ErrorMessage());
+            }
+            return OperationResult.SuccessedResult(true, Messages.BrandAdded);
+
+        }
+        public async Task<OperationResult> DeleteBrandAsync(int id)
+        {
+
+            var result = await _brandRepository.DeleteAsync(id);
+            if (!result.Success)
+            {
+                var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
+                var errorResult = await _errorService.LogErrorAsync(error);
+                return OperationResult.Failed(errorResult.Message!.ErrorMessage());
+            }
+            return OperationResult.SuccessedResult(true, Messages.DeleteBrand);
+        }
+
+        public async Task<OperationResult> UpdateBrandAsync(BrandViewModel brandView,int id)
+        {
+            if (!brandView.IsValid)
+                return OperationResult.Failed(brandView.ErrorMessage);
+            if (brandView.MainImage!.Contains(Messages.Url))
+            {
+                BrandDto brandDto = brandView.ToBrandDTO();
+                var resultUpdate = await _brandRepository.UpdateAsync(brandDto, id);
+                if (!resultUpdate.Success)
                 {
-                    _logger.LogError("No brand found with BrandId: {BrandId}", id);
-                    throw new Exception("No brand found with the provided BrandId");
+                    var error = resultUpdate.Exception!.ExceptionToErrorDTO(resultUpdate.Message!);
+                    var eroorResult = await _errorService.LogErrorAsync(error);
+                    return eroorResult;
                 }
+                return OperationResult.SuccessedResult(true, Messages.update);
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while getting brand by ID: {Id}", id);
-                throw;
-            }
+            return OperationResult.SuccessedResult(true, Messages.update);
         }
 
-        public async Task<BrandDto> CreateBrandAsync(CreateBrandDto dto)
+        public async Task<OperationResult<List<BrandDto>>> GetBrandsByNameAsync(string name)
         {
-            try 
+            var result = await _brandRepository.GetBrandsByNameAsync(name);
+            if (!result.Success)
             {
-                var brand = _mapper.Map<Brand>(dto);
-                await _brandRepository.InsertAsync(brand);
-                return _mapper.Map<BrandDto>(brand);
+                var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
+                var errorResult = await _errorService.LogErrorAsync(error);
+                return OperationResult<List<BrandDto>>.Failed(errorResult.Message!.ErrorMessage());
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while creating a new brand.");
-                throw;
-            }
-           
-        }
-        public async Task<bool> DeleteBrandAsync(int id)
-        {
-            try
-            {
-                var brand = await _brandRepository.GetByIdAsync(id);
-                if (brand != null) return await _brandRepository.DeleteAsync(id);
-                else return false;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while deleting brand by ID: {Id}", id);
-                throw;
-            }
+            return OperationResult<List<BrandDto>>.SuccessedResult(result.Data);
         }
 
-        public async Task<bool> UpdateBrandAsync(UpdateBrandDto updateBrandDto)
+        public async Task<OperationResult<List<BrandDto>>> GetBrandsByCategoryNameAsync(string categoryName)
         {
-            try
+            var result = await _brandRepository.GetBrandsByCategoryNameAsync(categoryName);
+            if (!result.Success)
             {
-                var brand = _mapper.Map<Brand>(updateBrandDto);
-                return await _brandRepository.UpdateAsync(brand);
+                var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
+                var errorResult = await _errorService.LogErrorAsync(error);
+                return OperationResult<List<BrandDto>>.Failed(errorResult.Message!.ErrorMessage());
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while updating brand.");
-                throw;
-            }
-        }
-
-        public async Task<List<BrandDto?>> GetBrandByNameAsync(string name)
-        {
-            try
-            {
-                var brands = await _brandRepository.GetBrandsByNameAsync(name);
-                return _mapper.Map<List<BrandDto>>(brands)!;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while getting brands by name: {Name}", name);
-                throw;
-            }
-        }
-
-        public async Task<List<BrandDto?>> GetBrandsByCategoryNameAsync(string categoryName)
-        {
-             try
-             {
-                var brands = await _brandRepository.GetBrandsByCategoryNameAsync(categoryName);
-                return _mapper.Map<List<BrandDto>>(brands)!;
-             }
-             catch (Exception ex)
-             {
-                _logger.LogError(ex, "Error occurred while getting products by category name: {CategoryName}", categoryName);
-                throw;
-             }
+            return OperationResult<List<BrandDto>>.SuccessedResult(result.Data);
         }
     }
 
