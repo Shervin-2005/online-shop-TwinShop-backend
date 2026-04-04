@@ -1,4 +1,5 @@
 ﻿
+using Newtonsoft.Json;
 using System.Text;
 using TwinShop.DAL.Repositories.Interfaces;
 using TwinShop.Shared;
@@ -21,13 +22,13 @@ namespace TwinShop.DAL.Logging
                 if (!Directory.Exists(dir))
                     Directory.CreateDirectory(dir);
                 var error = ex.ExceptionToErrorDTO(GetType().Name);
-                //var json = JsonConvert.SerializeObject(error) + Environment.NewLine;
+                var json = JsonConvert.SerializeObject(error) + Environment.NewLine;
 
                 await _lock.WaitAsync();
                 try
                 {
-                    //چون پکیج newtosoft رو ندارم فعلا به جای json نوشتم error.ToString()
-                    await File.AppendAllTextAsync(_filePath, error.ToString(), Encoding.UTF8);
+
+                    await File.AppendAllTextAsync(_filePath, json, Encoding.UTF8);
                 }
                 finally
                 {
