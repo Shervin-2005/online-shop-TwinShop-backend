@@ -71,6 +71,7 @@
             txtPhone.Name = "txtPhone";
             txtPhone.Size = new Size(208, 29);
             txtPhone.TabIndex = 2;
+            txtPhone.TextChanged += txtPhone_TextChanged;
             // 
             // txtPassword
             // 

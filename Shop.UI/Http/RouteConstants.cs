@@ -15,6 +15,7 @@
         public const string GetBrandsByName = "api/Brands/GetBrandsByName";
         public const string GetBrandsByCategoryName = "api/Brands/GetBrandsByCategoryName";
         public const string Create = "api/Brands/Create";
+        public const string LogError = "Error/LogError";
 
     }
 }

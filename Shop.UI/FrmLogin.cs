@@ -205,7 +205,7 @@ namespace Shop.UI
             this.Hide();
         }
 
-        private async void  btnAllBrands_Click(object sender, EventArgs e)
+        private async void btnAllBrands_Click(object sender, EventArgs e)
         {
             var result = await _client.GetAsync<List<BrandDto>>(RouteConstants.GetBrandAll);
             if (result == null || result.Count == 0)
@@ -216,6 +216,11 @@ namespace Shop.UI
             {
                 dataGridView.DataSource = result;
             }
+        }
+
+        private void txtPhone_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
