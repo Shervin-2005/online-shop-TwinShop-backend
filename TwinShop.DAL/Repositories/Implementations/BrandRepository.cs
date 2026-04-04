@@ -143,7 +143,7 @@ namespace TwinShop.DAL.Repositories.Implementations
 
             try
             {
-                var brands = await _dbContext.Brands.AsNoTracking().Where(b => b.BrandName == brandName && b.IsDeleted == false)
+                var brands = await _dbContext.Brands.AsNoTracking().Where(b => b.BrandName.Contains(brandName) && b.IsDeleted == false)
                    .Select(b => new BrandDto
                    {
                        BrandName = b.BrandName,

@@ -41,7 +41,7 @@ namespace TwinShop.DAL.Repositories.Implementations
         {
             try
             {
-                var categories = await _dbContext.Products.AsNoTracking()
+                var categories = await _dbContext.Categories.AsNoTracking()
                     .Where(c => c.IsDeleted == false).Select(c => new CategoryDto
                     {
                         CategoryName = c.CategoryName,

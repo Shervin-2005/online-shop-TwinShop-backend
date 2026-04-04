@@ -138,7 +138,7 @@ namespace TwinShop.DAL.Repositories.Implementations
         {
             try
             {
-                var products = await _dbContext.Products.AsNoTracking().Where(p => p.ProductName == productName && p.IsDeleted == false)
+                var products = await _dbContext.Products.AsNoTracking().Where(p => p.ProductName.Contains(productName) && p.IsDeleted == false)
                   .Select(p => new ProductDto
                   {
                       ProductName = p.ProductName,
