@@ -10,7 +10,7 @@ namespace TwinShop.Shared.DTOS
     {
         public const string InternetErrorMessage = "اتصال اینترنت خود را بررسی کنید و دوباره تلاش کنید. در صورت تکرار مشکل، با پشتیبانی تماس بگیرید.";
         public const string Url = "https://";
-        public const string pleaseWaitText = "صبر کنید";
+        public const string pleaseWaitText = "Please wait";
         public const string LoginText = "Login Succssesfuly!";
         public const string SingUpText = "ثبت نام";
         //======================================================================================================

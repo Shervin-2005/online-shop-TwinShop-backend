@@ -1,42 +1,46 @@
 ﻿using Shop.UI.Http;
 using Twin_Shop__Web_API.DTOs.Brand;
+using TwinShop.Shared;
 using TwinShop.Shared.DTOS;
 using TwinShop.Shared.DTOS.Auth;
 using TwinShop.Shared.ViewModels;
 
 namespace Shop.UI
 {
-    public partial class FormLogin : Form
+    public partial class FormLogin : FormStyle
     {
-
-
         private readonly HttpClientHelper _client;
-        public FormLogin(HttpClientHelper client)
-        {
-            InitializeComponent();
-            _client = client;
-        }
         public FormLogin()
         {
             InitializeComponent();
         }
-
         private async void button1_Click(object sender, EventArgs e)
         {
-            UserViewModel userViewModel = new UserViewModel()
+            btnLogin.Enabled = false;
+            btnLogin.Text = Messages.pleaseWaitText;
+            UserViewModel user = new UserViewModel
             {
                 PhoneNumber = txtPhone.Text,
-                Password = txtPassword.Text,
+                Password = txtPassword.Text
             };
-            var result = await _client.PostAsync<bool, UserViewModel>(RouteConstants.LoginRoute, userViewModel);
-            if (result)
+            var client = HttpClientHelper.Instance;
+            var result = await client.PostAsync<OperationResult, UserViewModel>(RouteConstants.LoginRoute, user);
+            
+            if (result == null)
             {
-                lblMessage.Text = Messages.LoginText;
+                ShowInfoError(Messages.InternetErrorMessage);
+                btnLogin.Enabled = true;
+                btnLogin.Text = Messages.LoginText;
+                return;
             }
-            else
+            if (result.Success)
             {
-                lblMessage.Text = Messages.FailedLogin;
+                ShowInfo(result.Message!);
+                btnLogin.Enabled = true;
+                btnLogin.Text = Messages.LoginText;
+                return;
             }
+            CurrentUser.PhoneNumber = txtPhone.Text;
         }
 
         private async void button2_Click(object sender, EventArgs e)

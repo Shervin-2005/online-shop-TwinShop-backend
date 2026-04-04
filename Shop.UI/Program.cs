@@ -13,13 +13,7 @@ namespace Shop.UI
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            var http = new HttpClient()
-            {
-                BaseAddress = new Uri(RouteConstants.BaseUrl)
-            };
-            var helper = new HttpClientHelper(http);
-
-            Application.Run(new FormLogin(helper));
+            Application.Run(new FormLogin());
 
         }
     }
