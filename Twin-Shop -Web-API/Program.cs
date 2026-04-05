@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using Twin_Shop__Web_API.Data;
 using Twin_Shop__Web_API.Services.Implementations;
 using Twin_Shop__Web_API.Services.Interfaces;
 using TwinShop.BLL.Services.Implementations;
 using TwinShop.BLL.Services.Interfaces;
+using TwinShop.DAL.Data;
 using TwinShop.DAL.Logging;
 using TwinShop.DAL.Repositories.Implementations;
 using TwinShop.DAL.Repositories.Interfaces;
@@ -18,14 +18,13 @@ var connectionString =
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-builder.Services.AddCors(c =>
-{
-    c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-});
+//builder.Services.AddCors(c =>
+//{
+//    c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+//});
 
 //builder.Services.AddControllersWithViews().AddNewtonsoftJson();
 
-builder.Services.AddHttpClient();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();

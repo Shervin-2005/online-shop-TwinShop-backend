@@ -20,7 +20,7 @@ public class AuthController : BaseController
         var result = await _authService.RegisterAsync(userViewModel);
         return result;
     }
-
+    
     [HttpPost]
     public async Task<OperationResult> LoginWithPassword([FromBody] UserViewModel userViewModel)
     {

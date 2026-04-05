@@ -17,6 +17,7 @@ namespace TwinShop.Shared.ViewModels
         public string? LastName { get; set; }
 
         public string ProflileImage { get; set; }
+
         [PhoneNumberValidationAtribute]
         public string PhoneNumber { get; set; }
 

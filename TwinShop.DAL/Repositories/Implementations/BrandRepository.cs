@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Twin_Shop__Web_API.Data;
 using Twin_Shop__Web_API.DTOs.Brand;
 using Twin_Shop__Web_API.DTOs.Product;
 using Twin_Shop__Web_API.Entities;
+using TwinShop.DAL.Data;
 using TwinShop.DAL.Repositories.Interfaces;
 using TwinShop.Shared;
 

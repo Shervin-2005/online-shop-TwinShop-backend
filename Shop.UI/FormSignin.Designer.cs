@@ -99,7 +99,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(253, 294);
+            ClientSize = new Size(278, 294);
             Controls.Add(lblLogin);
             Controls.Add(txtPassword);
             Controls.Add(txtPhone);
@@ -109,6 +109,7 @@
             Margin = new Padding(3, 2, 3, 2);
             Name = "FormSignin";
             Text = "FormSignin";
+            Load += FormSignin_Load;
             ResumeLayout(false);
             PerformLayout();
         }

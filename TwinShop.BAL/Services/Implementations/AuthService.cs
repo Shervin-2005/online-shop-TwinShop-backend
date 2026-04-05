@@ -56,7 +56,7 @@ namespace Twin_Shop__Web_API.Services.Implementations
             {
                 var error = ex!.ExceptionToErrorDTO("BLL-AuthService");
                 var result = await _errorService.LogErrorAsync(error);
-                return OperationResult.Failed(result.Message!);
+                return OperationResult.Failed(result.Message!.ErrorMessage());
             }
         }
 

@@ -133,7 +133,6 @@ namespace Shop.UI
                 });
                 return result;
             }
-
         }
         private async Task<Tout> LogError<Tout, Tin>(Tin error)
         {

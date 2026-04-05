@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Twin_Shop__Web_API.Data;
 using Twin_Shop__Web_API.Entities;
+using TwinShop.DAL.Data;
 using TwinShop.DAL.Repositories.Interfaces;
 using TwinShop.Shared;
 using TwinShop.Shared.DTOS;

@@ -2,7 +2,7 @@
 using Twin_Shop__Web_API.Entities;
 using TwinShop.DAL.Entities;
 
-namespace Twin_Shop__Web_API.Data
+namespace TwinShop.DAL.Data
 {
     public class AppDbContext : DbContext
     {

@@ -9,7 +9,6 @@ namespace Shop.UI
 {
     public partial class FormLogin : FormStyle
     {
-        private readonly HttpClientHelper _client;
         public FormLogin()
         {
             InitializeComponent();
@@ -211,15 +210,15 @@ namespace Shop.UI
 
         private async void btnAllBrands_Click(object sender, EventArgs e)
         {
-            var result = await _client.GetAsync<List<BrandDto>>(RouteConstants.GetBrandAll);
-            if (result == null || result.Count == 0)
-            {
-                MessageBox.Show("There is no brands to show!");
-            }
-            else
-            {
-                dataGridView.DataSource = result;
-            }
+            //var result = await _client.GetAsync<List<BrandDto>>(RouteConstants.GetBrandAll);
+            //if (result == null || result.Count == 0)
+            //{
+            //    MessageBox.Show("There is no brands to show!");
+            //}
+            //else
+            //{
+            //    dataGridView.DataSource = result;
+            //}
         }
 
         private void txtPhone_TextChanged(object sender, EventArgs e)
