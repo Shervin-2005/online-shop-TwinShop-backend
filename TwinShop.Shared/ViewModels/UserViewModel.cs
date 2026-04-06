@@ -16,10 +16,10 @@ namespace TwinShop.Shared.ViewModels
 
         public string? LastName { get; set; }
 
-        public string ProflileImage { get; set; }
+        public string? ProflileImage { get; set; }
 
         [PhoneNumberValidationAtribute]
-        public string PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
 
         //   [OptionalEmailAtribute]
         public string? Email { get; set; }
