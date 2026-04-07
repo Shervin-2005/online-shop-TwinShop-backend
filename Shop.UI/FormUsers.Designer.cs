@@ -1,6 +1,6 @@
 ﻿namespace Shop.UI
 {
-    partial class Admin
+    partial class FormUsers
     {
         /// <summary>
         /// Required designer variable.
@@ -30,13 +30,13 @@
         {
             SuspendLayout();
             // 
-            // Admin
+            // FormUsers
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(930, 554);
-            Name = "Admin";
-            Text = "Admin";
+            ClientSize = new Size(822, 444);
+            Name = "FormUsers";
+            Text = "FormUsers";
             ResumeLayout(false);
         }
 

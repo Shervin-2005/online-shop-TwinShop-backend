@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace Shop.UI
 {
-    public partial class Admin : Form
+    public partial class FormUsers : Form
     {
-        public Admin()
+        public FormUsers()
         {
             InitializeComponent();
         }

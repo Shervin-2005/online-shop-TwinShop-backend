@@ -28,7 +28,7 @@ namespace TwinShop.DAL.Repositories.Implementations
             ErrorLog errorLog = new ErrorLog
             {
                 CreatedAt = error.CreatedAt,
-                Message = error.Message,
+                Message = error.Message!,
                 Source = error.Source,
                 StackTrace = error.StackTrace,
                 Layer = error.Layer,

@@ -34,12 +34,6 @@
             txtPassword = new TextBox();
             lblPassword = new Label();
             lblSignin = new Label();
-            label1 = new Label();
-            lblMessage = new Label();
-            lblAllBrands = new Label();
-            dataGridView = new DataGridView();
-            btnAllBrands = new Button();
-            ((System.ComponentModel.ISupportInitialize)dataGridView).BeginInit();
             SuspendLayout();
             // 
             // btnLogin
@@ -104,62 +98,11 @@
             lblSignin.Text = "don't have an acount?!\r\n sign in now";
             lblSignin.Click += label1_Click;
             // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(46, 41);
-            label1.Name = "label1";
-            label1.Size = new Size(0, 21);
-            label1.TabIndex = 5;
-            // 
-            // lblMessage
-            // 
-            lblMessage.AutoSize = true;
-            lblMessage.Font = new Font("Segoe UI", 10F);
-            lblMessage.ForeColor = Color.IndianRed;
-            lblMessage.Location = new Point(13, 44);
-            lblMessage.Name = "lblMessage";
-            lblMessage.Size = new Size(45, 19);
-            lblMessage.TabIndex = 6;
-            lblMessage.Text = "label2";
-            // 
-            // lblAllBrands
-            // 
-            lblAllBrands.AutoSize = true;
-            lblAllBrands.Location = new Point(731, 27);
-            lblAllBrands.Name = "lblAllBrands";
-            lblAllBrands.Size = new Size(108, 21);
-            lblAllBrands.TabIndex = 7;
-            lblAllBrands.Text = "Get All Brands";
-            // 
-            // dataGridView
-            // 
-            dataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView.Location = new Point(639, 51);
-            dataGridView.Name = "dataGridView";
-            dataGridView.Size = new Size(294, 310);
-            dataGridView.TabIndex = 8;
-            // 
-            // btnAllBrands
-            // 
-            btnAllBrands.Location = new Point(743, 367);
-            btnAllBrands.Name = "btnAllBrands";
-            btnAllBrands.Size = new Size(96, 62);
-            btnAllBrands.TabIndex = 9;
-            btnAllBrands.Text = "Get All Brands";
-            btnAllBrands.UseVisualStyleBackColor = true;
-            btnAllBrands.Click += btnAllBrands_Click;
-            // 
             // FormLogin
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(226, 348);
-            Controls.Add(btnAllBrands);
-            Controls.Add(dataGridView);
-            Controls.Add(lblAllBrands);
-            Controls.Add(lblMessage);
-            Controls.Add(label1);
+            ClientSize = new Size(243, 331);
             Controls.Add(lblSignin);
             Controls.Add(txtPassword);
             Controls.Add(txtPhone);
@@ -171,7 +114,6 @@
             Name = "FormLogin";
             Text = "FrmLogin";
             Load += FrmLogin_Load;
-            ((System.ComponentModel.ISupportInitialize)dataGridView).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -184,10 +126,5 @@
         private TextBox txtPassword;
         private Label lblPassword;
         private Label lblSignin;
-        private Label label1;
-        private Label lblMessage;
-        private Label lblAllBrands;
-        private DataGridView dataGridView;
-        private Button btnAllBrands;
     }
 }

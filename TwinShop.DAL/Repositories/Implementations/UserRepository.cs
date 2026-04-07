@@ -46,7 +46,7 @@ namespace TwinShop.DAL.Repositories.Implementations
                         PhoneNumber = u.PhoneNumber,
                         Email = u.Email,
                     }).FirstOrDefaultAsync();
-                return OperationResult<UserDto>.SuccessedResult(user);
+                return OperationResult<UserDto>.SuccessedResult(user!);
             }
             catch (Exception ex)
             {

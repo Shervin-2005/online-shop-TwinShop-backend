@@ -36,8 +36,8 @@ namespace Twin_Shop__Web_API.Services.Implementations
                 }
 
                 UserDto userDto = UserMapper.ToUserDTO(userView);
-                userDto.PasswordHash = HashPassword(userDto.PasswordHash);
-                var isPhoneExist = await _userRepository.PhoneExistsAsync(userDto.PhoneNumber);
+                userDto.PasswordHash = HashPassword(userDto.PasswordHash!);
+                var isPhoneExist = await _userRepository.PhoneExistsAsync(userDto.PhoneNumber!);
 
                 if (isPhoneExist.Success)
                 {
@@ -77,7 +77,7 @@ namespace Twin_Shop__Web_API.Services.Implementations
                 {
                     return OperationResult.Failed(Messages.FailedLogin);
                 }
-                return OperationResult.SuccessedResult();
+                return OperationResult.SuccessedResult(true,Messages.LoginText);
               
             }
             catch(Exception ex)

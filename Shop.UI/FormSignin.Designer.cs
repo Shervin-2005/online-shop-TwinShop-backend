@@ -41,11 +41,11 @@
             lblLogin.AutoSize = true;
             lblLogin.Font = new Font("Segoe UI", 8F);
             lblLogin.ForeColor = Color.DodgerBlue;
-            lblLogin.Location = new Point(42, 236);
+            lblLogin.Location = new Point(41, 237);
             lblLogin.Name = "lblLogin";
-            lblLogin.Size = new Size(125, 26);
+            lblLogin.Size = new Size(183, 13);
             lblLogin.TabIndex = 10;
-            lblLogin.Text = "don't have an acount?!\r\n sign in now";
+            lblLogin.Text = "Already have an acount login now";
             lblLogin.Click += lblLogin_Click;
             // 
             // txtPassword

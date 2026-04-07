@@ -1,16 +1,6 @@
 ﻿using Shop.UI.Http;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using TwinShop.Shared;
 using TwinShop.Shared.DTOS;
-using TwinShop.Shared.ErrorHandling;
 using TwinShop.Shared.ViewModels;
 
 namespace Shop.UI
@@ -56,13 +46,9 @@ namespace Shop.UI
                 btnSignin.Text = Messages.SingUpText;
                 return;
             }
-            if (result.Success)
-            {
-                MessageBox.Show("wtf");
-            }
             if (!result.Success)
             {
-                ShowInfo(result.Message.ErrorMessage());
+                ShowInfo(result.Message!);
                 btnSignin.Enabled = true;
                 btnSignin.Text = Messages.SingUpText;
                 return;

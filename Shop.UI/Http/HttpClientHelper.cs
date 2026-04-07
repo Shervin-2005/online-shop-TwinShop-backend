@@ -75,7 +75,7 @@ namespace Shop.UI
                 }
                 string content = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<T>(content);
-                return result;
+                return result!;
             }
             catch (Exception ex)
             {
@@ -118,7 +118,7 @@ namespace Shop.UI
                 }
                 string content = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<Tout>(content);
-                return result;
+                return result!;
             }
             catch (Exception ex)
             {
