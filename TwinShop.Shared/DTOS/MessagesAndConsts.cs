@@ -6,13 +6,15 @@ using System.Threading.Tasks;
 
 namespace TwinShop.Shared.DTOS
 {
-    public class Messages
+    public class MessagesAndConsts
     {
         public const string InternetErrorMessage = "اتصال اینترنت خود را بررسی کنید و دوباره تلاش کنید. در صورت تکرار مشکل، با پشتیبانی تماس بگیرید.";
         public const string Url = "https://";
         public const string pleaseWaitText = "Please wait";
         public const string LoginText = "Login Succssesfuly!";
         public const string SingUpText = "ثبت نام";
+        public const string ApplyText = "Apply";
+        public const string DefaultProfile = "https://s3.ir-thr-at1.arvanstorage.ir/shams1384/DefalutProfile.png";
         //======================================================================================================
         public const string SuccessSignUp1 = "Succssesfully signed in!";
         public const string FailedSignUp1 = "Your Sign in Went Wrong!!";

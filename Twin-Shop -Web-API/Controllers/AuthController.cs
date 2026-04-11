@@ -20,7 +20,14 @@ public class AuthController : BaseController
         var result = await _authService.RegisterAsync(userViewModel);
         return result;
     }
-    
+    [HttpPost]
+    public async Task<OperationResult> EditUserInfo([FromBody] UserViewModel userViewModel,string phoneNumber)
+    {
+        var result = await _authService.EditUserInfoAsync(userViewModel,phoneNumber);
+        return result;
+    }
+
+
     [HttpPost]
     public async Task<OperationResult> LoginWithPassword([FromBody] UserViewModel userViewModel)
     {
@@ -41,4 +48,5 @@ public class AuthController : BaseController
         var result = await _authService.GetByPhoneAsync(phoneNumber);
         return result;
     }
+
 }

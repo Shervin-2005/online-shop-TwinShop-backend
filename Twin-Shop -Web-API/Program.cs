@@ -36,7 +36,6 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IErrorService, ErrorService>();
-builder.Services.AddScoped<IVerificationCodeService, VerificationCodeService>();
 
 
 

@@ -13,14 +13,14 @@ namespace TwinShop.Shared.CustomAtribute
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
             if (value == null)
-                return new ValidationResult(Messages.Mandatory);
-            if (value.ToString().Length < 11)
-                return new ValidationResult(Messages.NumberInvalid1);
-            if (value.ToString().Length > 11)
-                return new ValidationResult(Messages.numberInvalid2);
-            if (!value.ToString().StartsWith("09"))
-                return new ValidationResult(Messages.numberInvalid2);
-            return ValidationResult.Success;
+                return new ValidationResult(MessagesAndConsts.Mandatory);
+            if (value.ToString()!.Length < 11)
+                return new ValidationResult(MessagesAndConsts.NumberInvalid1);
+            if (value.ToString()!.Length > 11)
+                return new ValidationResult(MessagesAndConsts.numberInvalid2);
+            if (!value.ToString()!.StartsWith("09"))
+                return new ValidationResult(MessagesAndConsts.numberInvalid2);
+            return ValidationResult.Success!;
         }
     }
 }

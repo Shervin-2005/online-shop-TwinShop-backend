@@ -11,7 +11,7 @@ namespace TwinShop.Shared.ErrorHandling
     {
         public static string ErrorMessage(this string message)
         {
-            return string.Format($"{Messages.error}{Environment.NewLine}{Messages.codeError}{message}");
+            return string.Format($"{MessagesAndConsts.error}{Environment.NewLine}{MessagesAndConsts.codeError}{message}");
 
         }
     }

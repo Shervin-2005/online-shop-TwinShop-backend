@@ -13,6 +13,7 @@ namespace TwinShop.DAL.Repositories.Interfaces
         Task<OperationResult> EmailExistsAsync(string email);
         Task<OperationResult> ChangePasswordAsync(UserDto userDto, string newPassword);
         Task<OperationResult> VerifyPassword(string passwordHashUser, string passwordHashUserDto);
+        Task<OperationResult> UpdateUserAsync(UserDto userDto);
     }
 }
 

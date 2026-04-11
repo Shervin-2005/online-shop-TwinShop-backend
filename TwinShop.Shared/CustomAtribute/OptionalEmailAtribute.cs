@@ -23,7 +23,7 @@ namespace TwinShop.Shared.CustomAtribute
             }
             catch
             {
-                return new ValidationResult(Messages.EmailInvalid);
+                return new ValidationResult(MessagesAndConsts.EmailInvalid);
             }
         }
     }

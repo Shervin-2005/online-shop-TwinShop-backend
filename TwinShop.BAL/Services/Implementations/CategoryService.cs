@@ -61,7 +61,7 @@ namespace Twin_Shop__Web_API.Services.Implementations
                 var result1 = await _errorService.LogErrorAsync(error);
                 return OperationResult.Failed(result1.Message!.ErrorMessage());
             }
-            return OperationResult.SuccessedResult(true, Messages.CategoryAdded);
+            return OperationResult.SuccessedResult(true, MessagesAndConsts.CategoryAdded);
         }
 
         public async Task<OperationResult> DeleteCategoryAsync(int id)
@@ -73,14 +73,14 @@ namespace Twin_Shop__Web_API.Services.Implementations
                 var errorResult = await _errorService.LogErrorAsync(error);
                 return OperationResult.Failed(errorResult.Message!.ErrorMessage());
             }
-            return OperationResult.SuccessedResult(true, Messages.DeleteCategory);
+            return OperationResult.SuccessedResult(true, MessagesAndConsts.DeleteCategory);
         }
 
         public async Task<OperationResult> UpdateCategoryAsync(CategoryViewModel categoryViewModel,int id )
         {
             if (!categoryViewModel.IsValid)
                 return OperationResult.Failed(categoryViewModel.ErrorMessage);
-            if (categoryViewModel.MainImage!.Contains(Messages.Url))
+            if (categoryViewModel.MainImage!.Contains(MessagesAndConsts.Url))
             {
                 CategoryDto categoryDto = categoryViewModel.ToCategoryDTO();
                 var resultUpdate = await _categoryRepository.UpdateAsync(categoryDto, id);
@@ -90,9 +90,9 @@ namespace Twin_Shop__Web_API.Services.Implementations
                     var eroorResult = await _errorService.LogErrorAsync(error);
                     return eroorResult;
                 }
-                return OperationResult.SuccessedResult(true, Messages.update);
+                return OperationResult.SuccessedResult(true, MessagesAndConsts.update);
             }
-            return OperationResult.SuccessedResult(true, Messages.update);
+            return OperationResult.SuccessedResult(true, MessagesAndConsts.update);
         }
         
 

@@ -32,6 +32,7 @@
             btnBrand = new Button();
             btnCategory = new Button();
             btnUsers = new Button();
+            label1 = new Label();
             SuspendLayout();
             // 
             // btnProduct
@@ -74,11 +75,23 @@
             btnUsers.UseVisualStyleBackColor = true;
             btnUsers.Click += btnUsers_Click;
             // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.ForeColor = Color.DarkTurquoise;
+            label1.Location = new Point(312, 363);
+            label1.Name = "label1";
+            label1.Size = new Size(161, 15);
+            label1.TabIndex = 4;
+            label1.Text = "Complete your personal info ";
+            label1.Click += label1_Click;
+            // 
             // FormAdmin
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(759, 398);
+            Controls.Add(label1);
             Controls.Add(btnUsers);
             Controls.Add(btnCategory);
             Controls.Add(btnBrand);
@@ -86,6 +99,7 @@
             Name = "FormAdmin";
             Text = "Admin";
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -94,5 +108,6 @@
         private Button btnBrand;
         private Button btnCategory;
         private Button btnUsers;
+        private Label label1;
     }
 }

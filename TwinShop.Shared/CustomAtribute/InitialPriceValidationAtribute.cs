@@ -13,12 +13,12 @@ namespace TwinShop.Shared.CustomAtribute
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
             if (value == null)
-                return new ValidationResult(Messages.ProductInitialPrice);
+                return new ValidationResult(MessagesAndConsts.ProductInitialPrice);
             int initialPrice;
             if (!int.TryParse(value.ToString(), out initialPrice))
-                return new ValidationResult(Messages.ValidProductPrice);
+                return new ValidationResult(MessagesAndConsts.ValidProductPrice);
             if (initialPrice == 0)
-                return new ValidationResult(Messages.ProductInitialPrice);
+                return new ValidationResult(MessagesAndConsts.ProductInitialPrice);
             return ValidationResult.Success;
         }
     }

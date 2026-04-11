@@ -48,7 +48,7 @@ public class ProductService : IProductService
                 var result1 = await _errorService.LogErrorAsync(error);
                 return OperationResult.Failed(result1.Message!.ErrorMessage());
             }
-        return OperationResult.SuccessedResult(true, Messages.ProductAdded);
+        return OperationResult.SuccessedResult(true, MessagesAndConsts.ProductAdded);
     }
 
     public async Task<OperationResult<List<ProductDto>>> GetAllProductsAsync()
@@ -72,7 +72,7 @@ public class ProductService : IProductService
             var errorResult = await _errorService.LogErrorAsync(error);
             return OperationResult.Failed(errorResult.Message!.ErrorMessage());
         }
-        return OperationResult.SuccessedResult(true, Messages.DeleteProduct);
+        return OperationResult.SuccessedResult(true, MessagesAndConsts.DeleteProduct);
     }   
     
 
@@ -80,7 +80,7 @@ public class ProductService : IProductService
     {
         if (!productView.IsValid)
             return OperationResult.Failed(productView.ErrorMessage);
-        if (productView.MainImage!.Contains(Messages.Url))
+        if (productView.MainImage!.Contains(MessagesAndConsts.Url))
         {
             ProductDto productDto = productView.ToProductDTO();
             var resultUpdate = await _productRepository.UpdateAsync(productDto,id);
@@ -90,9 +90,9 @@ public class ProductService : IProductService
                 var eroorResult = await _errorService.LogErrorAsync(error);
                 return eroorResult;
             }
-            return OperationResult.SuccessedResult(true, Messages.update);
+            return OperationResult.SuccessedResult(true, MessagesAndConsts.update);
         }
-        return OperationResult.SuccessedResult(true, Messages.update);
+        return OperationResult.SuccessedResult(true, MessagesAndConsts.update);
     }
     public async Task<OperationResult<List<ProductDto>>> GetProductsByNameAsync(string name)
     {

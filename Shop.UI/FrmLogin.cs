@@ -14,7 +14,7 @@ namespace Shop.UI
         private async void button1_Click(object sender, EventArgs e)
         {
             btnLogin.Enabled = false;
-            btnLogin.Text = Messages.pleaseWaitText;
+            btnLogin.Text = MessagesAndConsts.pleaseWaitText;
             UserViewModel userViewModel = new UserViewModel
             {
                 PhoneNumber = txtPhone.Text,
@@ -27,23 +27,25 @@ namespace Shop.UI
             {
                 ShowInfo(userViewModel.ErrorMessage);
                 btnLogin.Enabled = true;
-                btnLogin.Text = Messages.SingUpText;
+                btnLogin.Text = MessagesAndConsts.SingUpText;
                 return;
             }
             if (result == null)
             {
-                ShowInfoError(Messages.InternetErrorMessage);
+                ShowInfoError(MessagesAndConsts.InternetErrorMessage);
                 btnLogin.Enabled = true;
-                btnLogin.Text = Messages.LoginText;
+                btnLogin.Text = MessagesAndConsts.LoginText;
                 return;
             }
             if (!result.Success)
             {
                 ShowInfo(result.Message!);
                 btnLogin.Enabled = true;
-                btnLogin.Text = Messages.LoginText;
+                btnLogin.Text = MessagesAndConsts.LoginText;
                 return;
             }
+            
+            CurrentUser.PhoneNumber = txtPhone.Text;
             ShowInfo(result.Message!);
             FormAdmin admin = new FormAdmin();
             admin.Show();

@@ -64,7 +64,7 @@ namespace Twin_Shop__Web_API.Services.Implementations
                 var result1 = await _errorService.LogErrorAsync(error);
                 return OperationResult.Failed(result1.Message!.ErrorMessage());
             }
-            return OperationResult.SuccessedResult(true, Messages.BrandAdded);
+            return OperationResult.SuccessedResult(true, MessagesAndConsts.BrandAdded);
 
         }
         public async Task<OperationResult> DeleteBrandAsync(int id)
@@ -77,14 +77,14 @@ namespace Twin_Shop__Web_API.Services.Implementations
                 var errorResult = await _errorService.LogErrorAsync(error);
                 return OperationResult.Failed(errorResult.Message!.ErrorMessage());
             }
-            return OperationResult.SuccessedResult(true, Messages.DeleteBrand);
+            return OperationResult.SuccessedResult(true, MessagesAndConsts.DeleteBrand);
         }
 
         public async Task<OperationResult> UpdateBrandAsync(BrandViewModel brandView,int id)
         {
             if (!brandView.IsValid)
                 return OperationResult.Failed(brandView.ErrorMessage);
-            if (brandView.MainImage!.Contains(Messages.Url))
+            if (brandView.MainImage!.Contains(MessagesAndConsts.Url))
             {
                 BrandDto brandDto = brandView.ToBrandDTO();
                 var resultUpdate = await _brandRepository.UpdateAsync(brandDto, id);
@@ -94,9 +94,9 @@ namespace Twin_Shop__Web_API.Services.Implementations
                     var eroorResult = await _errorService.LogErrorAsync(error);
                     return eroorResult;
                 }
-                return OperationResult.SuccessedResult(true, Messages.update);
+                return OperationResult.SuccessedResult(true, MessagesAndConsts.update);
             }
-            return OperationResult.SuccessedResult(true, Messages.update);
+            return OperationResult.SuccessedResult(true, MessagesAndConsts.update);
         }
 
         public async Task<OperationResult<List<BrandDto>>> GetBrandsByNameAsync(string name)

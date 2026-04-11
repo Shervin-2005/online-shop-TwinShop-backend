@@ -15,7 +15,7 @@ namespace TwinShop.Shared.CustomAtribute
            // var otherProperty = validationContext.ObjectType.GetProperty("VerifyPassword");
           //  var otherValue = otherProperty.GetValue(validationContext.ObjectInstance);
             if (string.IsNullOrEmpty(value.ToString()))
-                return new ValidationResult(Messages.EnterPassword);
+                return new ValidationResult(MessagesAndConsts.EnterPassword);
 
            // if (!value.Equals(otherValue))
             //    return new ValidationResult(Messages.PasswordNotMatch);

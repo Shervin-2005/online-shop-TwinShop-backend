@@ -10,25 +10,25 @@ namespace Twin_Shop__Web_API.Entities
 
         [Column(TypeName = "nvarchar")]
         [StringLength(50)]
-        public string? FirstName { get; set; }
+        public string? FirstName { get; set; } = "no Fist name";
 
         [Column(TypeName = "nvarchar")]
         [StringLength(50)]
-        public string? LastName { get; set; }
+        public string? LastName { get; set; } = "no Last name";
 
         public string ProflileImage { get; set; } = "defalut Image";
 
         [Column(TypeName = "char")]
         [StringLength(11)]
         [Required]
-        public string PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
 
         [Column(TypeName = "varchar")]
         [StringLength(30)]
-        public string? Email { get; set; }
+        public string? Email { get; set; } = "no Email";
 
         [StringLength(100)]
         [Required]
-        public string PasswordHash { get; set; }
+        public string? PasswordHash { get; set; }
     }
 }

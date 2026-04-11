@@ -12,15 +12,15 @@ namespace TwinShop.Shared.ViewModels
 {
     public class ProductViewModel:BaseValidatoin
     {
-        [Required(ErrorMessage=Messages.ProductName)]
+        [Required(ErrorMessage=MessagesAndConsts.ProductName)]
         public string ProductName { get; set; }
-        [Required(ErrorMessage=Messages.ProductBrandName)]
+        [Required(ErrorMessage=MessagesAndConsts.ProductBrandName)]
         public string BrandName { get; set; }
-        [Required(ErrorMessage = Messages.ProductBrandId)]
+        [Required(ErrorMessage = MessagesAndConsts.ProductBrandId)]
         public int BrandId { get; set; }
-        [Required(ErrorMessage = Messages.ProductCategoryName)]
+        [Required(ErrorMessage = MessagesAndConsts.ProductCategoryName)]
         public string CategoryName { get; set; }
-        [Required(ErrorMessage = Messages.ProductPhoto)]
+        [Required(ErrorMessage = MessagesAndConsts.ProductPhoto)]
         public string? MainImage { get; set; }
         [ProductNumberValidation]
         public int NumberInStorage { get; set; }
@@ -28,8 +28,8 @@ namespace TwinShop.Shared.ViewModels
         public int InitialPrice { get; set; }
         [SecondryPriceValidationAtribute]
         public int SecondryPrice { get; set; }
-        [Required(ErrorMessage = Messages.ProductDescription)]
-        [StringLength(2000, ErrorMessage = Messages.ProductDescriptionLength)]
+        [Required(ErrorMessage = MessagesAndConsts.ProductDescription)]
+        [StringLength(2000, ErrorMessage = MessagesAndConsts.ProductDescriptionLength)]
         public string Description { get; set; }     
         public bool IsDeleted { get; set; } = false;
     }

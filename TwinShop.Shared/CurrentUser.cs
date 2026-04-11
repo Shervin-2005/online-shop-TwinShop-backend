@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace TwinShop.Shared
 {
-    public class CurrentUser
+    public static class CurrentUser
     {
-        public static string PhoneNumber {  get; set; }
+        public static int Id { get; set; }
+        public static string? PhoneNumber {  get; set; }
     }
 }

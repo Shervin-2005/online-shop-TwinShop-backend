@@ -40,5 +40,11 @@ namespace Shop.UI
             FormUsers users = new FormUsers();
             users.ShowDialog();
         }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+            FormEditUserInfo editUserInfo=new FormEditUserInfo();
+            editUserInfo.ShowDialog();
+        }
     }
 }

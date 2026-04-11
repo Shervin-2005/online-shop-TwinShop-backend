@@ -23,6 +23,8 @@ namespace TwinShop.DAL.Repositories.Implementations
                 var user = await _dbContext.Users.AsNoTracking().Where(u => u.PhoneNumber == phone)
                     .Select(u => new UserDto
                     {
+                        Id=u.UserId,
+                        ProflileImage=u.ProflileImage,
                         FirstName = u.FirstName,
                         LastName = u.LastName,
                         PhoneNumber= u.PhoneNumber,
@@ -30,7 +32,7 @@ namespace TwinShop.DAL.Repositories.Implementations
                         PasswordHash = u.PasswordHash,
                     }).FirstOrDefaultAsync();
            
-            return user!=null ?OperationResult<UserDto>.SuccessedResult(user): OperationResult<UserDto>.Failed(Messages.userNotLoginWithThisPhoneNumber);
+            return user!=null ?OperationResult<UserDto>.SuccessedResult(user): OperationResult<UserDto>.Failed(MessagesAndConsts.userNotLoginWithThisPhoneNumber);
         }
        
 
@@ -107,27 +109,30 @@ namespace TwinShop.DAL.Repositories.Implementations
         {
             bool result= (passwordHashUser == passwordHashUserDto);
             if(result) return OperationResult.SuccessedResult();
-            else return OperationResult.Failed(Messages.IncorrectPhoneNumberOrPassword);
+            else return  OperationResult.Failed(MessagesAndConsts.IncorrectPhoneNumberOrPassword);
         }
 
-        public async Task<OperationResult> UpdateUser(UserDto userDto,int id)
+        public async Task<OperationResult> UpdateUserAsync(UserDto userDto)
         {
             try
             {
-                var existing = await _dbContext.Users.Where(u => u.UserId == id).FirstAsync();
+               var user=new User { UserId= userDto.Id };
+                _dbContext.Attach(user);
 
-                existing.FirstName = userDto.FirstName;
-                existing.LastName = userDto.LastName;
-                existing.Email = userDto.Email;
-                existing.PhoneNumber = userDto.PhoneNumber;  
-                existing.ProflileImage = userDto.ProflileImage;
+
+                user.FirstName = userDto.FirstName;
+                user.LastName = userDto.LastName;
+                user.Email = userDto.Email;
+                user.PhoneNumber = userDto.PhoneNumber!;  
+                user.ProflileImage = userDto.ProflileImage!;
+                user.PasswordHash = userDto.PasswordHash!;
 
                 await _dbContext.SaveChangesAsync();
                 return OperationResult.SuccessedResult(); ;
             }
             catch (Exception ex)
             {
-                return OperationResult.Failed(GetType().Name, ex);
+                return  OperationResult.Failed(GetType().Name, ex);
             }
         }
     }

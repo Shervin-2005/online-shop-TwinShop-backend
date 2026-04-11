@@ -14,10 +14,12 @@ namespace TwinShop.Shared.Mappers
         {
             return new UserDto
             {
+                Id=userView.Id,
                 FirstName = userView.FirstName,
                 LastName = userView.LastName,
                 PhoneNumber = userView.PhoneNumber,
                 Email = userView.Email,
+                ProflileImage=userView.ProfileImage,
                 PasswordHash = userView.Password
             };
         }
@@ -25,10 +27,12 @@ namespace TwinShop.Shared.Mappers
         {
             return new UserViewModel
             {
+                Id=userDto.Id,
                 FirstName = userDto.FirstName,
                 LastName = userDto.LastName,
                 PhoneNumber = userDto.PhoneNumber,
                 Email = userDto.Email,
+                ProfileImage=userDto.ProflileImage,
                 Password = userDto.PasswordHash,
             };
         }
