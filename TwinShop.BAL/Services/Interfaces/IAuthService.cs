@@ -11,8 +11,8 @@ namespace Twin_Shop__Web_API.Services.Interfaces
     {
         Task<OperationResult> RegisterAsync(UserViewModel userView);
         Task<OperationResult> EditUserInfoAsync(UserViewModel userView, string phoneNumber);
-        Task<OperationResult> LoginWithVerificationCodeAsync(UserViewModel userView); 
-        Task<OperationResult> LoginWithPasswordAsync(UserViewModel userView);
+        Task<OperationResult> LoginWithVerificationCodeAsync(UserViewModel userView);
+        Task<OperationResult<UserViewModel>> LoginWithPasswordAsync(UserViewModel userView);
         Task<OperationResult<UserViewModel>> GetByEmailAsync(string email);
         Task<OperationResult<UserViewModel>> GetByPhoneAsync(string phoneNumber);
     }

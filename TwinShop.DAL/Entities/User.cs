@@ -16,7 +16,7 @@ namespace Twin_Shop__Web_API.Entities
         [StringLength(50)]
         public string? LastName { get; set; } = "no Last name";
 
-        public string ProflileImage { get; set; } = "defalut Image";
+        public string? ProfileImage { get; set; }
 
         [Column(TypeName = "char")]
         [StringLength(11)]

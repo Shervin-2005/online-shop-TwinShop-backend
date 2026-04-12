@@ -78,14 +78,16 @@ namespace Twin_Shop__Web_API.Services.Implementations
                 userView.ProfileImage = savingPhoto.Message;
             }
 
-                if (phoneNumber != userView.PhoneNumber)
+            if (phoneNumber != userView.PhoneNumber)
+            {
+                var isPhoneExist = await _userRepository
+                                         .PhoneExistsAsync(userView.PhoneNumber!);
+                if (isPhoneExist.Success)
                 {
-                    var isPhoneExist = await _userRepository
-                                             .PhoneExistsAsync(userView.PhoneNumber!);
-                    if (isPhoneExist.Success)
-                    {
-                        return OperationResult.Failed(MessagesAndConsts.PhoneNumberAlreadyExist);
-                    }
+                    return OperationResult.Failed(MessagesAndConsts.PhoneNumberAlreadyExist);
+                }
+                userView.PhoneNumber = phoneNumber;
+            }
                     UserDto userDto = UserMapper.ToUserDTO(userView);
                     var updateUser = await _userRepository.UpdateUserAsync(userDto);
                     if (!updateUser.Success)
@@ -94,11 +96,11 @@ namespace Twin_Shop__Web_API.Services.Implementations
                         var result2 = await _errorService.LogErrorAsync(error);
                         return OperationResult.Failed(result2.Message!.ErrorMessage());
                     }
-                }
+                
                 return OperationResult.SuccessedResult(true, MessagesAndConsts.update);
             
         }
-        public async Task<OperationResult> LoginWithPasswordAsync(UserViewModel userView)
+        public async Task<OperationResult<UserViewModel>> LoginWithPasswordAsync(UserViewModel userView)
         {
             try
             {
@@ -106,23 +108,24 @@ namespace Twin_Shop__Web_API.Services.Implementations
 
                 if (!user!.Success)
                 {
-                    return OperationResult.Failed(MessagesAndConsts.userNotLoginWithThisPhoneNumber);
+                    return OperationResult<UserViewModel>.Failed(MessagesAndConsts.userNotLoginWithThisPhoneNumber);
                 }
+                userView.Id=user.Data.Id;
                 var isVerified = await _userRepository
                     .VerifyPassword(user.Data.PasswordHash!, HashPassword(userView.Password!));
 
                 if (!isVerified.Success)
                 {
-                    return OperationResult.Failed(MessagesAndConsts.FailedLogin);
+                    return OperationResult<UserViewModel>.Failed(MessagesAndConsts.FailedLogin);
                 }
-                return OperationResult.SuccessedResult(true,MessagesAndConsts.LoginText);
+                return OperationResult<UserViewModel>.SuccessedResult(userView,MessagesAndConsts.LoginText);
               
             }
             catch(Exception ex)
             {
                 var error = ex!.ExceptionToErrorDTO("BLL-AuthService");
                 var result = await _errorService.LogErrorAsync(error);
-                return OperationResult.Failed(result.Message!);
+                return OperationResult<UserViewModel>.Failed(result.Message!);
             }
     }
 

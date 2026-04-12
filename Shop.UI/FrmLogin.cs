@@ -21,8 +21,7 @@ namespace Shop.UI
                 Password = txtPassword.Text
             };
             var client = HttpClientHelper.Instance;
-            var result = await client.PostAsync<OperationResult, UserViewModel>(RouteConstants.LoginRoute, userViewModel);
-
+            var result = await client.PostAsync<OperationResult<UserViewModel>, UserViewModel>(RouteConstants.LoginRoute, userViewModel);
             if (!userViewModel.IsValid)
             {
                 ShowInfo(userViewModel.ErrorMessage);
@@ -44,8 +43,9 @@ namespace Shop.UI
                 btnLogin.Text = MessagesAndConsts.LoginText;
                 return;
             }
-            
+            CurrentUser.Id=result.Data.Id;
             CurrentUser.PhoneNumber = txtPhone.Text;
+            
             ShowInfo(result.Message!);
             FormAdmin admin = new FormAdmin();
             admin.Show();

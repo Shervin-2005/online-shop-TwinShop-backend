@@ -17,7 +17,7 @@ namespace Shop.UI
 
         private void btnProfile_Click(object sender, EventArgs e)
         {
-            
+
         }
 
         private async void FormEditUserInfo_Load(object sender, EventArgs e)
@@ -38,7 +38,7 @@ namespace Shop.UI
             }
             profileImagePath = userView.Data.ProfileImage;
             txtFirstName.Text = userView.Data.FirstName;
-            txtLastName.Text =userView.Data.LastName;
+            txtLastName.Text = userView.Data.LastName;
             txtPhone.Text = userView.Data.PhoneNumber;
             txtEmail.Text = userView.Data.Email;
             txtPassword.Text = userView.Data.Password;
@@ -50,6 +50,7 @@ namespace Shop.UI
             btnApply.Text = MessagesAndConsts.pleaseWaitText;
             var userViewModel = new UserViewModel()
             {
+                Id = CurrentUser.Id,
                 FirstName = txtFirstName.Text,
                 LastName = txtLastName.Text,
                 PhoneNumber = txtPhone.Text,
@@ -64,8 +65,10 @@ namespace Shop.UI
                 btnApply.Text = MessagesAndConsts.ApplyText;
                 return;
             }
+
+            string route = string.Format(RouteConstants.EditUserInfo, txtPhone.Text);
             var client = HttpClientHelper.Instance;
-            var result = await client.PostAsync<OperationResult, UserViewModel>(RouteConstants.EditUserInfo, userViewModel);
+            var result = await client.PostAsync<OperationResult, UserViewModel>(route, userViewModel);
             if (result == null)
             {
                 ShowInfoError(MessagesAndConsts.InternetErrorMessage);
@@ -75,7 +78,7 @@ namespace Shop.UI
             }
             if (!result.Success)
             {
-                ShowInfo(result.Message!);
+                ShowInfo(result.Message!.ErrorMessage());
                 btnApply.Enabled = true;
                 btnApply.Text = MessagesAndConsts.ApplyText;
                 return;
@@ -91,7 +94,7 @@ namespace Shop.UI
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 profileImagePath = openFileDialog.FileName;
-                ProfilePictureBox.ImageLocation =profileImagePath;
+                ProfilePictureBox.ImageLocation = profileImagePath;
             }
         }
 
@@ -104,6 +107,11 @@ namespace Shop.UI
         private void ProfilePictureBox_LoadCompleted(object sender, AsyncCompletedEventArgs e)
         {
             ProfilePictureBox.ImageLocation = profileImagePath;
+        }
+
+        private void txtPhone_TextChanged(object sender, EventArgs e)
+        {
+            
         }
     }
 }

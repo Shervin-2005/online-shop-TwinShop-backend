@@ -49,9 +49,9 @@
             // 
             lblFirstName.AutoSize = true;
             lblFirstName.Font = new Font("Segoe UI", 12F);
-            lblFirstName.Location = new Point(26, 149);
+            lblFirstName.Location = new Point(23, 112);
             lblFirstName.Name = "lblFirstName";
-            lblFirstName.Size = new Size(101, 28);
+            lblFirstName.Size = new Size(82, 21);
             lblFirstName.TabIndex = 0;
             lblFirstName.Text = "FirstName";
             // 
@@ -59,9 +59,9 @@
             // 
             lblLastName.AutoSize = true;
             lblLastName.Font = new Font("Segoe UI", 12F);
-            lblLastName.Location = new Point(26, 189);
+            lblLastName.Location = new Point(23, 142);
             lblLastName.Name = "lblLastName";
-            lblLastName.Size = new Size(98, 28);
+            lblLastName.Size = new Size(80, 21);
             lblLastName.TabIndex = 1;
             lblLastName.Text = "LastName";
             // 
@@ -69,9 +69,9 @@
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 12F);
-            label3.Location = new Point(7, 233);
+            label3.Location = new Point(6, 175);
             label3.Name = "label3";
-            label3.Size = new Size(144, 28);
+            label3.Size = new Size(116, 21);
             label3.TabIndex = 2;
             label3.Text = "Phone Number";
             // 
@@ -79,9 +79,9 @@
             // 
             lblEmail.AutoSize = true;
             lblEmail.Font = new Font("Segoe UI", 12F);
-            lblEmail.Location = new Point(25, 277);
+            lblEmail.Location = new Point(22, 208);
             lblEmail.Name = "lblEmail";
-            lblEmail.Size = new Size(64, 28);
+            lblEmail.Size = new Size(52, 21);
             lblEmail.TabIndex = 3;
             lblEmail.Text = "Emaill";
             // 
@@ -89,59 +89,54 @@
             // 
             lblPassword.AutoSize = true;
             lblPassword.Font = new Font("Segoe UI", 12F);
-            lblPassword.Location = new Point(25, 320);
+            lblPassword.Location = new Point(22, 240);
             lblPassword.Name = "lblPassword";
-            lblPassword.Size = new Size(93, 28);
+            lblPassword.Size = new Size(76, 21);
             lblPassword.TabIndex = 5;
             lblPassword.Text = "Password";
             // 
             // txtLastName
             // 
-            txtLastName.Location = new Point(146, 192);
-            txtLastName.Margin = new Padding(3, 4, 3, 4);
+            txtLastName.Location = new Point(128, 144);
             txtLastName.Name = "txtLastName";
-            txtLastName.Size = new Size(143, 27);
+            txtLastName.Size = new Size(126, 23);
             txtLastName.TabIndex = 6;
             // 
             // txtPassword
             // 
-            txtPassword.Location = new Point(146, 323);
-            txtPassword.Margin = new Padding(3, 4, 3, 4);
+            txtPassword.Location = new Point(128, 242);
             txtPassword.Name = "txtPassword";
-            txtPassword.Size = new Size(143, 27);
+            txtPassword.Size = new Size(126, 23);
             txtPassword.TabIndex = 7;
             // 
             // txtEmail
             // 
-            txtEmail.Location = new Point(146, 275);
-            txtEmail.Margin = new Padding(3, 4, 3, 4);
+            txtEmail.Location = new Point(128, 206);
             txtEmail.Name = "txtEmail";
-            txtEmail.Size = new Size(143, 27);
+            txtEmail.Size = new Size(126, 23);
             txtEmail.TabIndex = 8;
             // 
             // txtPhone
             // 
-            txtPhone.Location = new Point(146, 231);
-            txtPhone.Margin = new Padding(3, 4, 3, 4);
+            txtPhone.Location = new Point(128, 173);
             txtPhone.Name = "txtPhone";
-            txtPhone.Size = new Size(143, 27);
+            txtPhone.Size = new Size(126, 23);
             txtPhone.TabIndex = 9;
+            txtPhone.TextChanged += txtPhone_TextChanged;
             // 
             // txtFirstName
             // 
-            txtFirstName.Location = new Point(146, 152);
-            txtFirstName.Margin = new Padding(3, 4, 3, 4);
+            txtFirstName.Location = new Point(128, 114);
             txtFirstName.Name = "txtFirstName";
-            txtFirstName.Size = new Size(143, 27);
+            txtFirstName.Size = new Size(126, 23);
             txtFirstName.TabIndex = 10;
             // 
             // ProfilePictureBox
             // 
             ProfilePictureBox.Image = (Image)resources.GetObject("ProfilePictureBox.Image");
-            ProfilePictureBox.Location = new Point(90, 13);
-            ProfilePictureBox.Margin = new Padding(3, 4, 3, 4);
+            ProfilePictureBox.Location = new Point(79, 10);
             ProfilePictureBox.Name = "ProfilePictureBox";
-            ProfilePictureBox.Size = new Size(140, 129);
+            ProfilePictureBox.Size = new Size(122, 97);
             ProfilePictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
             ProfilePictureBox.TabIndex = 12;
             ProfilePictureBox.TabStop = false;
@@ -155,10 +150,9 @@
             // 
             // btnApply
             // 
-            btnApply.Location = new Point(122, 464);
-            btnApply.Margin = new Padding(3, 4, 3, 4);
+            btnApply.Location = new Point(107, 348);
             btnApply.Name = "btnApply";
-            btnApply.Size = new Size(86, 61);
+            btnApply.Size = new Size(75, 46);
             btnApply.TabIndex = 13;
             btnApply.Text = "Apply";
             btnApply.UseVisualStyleBackColor = true;
@@ -166,9 +160,9 @@
             // 
             // FormEditUserInfo
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(326, 537);
+            ClientSize = new Size(285, 403);
             Controls.Add(btnApply);
             Controls.Add(ProfilePictureBox);
             Controls.Add(txtFirstName);
@@ -181,7 +175,6 @@
             Controls.Add(label3);
             Controls.Add(lblLastName);
             Controls.Add(lblFirstName);
-            Margin = new Padding(3, 4, 3, 4);
             Name = "FormEditUserInfo";
             Text = "FormEditUserInfo";
             Load += FormEditUserInfo_Load;

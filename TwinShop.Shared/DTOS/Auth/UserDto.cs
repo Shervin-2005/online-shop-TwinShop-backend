@@ -11,7 +11,7 @@ namespace TwinShop.Shared.DTOS.Auth
         
         public string? LastName { get; set; }
 
-        public string? ProflileImage { get; set; }
+        public string? ProfileImage { get; set; }
 
         public string? PhoneNumber { get; set; }
 

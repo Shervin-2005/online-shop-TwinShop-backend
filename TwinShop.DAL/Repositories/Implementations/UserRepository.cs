@@ -43,6 +43,8 @@ namespace TwinShop.DAL.Repositories.Implementations
                 var user = await _dbContext.Users.AsNoTracking().Where(u => u.Email == email)
                     .Select(u => new UserDto
                     {
+                        Id = u.UserId,
+                        ProflileImage = u.ProflileImage,
                         FirstName = u.FirstName,
                         LastName = u.LastName,
                         PhoneNumber = u.PhoneNumber,
@@ -78,14 +80,14 @@ namespace TwinShop.DAL.Repositories.Implementations
 
         public async Task<OperationResult> AddUserAsync(UserDto userDto)
         {
-           
-                User user = new User
-                {
-                   PhoneNumber= userDto.PhoneNumber,
-                    PasswordHash=userDto.PasswordHash
-                };
-                _dbContext.Users.Add(user);
-                await _dbContext.SaveChangesAsync();
+
+            User user = new User
+            {
+                PhoneNumber = userDto.PhoneNumber,
+                PasswordHash = userDto.PasswordHash,
+            };
+            _dbContext.Users.Add(user);
+            await _dbContext.SaveChangesAsync();
                 return OperationResult.SuccessedResult();
             
         }
@@ -108,7 +110,7 @@ namespace TwinShop.DAL.Repositories.Implementations
         public async Task<OperationResult> VerifyPassword(string passwordHashUser,string passwordHashUserDto)
         {
             bool result= (passwordHashUser == passwordHashUserDto);
-            if(result) return OperationResult.SuccessedResult();
+            if(result) return  OperationResult.SuccessedResult();
             else return  OperationResult.Failed(MessagesAndConsts.IncorrectPhoneNumberOrPassword);
         }
 
