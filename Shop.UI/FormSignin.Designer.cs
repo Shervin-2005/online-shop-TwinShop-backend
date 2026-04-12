@@ -34,6 +34,8 @@
             lblPassword = new Label();
             lblPhone = new Label();
             btnSignin = new Button();
+            lblRepeatPassword = new Label();
+            txtRepeatPassword = new TextBox();
             SuspendLayout();
             // 
             // lblLogin
@@ -41,7 +43,7 @@
             lblLogin.AutoSize = true;
             lblLogin.Font = new Font("Segoe UI", 8F);
             lblLogin.ForeColor = Color.DodgerBlue;
-            lblLogin.Location = new Point(41, 237);
+            lblLogin.Location = new Point(42, 282);
             lblLogin.Name = "lblLogin";
             lblLogin.Size = new Size(183, 13);
             lblLogin.TabIndex = 10;
@@ -86,7 +88,7 @@
             // 
             // btnSignin
             // 
-            btnSignin.Location = new Point(81, 203);
+            btnSignin.Location = new Point(78, 248);
             btnSignin.Margin = new Padding(4, 3, 4, 3);
             btnSignin.Name = "btnSignin";
             btnSignin.Size = new Size(89, 31);
@@ -95,11 +97,30 @@
             btnSignin.UseVisualStyleBackColor = true;
             btnSignin.Click += btnSignin_Click;
             // 
+            // lblRepeatPassword
+            // 
+            lblRepeatPassword.AutoSize = true;
+            lblRepeatPassword.Location = new Point(42, 186);
+            lblRepeatPassword.Name = "lblRepeatPassword";
+            lblRepeatPassword.Size = new Size(93, 15);
+            lblRepeatPassword.TabIndex = 11;
+            lblRepeatPassword.Text = "RepeatPassword";
+            // 
+            // txtRepeatPassword
+            // 
+            txtRepeatPassword.Location = new Point(42, 204);
+            txtRepeatPassword.Name = "txtRepeatPassword";
+            txtRepeatPassword.Size = new Size(183, 23);
+            txtRepeatPassword.TabIndex = 12;
+            txtRepeatPassword.TextChanged += txtRepeatPassword_TextChanged;
+            // 
             // FormSignin
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(278, 294);
+            Controls.Add(txtRepeatPassword);
+            Controls.Add(lblRepeatPassword);
             Controls.Add(lblLogin);
             Controls.Add(txtPassword);
             Controls.Add(txtPhone);
@@ -122,5 +143,7 @@
         private Label lblPassword;
         private Label lblPhone;
         private Button btnSignin;
+        private Label lblRepeatPassword;
+        private TextBox txtRepeatPassword;
     }
 }

@@ -15,18 +15,18 @@ namespace Shop.UI
         {
             btnLogin.Enabled = false;
             btnLogin.Text = MessagesAndConsts.pleaseWaitText;
-            UserViewModel userViewModel = new UserViewModel
+            LoginUserViewModel userViewModel = new LoginUserViewModel
             {
                 PhoneNumber = txtPhone.Text,
                 Password = txtPassword.Text
             };
             var client = HttpClientHelper.Instance;
-            var result = await client.PostAsync<OperationResult<UserViewModel>, UserViewModel>(RouteConstants.LoginRoute, userViewModel);
+            var result = await client.PostAsync<OperationResult<LoginUserViewModel>, LoginUserViewModel>(RouteConstants.LoginRoute, userViewModel);
             if (!userViewModel.IsValid)
             {
                 ShowInfo(userViewModel.ErrorMessage);
                 btnLogin.Enabled = true;
-                btnLogin.Text = MessagesAndConsts.SingUpText;
+                btnLogin.Text = MessagesAndConsts.LoginText;
                 return;
             }
             if (result == null)

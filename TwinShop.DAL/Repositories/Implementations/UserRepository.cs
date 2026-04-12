@@ -24,7 +24,7 @@ namespace TwinShop.DAL.Repositories.Implementations
                     .Select(u => new UserDto
                     {
                         Id=u.UserId,
-                        ProflileImage=u.ProflileImage,
+                        ProfileImage =u.ProfileImage,
                         FirstName = u.FirstName,
                         LastName = u.LastName,
                         PhoneNumber= u.PhoneNumber,
@@ -44,7 +44,7 @@ namespace TwinShop.DAL.Repositories.Implementations
                     .Select(u => new UserDto
                     {
                         Id = u.UserId,
-                        ProflileImage = u.ProflileImage,
+                        ProfileImage = u.ProfileImage,
                         FirstName = u.FirstName,
                         LastName = u.LastName,
                         PhoneNumber = u.PhoneNumber,
@@ -85,6 +85,7 @@ namespace TwinShop.DAL.Repositories.Implementations
             {
                 PhoneNumber = userDto.PhoneNumber,
                 PasswordHash = userDto.PasswordHash,
+                ProfileImage=userDto.ProfileImage,
             };
             _dbContext.Users.Add(user);
             await _dbContext.SaveChangesAsync();
@@ -126,7 +127,7 @@ namespace TwinShop.DAL.Repositories.Implementations
                 user.LastName = userDto.LastName;
                 user.Email = userDto.Email;
                 user.PhoneNumber = userDto.PhoneNumber!;  
-                user.ProflileImage = userDto.ProflileImage!;
+                user.ProfileImage = userDto.ProfileImage!;
                 user.PasswordHash = userDto.PasswordHash!;
 
                 await _dbContext.SaveChangesAsync();

@@ -23,19 +23,20 @@ namespace Shop.UI
 
         private async void btnSignin_Click(object sender, EventArgs e)
         {
-           btnSignin.Enabled = false;
+            btnSignin.Enabled = false;
             btnSignin.Text = MessagesAndConsts.pleaseWaitText;
             var userViewModel = new UserViewModel()
             {
                 PhoneNumber = txtPhone.Text,
                 Password = txtPassword.Text,
+                RepeatPassword=txtRepeatPassword.Text,
                 ProfileImage = MessagesAndConsts.DefaultProfile
             };
             if (!userViewModel.IsValid)
             {
                 ShowInfo(userViewModel.ErrorMessage);
-                btnSignin.Enabled=true;
-                btnSignin.Text= MessagesAndConsts.SingUpText;
+                btnSignin.Enabled = true;
+                btnSignin.Text = MessagesAndConsts.SingUpText;
                 return;
             }
             var client = HttpClientHelper.Instance;
@@ -61,6 +62,11 @@ namespace Shop.UI
         }
 
         private void FormSignin_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtRepeatPassword_TextChanged(object sender, EventArgs e)
         {
 
         }

@@ -29,7 +29,7 @@ public class AuthController : BaseController
 
 
     [HttpPost]
-    public async Task<OperationResult> LoginWithPassword([FromBody] UserViewModel userViewModel)
+    public async Task<OperationResult> LoginWithPassword([FromBody] LoginUserViewModel userViewModel)
     {
         var result = await _authService.LoginWithPasswordAsync(userViewModel);
         return result;

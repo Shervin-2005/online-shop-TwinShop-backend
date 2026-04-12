@@ -27,7 +27,7 @@ namespace TwinShop.Shared.ViewModels
         public string? Email { get; set; }
         [ComparePasswordAtribute]
         public string? Password { get; set; }
-       // public string? VerifyPassword { get; set; }
+        public string? RepeatPassword { get; set; }
 
     }
 }

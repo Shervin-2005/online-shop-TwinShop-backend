@@ -57,6 +57,7 @@ namespace Shop.UI
                 Email = txtEmail.Text,
                 ProfileImage = profileImagePath,
                 Password = txtPassword.Text,
+                RepeatPassword = txtRepeatPassword.Text,
             };
             if (!userViewModel.IsValid)
             {
@@ -66,7 +67,7 @@ namespace Shop.UI
                 return;
             }
 
-            string route = string.Format(RouteConstants.EditUserInfo, txtPhone.Text);
+            string route = string.Format(RouteConstants.EditUserInfo, CurrentUser.PhoneNumber);
             var client = HttpClientHelper.Instance;
             var result = await client.PostAsync<OperationResult, UserViewModel>(route, userViewModel);
             if (result == null)
@@ -78,11 +79,12 @@ namespace Shop.UI
             }
             if (!result.Success)
             {
-                ShowInfo(result.Message!.ErrorMessage());
+                ShowInfo(result.Message!);
                 btnApply.Enabled = true;
                 btnApply.Text = MessagesAndConsts.ApplyText;
                 return;
             }
+            CurrentUser.PhoneNumber=userViewModel.PhoneNumber;
             ShowInfo(result.Message!);
             this.Close();
         }

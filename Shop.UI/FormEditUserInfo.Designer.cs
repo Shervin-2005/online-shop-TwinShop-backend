@@ -42,6 +42,8 @@
             ProfilePictureBox = new PictureBox();
             openFileDialog1 = new OpenFileDialog();
             btnApply = new Button();
+            txtRepeatPassword = new TextBox();
+            lblRepeatPassword = new Label();
             ((System.ComponentModel.ISupportInitialize)ProfilePictureBox).BeginInit();
             SuspendLayout();
             // 
@@ -150,7 +152,7 @@
             // 
             // btnApply
             // 
-            btnApply.Location = new Point(107, 348);
+            btnApply.Location = new Point(95, 300);
             btnApply.Name = "btnApply";
             btnApply.Size = new Size(75, 46);
             btnApply.TabIndex = 13;
@@ -158,11 +160,29 @@
             btnApply.UseVisualStyleBackColor = true;
             btnApply.Click += btnApply_Click;
             // 
+            // txtRepeatPassword
+            // 
+            txtRepeatPassword.Location = new Point(128, 271);
+            txtRepeatPassword.Name = "txtRepeatPassword";
+            txtRepeatPassword.Size = new Size(134, 23);
+            txtRepeatPassword.TabIndex = 15;
+            // 
+            // lblRepeatPassword
+            // 
+            lblRepeatPassword.AutoSize = true;
+            lblRepeatPassword.Location = new Point(22, 277);
+            lblRepeatPassword.Name = "lblRepeatPassword";
+            lblRepeatPassword.Size = new Size(93, 15);
+            lblRepeatPassword.TabIndex = 14;
+            lblRepeatPassword.Text = "RepeatPassword";
+            // 
             // FormEditUserInfo
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(285, 403);
+            ClientSize = new Size(285, 369);
+            Controls.Add(txtRepeatPassword);
+            Controls.Add(lblRepeatPassword);
             Controls.Add(btnApply);
             Controls.Add(ProfilePictureBox);
             Controls.Add(txtFirstName);
@@ -198,5 +218,7 @@
         private PictureBox ProfilePictureBox;
         private OpenFileDialog openFileDialog1;
         private Button btnApply;
+        private TextBox txtRepeatPassword;
+        private Label lblRepeatPassword;
     }
 }

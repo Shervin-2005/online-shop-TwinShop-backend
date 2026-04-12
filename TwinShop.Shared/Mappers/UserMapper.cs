@@ -19,7 +19,7 @@ namespace TwinShop.Shared.Mappers
                 LastName = userView.LastName,
                 PhoneNumber = userView.PhoneNumber,
                 Email = userView.Email,
-                ProflileImage=userView.ProfileImage,
+                ProfileImage=userView.ProfileImage,
                 PasswordHash = userView.Password
             };
         }
@@ -32,7 +32,7 @@ namespace TwinShop.Shared.Mappers
                 LastName = userDto.LastName,
                 PhoneNumber = userDto.PhoneNumber,
                 Email = userDto.Email,
-                ProfileImage=userDto.ProflileImage,
+                ProfileImage=userDto.ProfileImage,
                 Password = userDto.PasswordHash,
             };
         }

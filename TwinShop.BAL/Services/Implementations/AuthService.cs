@@ -86,7 +86,6 @@ namespace Twin_Shop__Web_API.Services.Implementations
                 {
                     return OperationResult.Failed(MessagesAndConsts.PhoneNumberAlreadyExist);
                 }
-                userView.PhoneNumber = phoneNumber;
             }
                     UserDto userDto = UserMapper.ToUserDTO(userView);
                     var updateUser = await _userRepository.UpdateUserAsync(userDto);
@@ -100,7 +99,7 @@ namespace Twin_Shop__Web_API.Services.Implementations
                 return OperationResult.SuccessedResult(true, MessagesAndConsts.update);
             
         }
-        public async Task<OperationResult<UserViewModel>> LoginWithPasswordAsync(UserViewModel userView)
+        public async Task<OperationResult<LoginUserViewModel>> LoginWithPasswordAsync(LoginUserViewModel userView)
         {
             try
             {
@@ -108,7 +107,7 @@ namespace Twin_Shop__Web_API.Services.Implementations
 
                 if (!user!.Success)
                 {
-                    return OperationResult<UserViewModel>.Failed(MessagesAndConsts.userNotLoginWithThisPhoneNumber);
+                    return OperationResult<LoginUserViewModel>.Failed(MessagesAndConsts.userNotLoginWithThisPhoneNumber);
                 }
                 userView.Id=user.Data.Id;
                 var isVerified = await _userRepository
@@ -116,16 +115,16 @@ namespace Twin_Shop__Web_API.Services.Implementations
 
                 if (!isVerified.Success)
                 {
-                    return OperationResult<UserViewModel>.Failed(MessagesAndConsts.FailedLogin);
+                    return OperationResult<LoginUserViewModel>.Failed(MessagesAndConsts.FailedLogin);
                 }
-                return OperationResult<UserViewModel>.SuccessedResult(userView,MessagesAndConsts.LoginText);
+                return OperationResult<LoginUserViewModel>.SuccessedResult(userView,MessagesAndConsts.LoginText);
               
             }
             catch(Exception ex)
             {
                 var error = ex!.ExceptionToErrorDTO("BLL-AuthService");
                 var result = await _errorService.LogErrorAsync(error);
-                return OperationResult<UserViewModel>.Failed(result.Message!);
+                return OperationResult<LoginUserViewModel>.Failed(result.Message!);
             }
     }
 
