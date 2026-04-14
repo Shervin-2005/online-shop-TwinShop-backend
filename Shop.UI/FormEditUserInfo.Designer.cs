@@ -33,17 +33,16 @@
             lblLastName = new Label();
             label3 = new Label();
             lblEmail = new Label();
-            lblPassword = new Label();
             txtLastName = new TextBox();
-            txtPassword = new TextBox();
             txtEmail = new TextBox();
             txtPhone = new TextBox();
             txtFirstName = new TextBox();
             ProfilePictureBox = new PictureBox();
             openFileDialog1 = new OpenFileDialog();
             btnApply = new Button();
-            txtRepeatPassword = new TextBox();
-            lblRepeatPassword = new Label();
+            txtPassword = new TextBox();
+            lblPassword = new Label();
+            btnChangePassword = new Button();
             ((System.ComponentModel.ISupportInitialize)ProfilePictureBox).BeginInit();
             SuspendLayout();
             // 
@@ -81,21 +80,11 @@
             // 
             lblEmail.AutoSize = true;
             lblEmail.Font = new Font("Segoe UI", 12F);
-            lblEmail.Location = new Point(22, 208);
+            lblEmail.Location = new Point(40, 206);
             lblEmail.Name = "lblEmail";
             lblEmail.Size = new Size(52, 21);
             lblEmail.TabIndex = 3;
             lblEmail.Text = "Emaill";
-            // 
-            // lblPassword
-            // 
-            lblPassword.AutoSize = true;
-            lblPassword.Font = new Font("Segoe UI", 12F);
-            lblPassword.Location = new Point(22, 240);
-            lblPassword.Name = "lblPassword";
-            lblPassword.Size = new Size(76, 21);
-            lblPassword.TabIndex = 5;
-            lblPassword.Text = "Password";
             // 
             // txtLastName
             // 
@@ -103,13 +92,6 @@
             txtLastName.Name = "txtLastName";
             txtLastName.Size = new Size(126, 23);
             txtLastName.TabIndex = 6;
-            // 
-            // txtPassword
-            // 
-            txtPassword.Location = new Point(128, 242);
-            txtPassword.Name = "txtPassword";
-            txtPassword.Size = new Size(126, 23);
-            txtPassword.TabIndex = 7;
             // 
             // txtEmail
             // 
@@ -152,7 +134,7 @@
             // 
             // btnApply
             // 
-            btnApply.Location = new Point(95, 300);
+            btnApply.Location = new Point(136, 259);
             btnApply.Name = "btnApply";
             btnApply.Size = new Size(75, 46);
             btnApply.TabIndex = 13;
@@ -160,37 +142,47 @@
             btnApply.UseVisualStyleBackColor = true;
             btnApply.Click += btnApply_Click;
             // 
-            // txtRepeatPassword
+            // txtPassword
             // 
-            txtRepeatPassword.Location = new Point(128, 271);
-            txtRepeatPassword.Name = "txtRepeatPassword";
-            txtRepeatPassword.Size = new Size(134, 23);
-            txtRepeatPassword.TabIndex = 15;
+            txtPassword.Location = new Point(128, 235);
+            txtPassword.Name = "txtPassword";
+            txtPassword.Size = new Size(126, 23);
+            txtPassword.TabIndex = 17;
             // 
-            // lblRepeatPassword
+            // lblPassword
             // 
-            lblRepeatPassword.AutoSize = true;
-            lblRepeatPassword.Location = new Point(22, 277);
-            lblRepeatPassword.Name = "lblRepeatPassword";
-            lblRepeatPassword.Size = new Size(93, 15);
-            lblRepeatPassword.TabIndex = 14;
-            lblRepeatPassword.Text = "RepeatPassword";
+            lblPassword.AutoSize = true;
+            lblPassword.Font = new Font("Segoe UI", 12F);
+            lblPassword.Location = new Point(29, 234);
+            lblPassword.Name = "lblPassword";
+            lblPassword.Size = new Size(76, 21);
+            lblPassword.TabIndex = 16;
+            lblPassword.Text = "Password";
+            // 
+            // btnChangePassword
+            // 
+            btnChangePassword.Location = new Point(260, 235);
+            btnChangePassword.Name = "btnChangePassword";
+            btnChangePassword.Size = new Size(25, 23);
+            btnChangePassword.TabIndex = 18;
+            btnChangePassword.Text = "✏️✏";
+            btnChangePassword.UseVisualStyleBackColor = true;
+            btnChangePassword.Click += btnChangePassword_Click;
             // 
             // FormEditUserInfo
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(285, 369);
-            Controls.Add(txtRepeatPassword);
-            Controls.Add(lblRepeatPassword);
+            ClientSize = new Size(329, 369);
+            Controls.Add(btnChangePassword);
+            Controls.Add(txtPassword);
+            Controls.Add(lblPassword);
             Controls.Add(btnApply);
             Controls.Add(ProfilePictureBox);
             Controls.Add(txtFirstName);
             Controls.Add(txtPhone);
             Controls.Add(txtEmail);
-            Controls.Add(txtPassword);
             Controls.Add(txtLastName);
-            Controls.Add(lblPassword);
             Controls.Add(lblEmail);
             Controls.Add(label3);
             Controls.Add(lblLastName);
@@ -209,16 +201,15 @@
         private Label lblLastName;
         private Label label3;
         private Label lblEmail;
-        private Label lblPassword;
         private TextBox txtLastName;
-        private TextBox txtPassword;
         private TextBox txtEmail;
         private TextBox txtPhone;
         private TextBox txtFirstName;
         private PictureBox ProfilePictureBox;
         private OpenFileDialog openFileDialog1;
         private Button btnApply;
-        private TextBox txtRepeatPassword;
-        private Label lblRepeatPassword;
+        private TextBox txtPassword;
+        private Label lblPassword;
+        private Button btnChangePassword;
     }
 }

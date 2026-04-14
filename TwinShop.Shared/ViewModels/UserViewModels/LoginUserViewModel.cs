@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using TwinShop.Shared.CustomAtribute;
 using TwinShop.Shared.ViewModels.Base;
 
-namespace TwinShop.Shared.ViewModels
+namespace TwinShop.Shared.ViewModels.UserViewModels
 {
     public class LoginUserViewModel:BaseValidatoin
     {

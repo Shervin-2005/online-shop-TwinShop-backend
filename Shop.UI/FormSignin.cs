@@ -1,7 +1,7 @@
 ﻿using Shop.UI.Http;
 using TwinShop.Shared;
 using TwinShop.Shared.DTOS;
-using TwinShop.Shared.ViewModels;
+using TwinShop.Shared.ViewModels.UserViewModels;
 
 namespace Shop.UI
 {
@@ -25,22 +25,21 @@ namespace Shop.UI
         {
             btnSignin.Enabled = false;
             btnSignin.Text = MessagesAndConsts.pleaseWaitText;
-            var userViewModel = new UserViewModel()
+            var registerUserViewModel = new RegisterUserViewModel()
             {
                 PhoneNumber = txtPhone.Text,
                 Password = txtPassword.Text,
                 RepeatPassword=txtRepeatPassword.Text,
-                ProfileImage = MessagesAndConsts.DefaultProfile
             };
-            if (!userViewModel.IsValid)
+            if (!registerUserViewModel.IsValid)
             {
-                ShowInfo(userViewModel.ErrorMessage);
+                ShowInfo(registerUserViewModel.ErrorMessage);
                 btnSignin.Enabled = true;
                 btnSignin.Text = MessagesAndConsts.SingUpText;
                 return;
             }
             var client = HttpClientHelper.Instance;
-            var result = await client.PostAsync<OperationResult, UserViewModel>(RouteConstants.Register, userViewModel);
+            var result = await client.PostAsync<OperationResult, RegisterUserViewModel>(RouteConstants.Register, registerUserViewModel);
             if (result == null)
             {
                 ShowInfoError(MessagesAndConsts.InternetErrorMessage);

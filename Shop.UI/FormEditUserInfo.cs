@@ -1,10 +1,9 @@
-﻿
-using Shop.UI.Http;
+﻿using Shop.UI.Http;
 using System.ComponentModel;
 using TwinShop.Shared;
 using TwinShop.Shared.DTOS;
 using TwinShop.Shared.ErrorHandling;
-using TwinShop.Shared.ViewModels;
+using TwinShop.Shared.ViewModels.UserViewModels;
 namespace Shop.UI
 {
     public partial class FormEditUserInfo : FormStyle
@@ -24,31 +23,32 @@ namespace Shop.UI
         {
             var client = HttpClientHelper.Instance;
             string phoneNumber = Uri.UnescapeDataString(CurrentUser.PhoneNumber!);
-            string route = string.Format(RouteConstants.GetbyPhoneNumber, phoneNumber);
-            var userView = await client.GetAsync<OperationResult<UserViewModel>>(route);
-            if (userView == null)
+            string route = string.Format(RouteConstants.GetUserbyPhoneNumber, phoneNumber);
+            var userInfoViewModel = await client.GetAsync<OperationResult<UserInfoViewModel>>(route);
+            if (userInfoViewModel == null)
             {
                 ShowInfoError(MessagesAndConsts.InternetErrorMessage);
                 return;
             }
-            if (!userView.Success)
+            if (!userInfoViewModel.Success)
             {
-                ShowInfo(userView.Message!.ErrorMessage());
+                ShowInfo(userInfoViewModel.Message!.ErrorMessage());
                 return;
             }
-            profileImagePath = userView.Data.ProfileImage;
-            txtFirstName.Text = userView.Data.FirstName;
-            txtLastName.Text = userView.Data.LastName;
-            txtPhone.Text = userView.Data.PhoneNumber;
-            txtEmail.Text = userView.Data.Email;
-            txtPassword.Text = userView.Data.Password;
+            txtPassword.Text = new string('•', CurrentUser.PasswordLength);
+            profileImagePath = userInfoViewModel.Data.ProfileImage;
+            ProfilePictureBox.ImageLocation = profileImagePath;
+            txtFirstName.Text = userInfoViewModel.Data.FirstName;
+            txtLastName.Text = userInfoViewModel.Data.LastName;
+            txtPhone.Text = userInfoViewModel.Data.PhoneNumber;
+            txtEmail.Text = userInfoViewModel.Data.Email;
         }
 
         private async void btnApply_Click(object sender, EventArgs e)
         {
             btnApply.Enabled = false;
             btnApply.Text = MessagesAndConsts.pleaseWaitText;
-            var userViewModel = new UserViewModel()
+            var userInfoViewModel = new UserInfoViewModel()
             {
                 Id = CurrentUser.Id,
                 FirstName = txtFirstName.Text,
@@ -56,12 +56,11 @@ namespace Shop.UI
                 PhoneNumber = txtPhone.Text,
                 Email = txtEmail.Text,
                 ProfileImage = profileImagePath,
-                Password = txtPassword.Text,
-                RepeatPassword = txtRepeatPassword.Text,
+
             };
-            if (!userViewModel.IsValid)
+            if (!userInfoViewModel.IsValid)
             {
-                ShowInfo(userViewModel.ErrorMessage);
+                ShowInfo(userInfoViewModel.ErrorMessage);
                 btnApply.Enabled = true;
                 btnApply.Text = MessagesAndConsts.ApplyText;
                 return;
@@ -69,7 +68,7 @@ namespace Shop.UI
 
             string route = string.Format(RouteConstants.EditUserInfo, CurrentUser.PhoneNumber);
             var client = HttpClientHelper.Instance;
-            var result = await client.PostAsync<OperationResult, UserViewModel>(route, userViewModel);
+            var result = await client.PostAsync<OperationResult, UserInfoViewModel>(route, userInfoViewModel);
             if (result == null)
             {
                 ShowInfoError(MessagesAndConsts.InternetErrorMessage);
@@ -84,7 +83,7 @@ namespace Shop.UI
                 btnApply.Text = MessagesAndConsts.ApplyText;
                 return;
             }
-            CurrentUser.PhoneNumber=userViewModel.PhoneNumber;
+            CurrentUser.PhoneNumber = userInfoViewModel.PhoneNumber;
             ShowInfo(result.Message!);
             this.Close();
         }
@@ -108,12 +107,18 @@ namespace Shop.UI
 
         private void ProfilePictureBox_LoadCompleted(object sender, AsyncCompletedEventArgs e)
         {
-            ProfilePictureBox.ImageLocation = profileImagePath;
+            
         }
 
         private void txtPhone_TextChanged(object sender, EventArgs e)
         {
-            
+
+        }
+
+        private void btnChangePassword_Click(object sender, EventArgs e)
+        {
+            FormChangePassword formChangePassword = new FormChangePassword();
+            formChangePassword.Show();
         }
     }
 }

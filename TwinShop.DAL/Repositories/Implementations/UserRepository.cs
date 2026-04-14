@@ -18,7 +18,7 @@ namespace TwinShop.DAL.Repositories.Implementations
             _dbContext = dbContext;
         }
 
-        public async Task<OperationResult<UserDto>?> GetByPhoneAsync(string phone)
+        public async Task<OperationResult<UserDto>?> GetUserByPhoneAsync(string phone)
         {         
                 var user = await _dbContext.Users.AsNoTracking().Where(u => u.PhoneNumber == phone)
                     .Select(u => new UserDto
@@ -128,7 +128,8 @@ namespace TwinShop.DAL.Repositories.Implementations
                 user.Email = userDto.Email;
                 user.PhoneNumber = userDto.PhoneNumber!;  
                 user.ProfileImage = userDto.ProfileImage!;
-                user.PasswordHash = userDto.PasswordHash!;
+                user.PasswordHash = userDto.PasswordHash;
+
 
                 await _dbContext.SaveChangesAsync();
                 return OperationResult.SuccessedResult(); ;
@@ -136,6 +137,22 @@ namespace TwinShop.DAL.Repositories.Implementations
             catch (Exception ex)
             {
                 return  OperationResult.Failed(GetType().Name, ex);
+            }
+        }
+        public async Task<OperationResult> UpdateUserPassword(UserDto userDto)
+        {
+            try
+            {
+                var user = new User { UserId = userDto.Id };
+                _dbContext.Attach(user);
+                user.PasswordHash = userDto.PasswordHash;
+
+                await _dbContext.SaveChangesAsync();
+                return OperationResult.SuccessedResult(); ;
+            }
+            catch (Exception ex)
+            {
+                return OperationResult.Failed(GetType().Name, ex);
             }
         }
     }

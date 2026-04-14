@@ -8,7 +8,8 @@
         public const string Register = "api/Auth/Register";
         public const string EditUserInfo = "api/Auth/EditUserInfo?phoneNumber={0}";
         public const string RegisterRoute = "api/Auth/Register";
-        public const string GetbyPhoneNumber = "api/Auth/GetbyPhoneNumber?phoneNumber={0}";
+        public const string ChangePassword = "api/Auth/ChangePassword?phoneNumber={0}";
+        public const string GetUserbyPhoneNumber = "api/Auth/GetUserbyPhoneNumber?phoneNumber={0}";
         public const string GetbyEmail = "api/Auth/GetbyEmail";
         public const string GetBrandAll = "api/Brands/GetAll";
         public const string GetById = "api/Brands/GetById";

@@ -1,7 +1,8 @@
 ﻿using Shop.UI.Http;
 using TwinShop.Shared;
 using TwinShop.Shared.DTOS;
-using TwinShop.Shared.ViewModels;
+using TwinShop.Shared.ErrorHandling;
+using TwinShop.Shared.ViewModels.UserViewModels;
 
 namespace Shop.UI
 {
@@ -15,16 +16,16 @@ namespace Shop.UI
         {
             btnLogin.Enabled = false;
             btnLogin.Text = MessagesAndConsts.pleaseWaitText;
-            LoginUserViewModel userViewModel = new LoginUserViewModel
+            LoginUserViewModel loginUserViewModel = new LoginUserViewModel
             {
                 PhoneNumber = txtPhone.Text,
                 Password = txtPassword.Text
             };
             var client = HttpClientHelper.Instance;
-            var result = await client.PostAsync<OperationResult<LoginUserViewModel>, LoginUserViewModel>(RouteConstants.LoginRoute, userViewModel);
-            if (!userViewModel.IsValid)
+            var result = await client.PostAsync<OperationResult<LoginUserViewModel>, LoginUserViewModel>(RouteConstants.LoginRoute, loginUserViewModel);
+            if (!loginUserViewModel.IsValid)
             {
-                ShowInfo(userViewModel.ErrorMessage);
+                ShowInfo(loginUserViewModel.ErrorMessage);
                 btnLogin.Enabled = true;
                 btnLogin.Text = MessagesAndConsts.LoginText;
                 return;
@@ -45,6 +46,7 @@ namespace Shop.UI
             }
             CurrentUser.Id=result.Data.Id;
             CurrentUser.PhoneNumber = txtPhone.Text;
+            CurrentUser.PasswordLength=txtPassword.Text.Length;
             
             ShowInfo(result.Message!);
             FormAdmin admin = new FormAdmin();

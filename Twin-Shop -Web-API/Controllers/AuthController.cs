@@ -3,7 +3,7 @@ using Twin_Shop__Web_API.Controllers;
 using Twin_Shop__Web_API.Services.Interfaces;
 using TwinShop.Shared;
 using TwinShop.Shared.DTOS.Auth;
-using TwinShop.Shared.ViewModels;
+using TwinShop.Shared.ViewModels.UserViewModels;
 
 public class AuthController : BaseController
 {
@@ -15,23 +15,29 @@ public class AuthController : BaseController
     }
 
     [HttpPost]
-    public async Task<OperationResult> Register([FromBody]UserViewModel userViewModel)
+    public async Task<OperationResult> Register([FromBody]RegisterUserViewModel registerUserViewModel)
     {
-        var result = await _authService.RegisterAsync(userViewModel);
+        var result = await _authService.RegisterAsync(registerUserViewModel);
         return result;
     }
     [HttpPost]
-    public async Task<OperationResult> EditUserInfo([FromBody] UserViewModel userViewModel,string phoneNumber)
+    public async Task<OperationResult> EditUserInfo([FromBody] UserInfoViewModel userInfoViewModel,string phoneNumber)
     {
-        var result = await _authService.EditUserInfoAsync(userViewModel,phoneNumber);
+        var result = await _authService.EditUserInfoAsync(userInfoViewModel, phoneNumber);
+        return result;
+    }
+    [HttpPost]
+    public async Task<OperationResult> ChangePassword([FromBody] ChangePasswordUserViewModel changePasswordUserViewModel, string phoneNumber)
+    {
+        var result = await _authService.ChangePasswordAsync(changePasswordUserViewModel, phoneNumber);
         return result;
     }
 
 
     [HttpPost]
-    public async Task<OperationResult> LoginWithPassword([FromBody] LoginUserViewModel userViewModel)
+    public async Task<OperationResult> LoginWithPassword([FromBody] LoginUserViewModel loginUserViewModel)
     {
-        var result = await _authService.LoginWithPasswordAsync(userViewModel);
+        var result = await _authService.LoginWithPasswordAsync(loginUserViewModel);
         return result;
     }
 
@@ -43,9 +49,9 @@ public class AuthController : BaseController
     }
 
     [HttpGet]
-    public async Task<OperationResult> GetbyPhoneNumber(string phoneNumber)
+    public async Task<OperationResult> GetUserbyPhoneNumber(string phoneNumber)
     {
-        var result = await _authService.GetByPhoneAsync(phoneNumber);
+        var result = await _authService.GetUserByPhoneAsync(phoneNumber);
         return result;
     }
 

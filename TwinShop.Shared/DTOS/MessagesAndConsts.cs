@@ -43,6 +43,8 @@ namespace TwinShop.Shared.DTOS
         public const string Mandatory = "Please Fill the necesery field";
         public const string userNotLoginWithThisPhoneNumber = "Can't find any user with this number,Are you registered before?!";
         public const string IncorrectPhoneNumberOrPassword = "Phonenumber or password is not correct";
+        public const string WrongCurrentPassword = "Wrong Current Password!";
+        public const string PasswordChangedSuccess = "Password Changed Succssesfuly";
         //==============================================================================================================================
         public const string ProductName = "Please enter the name of the product";
         public const string ProductInitialPrice = "Please enter the initial price";
