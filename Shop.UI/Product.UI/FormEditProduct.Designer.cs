@@ -46,6 +46,9 @@
             txtProductName = new TextBox();
             lblProductName = new Label();
             pictureBoxProduct = new PictureBox();
+            flowLayoutPanelSideImages = new FlowLayoutPanel();
+            btnAddSideImage = new Button();
+            lblSideImagesCount = new Label();
             ((System.ComponentModel.ISupportInitialize)pictureBoxProduct).BeginInit();
             SuspendLayout();
             // 
@@ -197,7 +200,7 @@
             // 
             // pictureBoxProduct
             // 
-            pictureBoxProduct.Location = new Point(82, 11);
+            pictureBoxProduct.Location = new Point(12, 11);
             pictureBoxProduct.Margin = new Padding(3, 2, 3, 2);
             pictureBoxProduct.Name = "pictureBoxProduct";
             pictureBoxProduct.Size = new Size(170, 88);
@@ -207,11 +210,40 @@
             pictureBoxProduct.Click += pictureBoxProduct_Click;
             pictureBoxProduct.MouseHover += pictureBoxProduct_MouseHover;
             // 
+            // flowLayoutPanelSideImages
+            // 
+            flowLayoutPanelSideImages.Location = new Point(202, 11);
+            flowLayoutPanelSideImages.Name = "flowLayoutPanelSideImages";
+            flowLayoutPanelSideImages.Size = new Size(188, 88);
+            flowLayoutPanelSideImages.TabIndex = 40;
+            // 
+            // btnAddSideImage
+            // 
+            btnAddSideImage.Location = new Point(396, 11);
+            btnAddSideImage.Name = "btnAddSideImage";
+            btnAddSideImage.Size = new Size(27, 23);
+            btnAddSideImage.TabIndex = 41;
+            btnAddSideImage.Text = "➕";
+            btnAddSideImage.UseVisualStyleBackColor = true;
+            btnAddSideImage.Click += btnAddSideImage_Click;
+            // 
+            // lblSideImagesCount
+            // 
+            lblSideImagesCount.AutoSize = true;
+            lblSideImagesCount.Location = new Point(401, 42);
+            lblSideImagesCount.Name = "lblSideImagesCount";
+            lblSideImagesCount.Size = new Size(13, 15);
+            lblSideImagesCount.TabIndex = 42;
+            lblSideImagesCount.Text = "0";
+            // 
             // FormEditProduct
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(349, 332);
+            ClientSize = new Size(461, 325);
+            Controls.Add(lblSideImagesCount);
+            Controls.Add(btnAddSideImage);
+            Controls.Add(flowLayoutPanelSideImages);
             Controls.Add(cmbCategoryName);
             Controls.Add(cmbBrandName);
             Controls.Add(txtNumberInStorage);
@@ -258,5 +290,8 @@
         private TextBox txtProductName;
         private Label lblProductName;
         private PictureBox pictureBoxProduct;
+        private FlowLayoutPanel flowLayoutPanelSideImages;
+        private Button btnAddSideImage;
+        private Label lblSideImagesCount;
     }
 }

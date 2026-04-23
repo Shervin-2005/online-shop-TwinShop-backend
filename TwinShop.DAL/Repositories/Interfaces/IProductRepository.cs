@@ -16,5 +16,6 @@ namespace TwinShop.DAL.Repositories.Interfaces
         Task<OperationResult<List<ProductDto>>> GetAllAsync();
         Task<OperationResult> ProductNameExist(string Name);
         Task<OperationResult<List<ProductDto>>> SearhProductByName(string searchTerm);
+        Task<OperationResult<int>>GetProductIdByName(string productName);
     }
 }

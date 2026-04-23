@@ -69,8 +69,8 @@ public class SavePhoto : IDisposable
     public Task<OperationResult> SaveBrandMainAsync(string filePath, string brandName)
      => UploadAsync(filePath, string.Format(Folders.BrandMainImage, brandName));
 
-    public Task<OperationResult> SaveProductGalleryAsync(string filePath, int productId)
-        => UploadAsync(filePath, string.Format(Folders.ProductSideImages, productId));
+    public Task<OperationResult> SaveProductGalleryAsync(string filePath, string productName)
+        => UploadAsync(filePath, string.Format(Folders.ProductSideImages, productName));
 
     public Task<OperationResult> SaveUserProfileImageAsync(string filePath, int userId)
         => UploadAsync(filePath, string.Format(Folders.UserProfileImage, userId));

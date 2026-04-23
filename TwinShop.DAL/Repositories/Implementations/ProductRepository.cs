@@ -253,5 +253,21 @@ namespace TwinShop.DAL.Repositories.Implementations
                 return OperationResult<List<ProductDto>>.Failed(GetType().Name, ex);
             }
         }
+
+        public async Task<OperationResult<int>> GetProductIdByName(string productName)
+        {
+            try
+            {
+                var productId = await _dbContext.Products.AsNoTracking().
+                     Where(p => p.ProductName == productName && p.IsDeleted == false)
+                     .Select(p => p.ProductId)
+                     .FirstOrDefaultAsync();
+                return OperationResult<int>.SuccessedResult(productId!);
+            }
+            catch (Exception ex)
+            {
+                return OperationResult<int>.Failed(GetType().Name, ex);
+            }
+        }
     }
 }
