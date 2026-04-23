@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 using Twin_Shop__Web_API.DTOs.Brand;
+using Twin_Shop__Web_API.DTOs.Category;
 using Twin_Shop__Web_API.DTOs.Product;
 using Twin_Shop__Web_API.Entities;
 using Twin_Shop__Web_API.Services.Interfaces;
@@ -19,23 +20,26 @@ namespace Twin_Shop__Web_API.Services.Implementations
     {
         private readonly IBrandRepository _brandRepository;
         private readonly IErrorService _errorService;
+        private readonly ICategoryRepository _categoryRepository;
 
-        public BrandService(IErrorService errorService, IBrandRepository brandRepository)
+        public BrandService(IErrorService errorService, IBrandRepository brandRepository, ICategoryRepository categoryRepository)
         {
             _brandRepository = brandRepository;
             _errorService = errorService;
+            _categoryRepository = categoryRepository;
         }
 
-        public async Task<OperationResult<List<BrandDto>>> GetAllBrandsAsync()
+        public async Task<OperationResult<List<BrandViewModel>>> GetAllBrandsAsync()
         {
-            var result = await _brandRepository.GetAllAsync();
-            if (!result.Success)
+            var brandsResult = await _brandRepository.GetAllAsync();
+            if (!brandsResult.Success)
             {
-                var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
-                var resulterror = await _errorService.LogErrorAsync(error);
-                return OperationResult<List<BrandDto>>.Failed(resulterror.Message!.ErrorMessage());
+                var error = brandsResult.Exception!.ExceptionToErrorDTO(brandsResult.Message!);
+                var errorLog = await _errorService.LogErrorAsync(error);
+                return OperationResult<List<BrandViewModel>>.Failed(errorLog.Message!.ErrorMessage());
             }
-            return result;
+            var brands = BrandMapper.BrandDTOToBrandViewModel(brandsResult.Data);
+            return OperationResult<List<BrandViewModel>>.SuccessedResult(brands);
         }
 
         public async Task<OperationResult<BrandDto>> GetBrandByIdAsync(int id)
@@ -51,12 +55,41 @@ namespace Twin_Shop__Web_API.Services.Implementations
         }
         
 
-        public async Task<OperationResult> CreateBrandAsync(BrandViewModel brandView)
+        public async Task<OperationResult> CreateBrandAsync(BrandViewModel brandViewModel)
         {
-            if (!brandView.IsValid)
-                return OperationResult.Failed(brandView.ErrorMessage);
-            //نوشتن نحوه اضافه کردن عکس با حسین
-            BrandDto brandDto = brandView.ToBrandDTO();
+            if (!brandViewModel.IsValid)
+                return OperationResult.Failed(brandViewModel.ErrorMessage);
+
+            var isNameExist = await _brandRepository
+                                        .BrandNameExist(brandViewModel.BrandName!);
+            if (isNameExist.Success)
+            {
+                return OperationResult.Failed(MessagesAndConsts.BrandNameAlreadyExist);
+            }
+
+            if (!brandViewModel.MainImage!.Contains(MessagesAndConsts.Url))
+            {
+                using var savePhoto = new SavePhoto();
+                var savingPhoto = await savePhoto.SaveBrandMainAsync(brandViewModel.MainImage!, brandViewModel.BrandName!);
+                if (!savingPhoto.Success)
+                {
+                    var error = savingPhoto.Exception!.ExceptionToErrorDTO(savingPhoto.Message!);
+                    var errorLog = await _errorService.LogErrorAsync(error);
+                    return OperationResult.Failed(errorLog.Message!.ErrorMessage());
+                }
+
+                brandViewModel.MainImage = savingPhoto.Message;
+            }
+            var isCategoryExist= await _categoryRepository.CategoryNameExist(brandViewModel.CategoryName!);
+            if (!isCategoryExist.Success)
+            {
+                return OperationResult.Failed(MessagesAndConsts.CategoryNameNotExisted);
+            }
+            var CategoryIdResult = await _categoryRepository.GetCateogryByNameAsync(brandViewModel.CategoryName!);
+
+            brandViewModel.CategoryId = CategoryIdResult.Data;
+
+            BrandDto brandDto = brandViewModel.BrandViewModelToBrandDTO();
             var result = await _brandRepository.InsertAsync(brandDto);
             if (!result.Success)
             {
@@ -65,11 +98,9 @@ namespace Twin_Shop__Web_API.Services.Implementations
                 return OperationResult.Failed(result1.Message!.ErrorMessage());
             }
             return OperationResult.SuccessedResult(true, MessagesAndConsts.BrandAdded);
-
         }
         public async Task<OperationResult> DeleteBrandAsync(int id)
         {
-
             var result = await _brandRepository.DeleteAsync(id);
             if (!result.Success)
             {
@@ -80,13 +111,41 @@ namespace Twin_Shop__Web_API.Services.Implementations
             return OperationResult.SuccessedResult(true, MessagesAndConsts.DeleteBrand);
         }
 
-        public async Task<OperationResult> UpdateBrandAsync(BrandViewModel brandView,int id)
+        public async Task<OperationResult> UpdateBrandAsync(BrandViewModel brandViewModel,int id)
         {
-            if (!brandView.IsValid)
-                return OperationResult.Failed(brandView.ErrorMessage);
-            if (brandView.MainImage!.Contains(MessagesAndConsts.Url))
+             if (!brandViewModel.IsValid)
+                return OperationResult.Failed(brandViewModel.ErrorMessage);
+
+            var isNameExist = await _brandRepository
+                                        .BrandNameExist(brandViewModel.BrandName!);
+
+            if (isNameExist.Success)
             {
-                BrandDto brandDto = brandView.ToBrandDTO();
+                return OperationResult.Failed(MessagesAndConsts.BrandNameAlreadyExist);
+            }
+
+            if (!brandViewModel.MainImage!.Contains(MessagesAndConsts.Url))
+            {
+                using var savePhoto = new SavePhoto();
+                var savingPhoto = await savePhoto.SaveBrandMainAsync(brandViewModel.MainImage!, brandViewModel.BrandName!);
+                if (!savingPhoto.Success)
+                {
+                    var error = savingPhoto.Exception!.ExceptionToErrorDTO(savingPhoto.Message!);
+                    var result = await _errorService.LogErrorAsync(error);
+                    return OperationResult.Failed(result.Message!.ErrorMessage());
+                }
+                brandViewModel.MainImage = savingPhoto.Message;
+            }
+            var isCategoryExist = await _categoryRepository.CategoryNameExist(brandViewModel.CategoryName!);
+            if (!isCategoryExist.Success)
+            {
+                return OperationResult.Failed(MessagesAndConsts.CategoryNameNotExisted);
+            }
+            var CategoryIdResult = await _categoryRepository.GetCateogryByNameAsync(brandViewModel.CategoryName!);
+
+            brandViewModel.CategoryId = CategoryIdResult.Data;
+
+            BrandDto brandDto = brandViewModel.BrandViewModelToBrandDTO();
                 var resultUpdate = await _brandRepository.UpdateAsync(brandDto, id);
                 if (!resultUpdate.Success)
                 {
@@ -95,8 +154,6 @@ namespace Twin_Shop__Web_API.Services.Implementations
                     return eroorResult;
                 }
                 return OperationResult.SuccessedResult(true, MessagesAndConsts.update);
-            }
-            return OperationResult.SuccessedResult(true, MessagesAndConsts.update);
         }
 
         public async Task<OperationResult<List<BrandDto>>> GetBrandsByNameAsync(string name)
@@ -121,6 +178,22 @@ namespace Twin_Shop__Web_API.Services.Implementations
                 return OperationResult<List<BrandDto>>.Failed(errorResult.Message!.ErrorMessage());
             }
             return OperationResult<List<BrandDto>>.SuccessedResult(result.Data);
+        }
+        public async Task<OperationResult<List<BrandViewModel>>> SearchBrandsAsync(string searchTerm)
+        {
+            if (string.IsNullOrWhiteSpace(searchTerm))
+                return await GetAllBrandsAsync ();
+
+            var result = await _brandRepository.SearhBrandByName(searchTerm);
+            if (!result.Success)
+            {
+                var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
+                var errorLog = await _errorService.LogErrorAsync(error);
+                return OperationResult<List<BrandViewModel>>.Failed(errorLog.Message!.ErrorMessage());
+            }
+
+            var brands = BrandMapper.BrandDTOToBrandViewModel(result.Data);
+            return OperationResult<List<BrandViewModel>>.SuccessedResult(brands);
         }
     }
 

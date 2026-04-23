@@ -6,6 +6,7 @@ using Twin_Shop__Web_API.Entities;
 using TwinShop.DAL.Data;
 using TwinShop.DAL.Repositories.Interfaces;
 using TwinShop.Shared;
+using TwinShop.Shared.DTOS.Auth;
 
 namespace TwinShop.DAL.Repositories.Implementations
 {
@@ -46,7 +47,7 @@ namespace TwinShop.DAL.Repositories.Implementations
                     {
                         CategoryName = c.CategoryName,
                         MainImage = c.MainImage,
-
+                        CategoryId=c.CategoryId
                     }).ToListAsync();
                 return OperationResult<List<CategoryDto>>.SuccessedResult(categories);
             }
@@ -74,11 +75,11 @@ namespace TwinShop.DAL.Repositories.Implementations
             }
         }
 
-        public async Task<OperationResult<List<CategoryDto>>> GetCategoriesByNameAsync(string CategoryName)
+        public async Task<OperationResult<List<CategoryDto>>> GetCategoriesByNameAsync(string categoryName)
         {
             try
             {
-                var categories = await _dbContext.Categories.AsNoTracking().Where(c => c.CategoryName == CategoryName && c.IsDeleted == false)
+                var categories = await _dbContext.Categories.AsNoTracking().Where(c => c.CategoryName == categoryName && c.IsDeleted == false)
                     .Select(c => new CategoryDto
                     {
                         CategoryName = c.CategoryName,
@@ -89,6 +90,21 @@ namespace TwinShop.DAL.Repositories.Implementations
             catch (Exception ex)
             {
                 return OperationResult<List<CategoryDto>>.Failed(GetType().Name, ex);
+            }
+        }
+        public async Task<OperationResult<int>> GetCateogryByNameAsync(string categoryName)
+        {
+            try
+            {
+               var categoryId = await _dbContext.Categories.AsNoTracking().
+                    Where(c => c.CategoryName == categoryName && c.IsDeleted == false)
+                    .Select(c => c.CategoryId)
+                    .FirstOrDefaultAsync();
+                return OperationResult<int>.SuccessedResult(categoryId!);
+            }
+            catch (Exception ex)
+            {
+                return OperationResult<int>.Failed(GetType().Name, ex);
             }
         }
 
@@ -117,15 +133,43 @@ namespace TwinShop.DAL.Repositories.Implementations
             {
                 var existing = await _dbContext.Categories.Where(c => c.CategoryId == id).FirstAsync();
 
-               existing.CategoryName = categoryDto.CategoryName;
+                existing.CategoryName = categoryDto.CategoryName;
                 existing.MainImage= categoryDto.MainImage;
-                existing.IsDeleted = categoryDto.IsDeleted;
                 await _dbContext.SaveChangesAsync();
                 return OperationResult.SuccessedResult(); ;
             }
             catch (Exception ex)
             {
                 return OperationResult.Failed(GetType().Name, ex);
+            }
+        }
+        public async Task<OperationResult> CategoryNameExist(string Name)
+        {
+            var user = await _dbContext.Categories.Where(x => x.CategoryName == Name).FirstOrDefaultAsync();
+
+            return user != null ? OperationResult.SuccessedResult() : OperationResult<UserDto>.Failed();
+        }
+        public async Task<OperationResult<List<CategoryDto>>> SearhCategoryByName(string searchTerm)
+        {
+            try
+            {
+                var categories = await _dbContext.Categories
+                    .AsNoTracking()
+                    .Where(c => c.IsDeleted == false &&
+                                 c.CategoryName!.Contains(searchTerm))
+                    .Select(c => new CategoryDto
+                    {
+                        CategoryId = c.CategoryId,
+                        CategoryName=c.CategoryName,
+                        MainImage=c.MainImage,
+                    })
+                    .ToListAsync();
+
+                return OperationResult<List<CategoryDto>>.SuccessedResult(categories);
+            }
+            catch (Exception ex)
+            {
+                return OperationResult<List<CategoryDto>>.Failed(GetType().Name, ex);
             }
         }
     }

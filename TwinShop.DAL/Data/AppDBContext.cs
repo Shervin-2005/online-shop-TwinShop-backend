@@ -15,6 +15,7 @@ namespace TwinShop.DAL.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<User>Users { get; set; }
         public DbSet<ErrorLog> ErrorLogs { get; set; }
+        public DbSet<ProductSideImage> productSideImages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -134,6 +134,43 @@ namespace Shop.UI
                 return result;
             }
         }
+        public async Task<T> DeleteAsync<T>(string route)
+        {
+            string curl = "";
+            try
+            {
+                var req = new HttpRequestMessage(HttpMethod.Delete, new Uri(RouteConstants.BaseUrl + route));
+
+                curl = client.GenerateCurlInString(req);
+                var response = await _retryPolicy.ExecuteAsync(() => client.SendAsync(req));
+                if (!response.IsSuccessStatusCode)
+                {
+                    var result1 = await LogError<T, ErrorLogDTO>(new ErrorLogDTO
+                    {
+                        Curl = curl,
+                        Layer = GetType().Name,
+                        Message = string.Format("StatusCode= {0}", response.StatusCode)
+                    });
+                    return result1;
+                }
+                string content = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<T>(content);
+                return result!;
+            }
+            catch (Exception ex)
+            {
+                var result = await LogError<T, ErrorLogDTO>(new ErrorLogDTO
+                {
+                    Curl = curl,
+                    Layer = GetType().Name,
+                    Message = ex.Message,
+                    Route = route,
+                    Source = ex.Source,
+                    StackTrace = ex.StackTrace
+                });
+                return result;
+            }
+        }
         private async Task<Tout> LogError<Tout, Tin>(Tin error)
         {
             try
@@ -143,12 +180,12 @@ namespace Shop.UI
                 var response = await logClient.PostAsync(RouteConstants.LogError, stringContent);
                 string content = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<Tout>(content);
-                return result;
+                return result!;
             }
             catch (Exception ex)
             {
                 await FileLogService.SaveFailedLogAsync(ex, GetType().Name);
-                return default(Tout);
+                return default(Tout)!;
             }
 
         }

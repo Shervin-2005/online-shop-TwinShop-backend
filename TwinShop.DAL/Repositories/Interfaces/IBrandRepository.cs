@@ -13,6 +13,9 @@ namespace TwinShop.DAL.Repositories.Interfaces
         Task<OperationResult<List<BrandDto>>> GetBrandsByCategoryNameAsync(string categoryName);
         Task<OperationResult<BrandDto>> GetByIdAsync(int brandId);
         Task<OperationResult<List<BrandDto>>> GetAllAsync();
+        Task<OperationResult> BrandNameExist(string Name);
+        Task<OperationResult<List<BrandDto>>> SearhBrandByName(string searchTerm);
+        Task<OperationResult<int>> GetBrandByNameAsync(string brandName);
 
     }
 }

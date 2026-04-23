@@ -4,11 +4,14 @@ namespace Twin_Shop__Web_API.DTOs.Brand
 {
     public class BrandDto
     {
-        public string BrandName { get; set; }
 
-        public string MainImage { get; set; }
+        public int BrandId { get; set; }
 
-        public string CategoryName { get; set; }
+        public string? BrandName { get; set; }
+
+        public string? MainImage { get; set; }
+
+        public string? CategoryName { get; set; }
 
         public bool IsDeleted { get; set; }
 

@@ -11,15 +11,16 @@ namespace TwinShop.Shared.ViewModels
 {
     public class BrandViewModel:BaseValidatoin
     {
-       
+        public int BrandId { get; set; }
+
         [Required(ErrorMessage = MessagesAndConsts.BrandName)]
-        public string BrandName { get; set; }
+        public string? BrandName { get; set; }
 
         [Required(ErrorMessage = MessagesAndConsts.BrandPhoto)]
-        public string MainImage { get; set; }
+        public string? MainImage { get; set; }
 
         [Required(ErrorMessage = MessagesAndConsts.BrandCategoryName)]
-        public string CategoryName { get; set; }
+        public string? CategoryName { get; set; }
 
         public bool IsDeleted { get; set; }
 

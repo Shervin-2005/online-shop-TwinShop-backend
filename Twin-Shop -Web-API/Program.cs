@@ -26,6 +26,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 //builder.Services.AddControllersWithViews().AddNewtonsoftJson();
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductSideImageRepository , ProductSideImageRepository>();
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();

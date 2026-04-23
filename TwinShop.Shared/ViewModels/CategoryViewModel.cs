@@ -11,12 +11,13 @@ namespace TwinShop.Shared.ViewModels
 {
     public class CategoryViewModel:BaseValidatoin
     {
+        public int CategoryId { get; set; }
 
         [Required(ErrorMessage = MessagesAndConsts.CategoryName)]
-        public string CategoryName { get; set; }
+        public string? CategoryName { get; set; }
 
         [Required(ErrorMessage = MessagesAndConsts.CategoryPhoto)]
-        public string MainImage { get; set; }
+        public string? MainImage { get; set; }
 
         public bool IsDeleted { get; set; }
     }

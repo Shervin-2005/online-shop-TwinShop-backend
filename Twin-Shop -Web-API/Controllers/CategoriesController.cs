@@ -45,19 +45,31 @@ public class CategoriesController : BaseController
         return result;
     }
 
-    [HttpPut]
+    [HttpPost]
     public async Task<OperationResult> Update([FromBody]CategoryViewModel categoryView,int id)
     {
         var result = await _categoryService.UpdateCategoryAsync(categoryView, id);
         return result;
     }
     [HttpGet]
-   public async Task<OperationResult> GetCategoriesByNameAsync(string name)
+   public async Task<OperationResult> GetCategoriesByName(string name)
     {
         var result=await _categoryService.GetCategoriesByNameAsync(name);
         return result;
     }
 
+    [HttpGet]
+    public async Task<OperationResult> GetCategoryByName(string name)
+    {
+        var result = await _categoryService.GetCategoryByNameAsync(name);
+        return result;
+    }
+   [HttpGet]
+   public async Task<OperationResult> SearchCategories(string searchTerm)
+    {
+        var result= await _categoryService.SearchCategoriesAsync(searchTerm);
+        return result;
+    }
 
 
 }

@@ -1,11 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Twin_Shop__Web_API.DTOs.Brand;
+using Twin_Shop__Web_API.DTOs.Category;
 using Twin_Shop__Web_API.DTOs.Product;
 using Twin_Shop__Web_API.Entities;
 using TwinShop.DAL.Data;
 using TwinShop.DAL.Repositories.Interfaces;
 using TwinShop.Shared;
+using TwinShop.Shared.DTOS.Auth;
 
 namespace TwinShop.DAL.Repositories.Implementations
 {
@@ -61,12 +63,10 @@ namespace TwinShop.DAL.Repositories.Implementations
             {
                 Brand brand = new Brand
                 {
-
-                    BrandName = brandDto.BrandName,
-                    MainImage = brandDto.MainImage,
-                    CategoryName = brandDto.CategoryName,
+                    BrandName = brandDto.BrandName!,
+                    MainImage = brandDto.MainImage!,
+                    CategoryName = brandDto.CategoryName!,
                     CategoryId =brandDto.CategoryId,
-                    IsDeleted=brandDto.IsDeleted,
                 };
                 _dbContext.Brands.Add(brand);
                 await _dbContext.SaveChangesAsync();
@@ -84,11 +84,10 @@ namespace TwinShop.DAL.Repositories.Implementations
             {
                 var existing = await _dbContext.Brands.Where(b => b.BrandId == id).FirstAsync();
 
-                existing.BrandName = brandDto.BrandName;
-                existing.MainImage = brandDto.MainImage;
-                existing.CategoryName = brandDto.CategoryName;
+                existing.BrandName = brandDto.BrandName!;
+                existing.MainImage = brandDto.MainImage!;
+                existing.CategoryName = brandDto.CategoryName!;
                 existing.CategoryId = brandDto.CategoryId;
-                existing.IsDeleted = brandDto.IsDeleted;
                 await _dbContext.SaveChangesAsync();
                 return OperationResult.SuccessedResult(); ;
             }
@@ -105,6 +104,7 @@ namespace TwinShop.DAL.Repositories.Implementations
                 var brands = await _dbContext.Brands.AsNoTracking()
                     .Where(b => b.IsDeleted == false).Select(b => new BrandDto
                     {
+                        BrandId = b.BrandId,
                         BrandName = b.BrandName,
                         MainImage = b.MainImage,
                         CategoryName = b.CategoryName,
@@ -151,6 +151,53 @@ namespace TwinShop.DAL.Repositories.Implementations
                        CategoryName = b.CategoryName,
                        CategoryId = b.CategoryId,
                    }).ToListAsync();
+                return OperationResult<List<BrandDto>>.SuccessedResult(brands);
+            }
+            catch (Exception ex)
+            {
+                return OperationResult<List<BrandDto>>.Failed(GetType().Name, ex);
+            }
+        }
+        public async Task<OperationResult<int>> GetBrandByNameAsync(string brandName)
+        {
+            try
+            {
+                var brandId = await _dbContext.Brands.AsNoTracking().
+                     Where(b => b.BrandName == brandName && b.IsDeleted == false)
+                     .Select(b => b.BrandId)
+                     .FirstOrDefaultAsync();
+                return OperationResult<int>.SuccessedResult(brandId!);
+            }
+            catch (Exception ex)
+            {
+                return OperationResult<int>.Failed(GetType().Name, ex);
+            }
+        }
+
+        public async Task<OperationResult> BrandNameExist(string Name)
+        {
+            var user = await _dbContext.Brands.Where(x => x.BrandName == Name).FirstOrDefaultAsync();
+
+            return user != null ? OperationResult.SuccessedResult() : OperationResult<UserDto>.Failed();
+        }
+        public async Task<OperationResult<List<BrandDto>>> SearhBrandByName(string searchTerm)
+        {
+            try
+            {
+                var brands = await _dbContext.Brands
+                    .AsNoTracking()
+                    .Where(c => c.IsDeleted == false &&
+                                 c.BrandName!.Contains(searchTerm))
+                    .Select(c => new BrandDto
+                    {
+                        BrandId = c.BrandId,
+                        BrandName= c.BrandName,
+                        CategoryId = c.CategoryId,
+                        CategoryName = c.CategoryName,
+                        MainImage = c.MainImage,
+                    })
+                    .ToListAsync();
+
                 return OperationResult<List<BrandDto>>.SuccessedResult(brands);
             }
             catch (Exception ex)

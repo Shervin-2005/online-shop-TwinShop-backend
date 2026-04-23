@@ -57,6 +57,31 @@ namespace TwinShop.DAL.Migrations
                     b.ToTable("ErrorLogs");
                 });
 
+            modelBuilder.Entity("TwinShop.DAL.Entities.ProductSideImage", b =>
+                {
+                    b.Property<int>("SideImageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SideImageId"));
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SideImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("SideImageId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("productSideImages");
+                });
+
             modelBuilder.Entity("Twin_Shop__Web_API.Entities.Brand", b =>
                 {
                     b.Property<int>("BrandId")
@@ -128,13 +153,16 @@ namespace TwinShop.DAL.Migrations
                     b.Property<int>("AveScoreOfUsers")
                         .HasColumnType("int");
 
-                    b.Property<int>("BrandId")
+                    b.Property<int?>("BrandId")
                         .HasColumnType("int");
 
                     b.Property<string>("BrandName")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
 
                     b.Property<string>("CategoryName")
                         .IsRequired()
@@ -152,7 +180,7 @@ namespace TwinShop.DAL.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("MainImage")
+                    b.Property<string>("MainImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -161,7 +189,7 @@ namespace TwinShop.DAL.Migrations
 
                     b.Property<string>("ProductName")
                         .IsRequired()
-                        .HasMaxLength(100)
+                        .HasMaxLength(1000)
                         .HasColumnType("nvarchar");
 
                     b.Property<int>("SecondryPrice")
@@ -215,6 +243,17 @@ namespace TwinShop.DAL.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("TwinShop.DAL.Entities.ProductSideImage", b =>
+                {
+                    b.HasOne("Twin_Shop__Web_API.Entities.Product", "Product")
+                        .WithMany("SideImages")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("Twin_Shop__Web_API.Entities.Brand", b =>
                 {
                     b.HasOne("Twin_Shop__Web_API.Entities.Category", "Category")
@@ -231,8 +270,7 @@ namespace TwinShop.DAL.Migrations
                     b.HasOne("Twin_Shop__Web_API.Entities.Brand", "Brand")
                         .WithMany("Products")
                         .HasForeignKey("BrandId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Brand");
                 });
@@ -245,6 +283,11 @@ namespace TwinShop.DAL.Migrations
             modelBuilder.Entity("Twin_Shop__Web_API.Entities.Category", b =>
                 {
                     b.Navigation("Brands");
+                });
+
+            modelBuilder.Entity("Twin_Shop__Web_API.Entities.Product", b =>
+                {
+                    b.Navigation("SideImages");
                 });
 #pragma warning restore 612, 618
         }

@@ -11,21 +11,27 @@ namespace TwinShop.Shared.Mappers
 {
     public static class CategoryMapper
     {
-        public static CategoryDto ToCategoryDTO(this CategoryViewModel categoryView)
+        public static CategoryDto CategoryCardViewModelToCategoryDTO(this CategoryViewModel categoryView)
         {
             return new CategoryDto
             {
-               CategoryName = categoryView.CategoryName,
-               MainImage = categoryView.MainImage,
+                CategoryId = categoryView.CategoryId,
+                CategoryName = categoryView.CategoryName,
+                MainImage = categoryView.MainImage,
             };
         }
-        public static CategoryViewModel ToCategoryViewModel(this CategoryDto categoryDto)
+        public static CategoryViewModel CategoryDTOToCategoryCardViewModel(this CategoryDto categoryDto)
         {
             return new CategoryViewModel
             {
-                CategoryName=categoryDto.CategoryName,
-                MainImage=categoryDto.MainImage,
+                CategoryName = categoryDto.CategoryName,
+                MainImage = categoryDto.MainImage,
+                CategoryId = categoryDto.CategoryId,
             };
+        }
+        public static List<CategoryViewModel> CategoryDTOToCategoryCardViewModel(this List<CategoryDto> categories)
+        {
+            return categories.Select(c => c.CategoryDTOToCategoryCardViewModel()).ToList();
         }
     }
 }

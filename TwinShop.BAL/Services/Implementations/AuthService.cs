@@ -65,8 +65,8 @@ namespace Twin_Shop__Web_API.Services.Implementations
                 return OperationResult.Failed(userInfoViewModel.ErrorMessage);
             if (!userInfoViewModel.ProfileImage!.Contains(MessagesAndConsts.Url))
             {
-                var savePhoto = new SavePhoto();
-                var savingPhoto = await savePhoto.SaveAsync(userInfoViewModel.ProfileImage!);
+                using var savePhoto = new SavePhoto();
+                var savingPhoto = await savePhoto.SaveUserProfileImageAsync(userInfoViewModel.ProfileImage!,userInfoViewModel.Id);
                 if (!savingPhoto.Success)
                 {
                     var error = savingPhoto.Exception!.ExceptionToErrorDTO(savingPhoto.Message!);

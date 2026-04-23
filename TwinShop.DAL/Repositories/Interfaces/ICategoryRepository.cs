@@ -6,12 +6,15 @@ namespace TwinShop.DAL.Repositories.Interfaces
 {
     public interface ICategoryRepository
     {
-        public Task<OperationResult> InsertAsync(CategoryDto categoryDto);
-        public Task<OperationResult> DeleteAsync(int id);
-        public Task<OperationResult> UpdateAsync(CategoryDto categoryDto, int id);
-        public Task<OperationResult<List<CategoryDto>>> GetCategoriesByNameAsync(string CategoryName);
-        public Task<OperationResult<CategoryDto>> GetByIdAsync(int CategoryId);
-        public Task<OperationResult<List<CategoryDto>>> GetAllAsync();
+        Task<OperationResult> InsertAsync(CategoryDto categoryDto);
+        Task<OperationResult> DeleteAsync(int id);
+        Task<OperationResult> UpdateAsync(CategoryDto categoryDto, int id);
+        Task<OperationResult<List<CategoryDto>>> GetCategoriesByNameAsync(string CategoryName);
+        Task<OperationResult<int>> GetCateogryByNameAsync(string categoryName);
+        Task<OperationResult<CategoryDto>> GetByIdAsync(int CategoryId);
+        Task<OperationResult<List<CategoryDto>>> GetAllAsync();
+        Task<OperationResult> CategoryNameExist(string Name);
+        Task<OperationResult<List<CategoryDto>>> SearhCategoryByName(string searchTerm);
     }
 }
    

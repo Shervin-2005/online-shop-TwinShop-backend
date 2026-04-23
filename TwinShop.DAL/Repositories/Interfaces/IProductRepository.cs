@@ -6,13 +6,15 @@ namespace TwinShop.DAL.Repositories.Interfaces
 {
     public interface IProductRepository 
     {
-        public Task<OperationResult> InsertAsync(ProductDto product);
-        public Task<OperationResult> DeleteAsync(int id);
-        public Task<OperationResult> UpdateAsync(ProductDto product,int id);
-        public Task<OperationResult<List<ProductDto>>> GetProductsByNameAsync(string productName);
-        public Task<OperationResult<List<ProductDto>>> GetProductsByBrandNameAsync(string brandName);
-        public Task<OperationResult<List<ProductDto>>> GetProductsByCategoryNameAsync(string categoryName);
-        public Task<OperationResult<ProductDto>> GetByIdAsync(int productId);
-        public Task<OperationResult<List<ProductDto>>> GetAllAsync();
+        Task<OperationResult> InsertAsync(ProductDto product);
+        Task<OperationResult> DeleteAsync(int id);
+        Task<OperationResult> UpdateAsync(ProductDto product,int id);
+        Task<OperationResult<List<ProductDto>>> GetProductsByNameAsync(string productName);
+        Task<OperationResult<List<ProductDto>>> GetProductsByBrandNameAsync(string brandName);
+        Task<OperationResult<List<ProductDto>>> GetProductsByCategoryNameAsync(string categoryName);
+        Task<OperationResult<ProductDto>> GetByIdAsync(int productId);
+        Task<OperationResult<List<ProductDto>>> GetAllAsync();
+        Task<OperationResult> ProductNameExist(string Name);
+        Task<OperationResult<List<ProductDto>>> SearhProductByName(string searchTerm);
     }
 }

@@ -10,32 +10,38 @@ namespace TwinShop.Shared.Mappers
 {
     public static class ProductMapper
     {
-        public static ProductDto ToProductDTO(this ProductViewModel productView)
+        public static ProductDto ProductViewModelToProductDTO(this ProductCardViewModel productView)
         {
             return new ProductDto
             {
                 ProductName = productView.ProductName,
+                ProductId = productView.ProductId,
                 BrandName = productView.BrandName,
                 BrandId = productView.BrandId,
+                CategoryId = productView.CategoryId,
                 CategoryName = productView.CategoryName,
                 Description = productView.Description,
-                MainImage= productView.MainImage,
+                MainImageUrl= productView.MainImageUrl,
                 NumberInStorage = productView.NumberInStorage,
                 InitialPrice = productView.InitialPrice, 
                 SecondryPrice = productView.SecondryPrice,
                 IsDeleted = productView.IsDeleted,
             };
         }
-        public static ProductViewModel ToProductViewModel(this ProductDto product)
+        public static List<ProductCardViewModel> ProductDTOToProductCardViewModel(this List<ProductDto> products)
         {
-            return new ProductViewModel
+            return products.Select(p => p.ProductDTOToProductCardViewModel()).ToList();
+        }
+        public static ProductCardViewModel ProductDTOToProductCardViewModel(this ProductDto product)
+        {
+            return new ProductCardViewModel
             {
-                ProductName = product.ProductName,
-                BrandName = product.BrandName,
-                BrandId = product.BrandId,
-                CategoryName = product.CategoryName,
-                Description = product.Description,
-                MainImage = product.MainImage,
+                ProductName = product.ProductName!,
+                ProductId = product.ProductId!,
+                BrandName = product.BrandName!,
+                CategoryName = product.CategoryName!,
+                Description = product.Description!,
+                MainImageUrl = product.MainImageUrl,
                 NumberInStorage = product.NumberInStorage,
                 InitialPrice = product.InitialPrice,
                 SecondryPrice = product.SecondryPrice,

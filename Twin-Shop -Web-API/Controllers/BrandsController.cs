@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Twin_Shop__Web_API.Controllers;
 using Twin_Shop__Web_API.DTOs.Brand;
 using Twin_Shop__Web_API.Services.Implementations;
@@ -30,9 +31,9 @@ public class BrandsController : BaseController
     }
 
     [HttpPost]
-    public async Task<OperationResult> Create([FromBody]BrandViewModel brandView)
+    public async Task<OperationResult> Create([FromBody]BrandViewModel brandViewModel)
     {
-        var result = await _brandService.CreateBrandAsync(brandView);
+        var result = await _brandService.CreateBrandAsync(brandViewModel);
         return result;
     }
 
@@ -43,7 +44,7 @@ public class BrandsController : BaseController
         return result;
     }
 
-    [HttpPut]
+    [HttpPost]
     public async Task<OperationResult> Update([FromBody]BrandViewModel brandView,int id)
     {
         var result = await _brandService.UpdateBrandAsync(brandView,id);
@@ -62,5 +63,12 @@ public class BrandsController : BaseController
     {
         var result = await _brandService.GetBrandsByCategoryNameAsync(categoryName);
         return result;
+    }
+
+    [HttpGet]
+    public async Task<OperationResult> SearchBrands(string searchTerm)
+    {
+        var result= await _brandService.SearchBrandsAsync(searchTerm);
+        return result;  
     }
 }

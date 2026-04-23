@@ -107,7 +107,7 @@ namespace Shop.UI
 
         private void ProfilePictureBox_LoadCompleted(object sender, AsyncCompletedEventArgs e)
         {
-            
+           // ProfilePictureBox.ImageLocation = profileImagePath;
         }
 
         private void txtPhone_TextChanged(object sender, EventArgs e)

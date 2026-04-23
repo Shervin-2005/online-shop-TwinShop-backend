@@ -2,6 +2,7 @@
 using Twin_Shop__Web_API.Controllers;
 using Twin_Shop__Web_API.DTOs.Product;
 using Twin_Shop__Web_API.Entities;
+using Twin_Shop__Web_API.Services.Implementations;
 using Twin_Shop__Web_API.Services.Interfaces;
 using TwinShop.Shared;
 using TwinShop.Shared.ViewModels;
@@ -30,9 +31,9 @@ public class ProductsController : BaseController
     } 
 
     [HttpPost]
-    public async Task<OperationResult> Create([FromBody] ProductViewModel productView)
+    public async Task<OperationResult> Create([FromBody] ProductCardViewModel productCardViewModel)
     {
-        var result = await _productService.CreateProductAsync(productView);
+        var result = await _productService.CreateProductAsync(productCardViewModel);
         return result;
     }
 
@@ -43,8 +44,8 @@ public class ProductsController : BaseController
         return result;
     }
 
-    [HttpPut]
-    public async Task<OperationResult> Update([FromBody]ProductViewModel productView,int id)
+    [HttpPost]
+    public async Task<OperationResult> Update([FromBody]ProductCardViewModel productView,int id)
     {
 
         var result = await _productService.UpdateProductAsync(productView,id);
@@ -68,6 +69,12 @@ public class ProductsController : BaseController
     public async Task<OperationResult<List<ProductDto>>> GetProductsByCategoryNameAsync(string categoryName)
     {
         var result = await _productService.GetProductsByCategoryNameAsync(categoryName);
+        return result;
+    }
+    [HttpGet]
+    public async Task<OperationResult> SearchProducts(string searchTerm)
+    {
+        var result = await _productService.SearchProductsAsync(searchTerm);
         return result;
     }
 }
