@@ -1,15 +1,20 @@
-﻿using Twin_Shop__Web_API.Entities;
+﻿using Twin_Shop__Web_API.DTOs.Category;
+using Twin_Shop__Web_API.Entities;
+using TwinShop.Shared;
 
 namespace TwinShop.DAL.Repositories.Interfaces
 {
     public interface ICategoryRepository
     {
-        public Task<bool> InsertAsync(Category category);
-        public Task<bool> DeleteAsync(int id);
-        public Task<bool> UpdateAsync(Category category);
-        public Task<List<Category?>> GetCategoriesByNameAsync(string categoryName);
-        public Task<Category> GetByIdAsync(int categoryId);
-        public Task<List<Category>> GetAllAsync();
+        Task<OperationResult> InsertAsync(CategoryDto categoryDto);
+        Task<OperationResult> DeleteAsync(int id);
+        Task<OperationResult> UpdateAsync(CategoryDto categoryDto, int id);
+        Task<OperationResult<List<CategoryDto>>> GetCategoriesByNameAsync(string CategoryName);
+        Task<OperationResult<int>> GetCateogryByNameAsync(string categoryName);
+        Task<OperationResult<CategoryDto>> GetByIdAsync(int CategoryId);
+        Task<OperationResult<List<CategoryDto>>> GetAllAsync();
+        Task<OperationResult> CategoryNameExist(string Name);
+        Task<OperationResult<List<CategoryDto>>> SearhCategoryByName(string searchTerm);
     }
 }
    

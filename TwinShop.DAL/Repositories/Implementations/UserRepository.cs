@@ -1,7 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Twin_Shop__Web_API.Data;
+﻿using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Twin_Shop__Web_API.Entities;
+using TwinShop.DAL.Data;
 using TwinShop.DAL.Repositories.Interfaces;
+using TwinShop.Shared;
+using TwinShop.Shared.DTOS;
+using TwinShop.Shared.DTOS.Auth;
 
 namespace TwinShop.DAL.Repositories.Implementations
 {
@@ -14,43 +18,141 @@ namespace TwinShop.DAL.Repositories.Implementations
             _dbContext = dbContext;
         }
 
-        public async Task<User?> GetByPhoneAsync(string phone)
-        {
-            var user = await _dbContext.Users.Where(x => x.PhoneNumber == phone).FirstOrDefaultAsync();
-            return user;
+        public async Task<OperationResult<UserDto>?> GetUserByPhoneAsync(string phone)
+        {         
+                var user = await _dbContext.Users.AsNoTracking().Where(u => u.PhoneNumber == phone)
+                    .Select(u => new UserDto
+                    {
+                        Id=u.UserId,
+                        ProfileImage =u.ProfileImage,
+                        FirstName = u.FirstName,
+                        LastName = u.LastName,
+                        PhoneNumber= u.PhoneNumber,
+                        Email = u.Email,
+                        PasswordHash = u.PasswordHash,
+                    }).FirstOrDefaultAsync();
+           
+            return user!=null ?OperationResult<UserDto>.SuccessedResult(user): OperationResult<UserDto>.Failed(MessagesAndConsts.userNotLoginWithThisPhoneNumber);
         }
+       
 
-        public async Task<User?> GetByEmailAsync(string email)
-        {
-            var user = await _dbContext.Users.Where(x => x.Email == email).FirstOrDefaultAsync();
-            return user;
-        }
-
-        public async Task<bool> PhoneExistsAsync(string phone)
-        {
-            var result = await _dbContext.Users.Where(x => x.PhoneNumber == phone).AnyAsync();
-            return result;
-        }
-
-        public async Task AddUserAsync(User user)
-        {
-            _dbContext.Users.Add(user);
-            await _dbContext.SaveChangesAsync();
-        }
-
-        public async Task<bool> ChangePasswordAsync(User user)
+        public async Task<OperationResult<UserDto>?> GetByEmailAsync(string email)
         {
             try
             {
-                var existingUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserId == user.UserId);
-
-                existingUser.PasswordHash = user.PasswordHash;
-                return true;
+                var user = await _dbContext.Users.AsNoTracking().Where(u => u.Email == email)
+                    .Select(u => new UserDto
+                    {
+                        Id = u.UserId,
+                        ProfileImage = u.ProfileImage,
+                        FirstName = u.FirstName,
+                        LastName = u.LastName,
+                        PhoneNumber = u.PhoneNumber,
+                        Email = u.Email,
+                    }).FirstOrDefaultAsync();
+                return OperationResult<UserDto>.SuccessedResult(user!);
             }
             catch (Exception ex)
             {
-                return false;
+                return OperationResult<UserDto>.Failed(GetType().Name, ex);
+            }
+        }
+        
+        public async Task<OperationResult> PhoneExistsAsync(string phone)
+        {
+            var user= await _dbContext.Users.Where(x => x.PhoneNumber == phone).FirstOrDefaultAsync();
 
+            return user != null ? OperationResult.SuccessedResult() : OperationResult<UserDto>.Failed();
+        }
+
+        public async Task<OperationResult> EmailExistsAsync(string email)
+        {
+            try
+            {
+                await _dbContext.Users.Where(x => x.Email == email).AnyAsync();
+                return OperationResult.SuccessedResult();
+            }
+            catch (Exception ex)
+            {
+                return OperationResult.Failed(GetType().Name, ex);
+            }
+        }
+
+        public async Task<OperationResult> AddUserAsync(UserDto userDto)
+        {
+
+            User user = new User
+            {
+                PhoneNumber = userDto.PhoneNumber,
+                PasswordHash = userDto.PasswordHash,
+                ProfileImage=userDto.ProfileImage,
+            };
+            _dbContext.Users.Add(user);
+            await _dbContext.SaveChangesAsync();
+                return OperationResult.SuccessedResult();
+            
+        }
+        //اشتباهه باید اصلاح بشه
+        public async Task<OperationResult>ChangePasswordAsync(UserDto userDto,string newPassword)
+        {
+            try
+            {
+                var existingUser = await _dbContext.Users.FirstAsync();
+                existingUser.PasswordHash = userDto.PasswordHash;
+                await _dbContext.SaveChangesAsync();
+                return OperationResult.SuccessedResult();
+            }
+            catch (Exception ex)
+            {
+                return OperationResult.Failed(GetType().Name, ex);
+            }
+        }
+
+        public async Task<OperationResult> VerifyPassword(string passwordHashUser,string passwordHashUserDto)
+        {
+            bool result= (passwordHashUser == passwordHashUserDto);
+            if(result) return  OperationResult.SuccessedResult();
+            else return  OperationResult.Failed(MessagesAndConsts.IncorrectPhoneNumberOrPassword);
+        }
+
+        public async Task<OperationResult> UpdateUserAsync(UserDto userDto)
+        {
+            try
+            {
+               var user=new User { UserId= userDto.Id };
+                _dbContext.Attach(user);
+
+
+                user.FirstName = userDto.FirstName;
+                user.LastName = userDto.LastName;
+                user.Email = userDto.Email;
+                user.PhoneNumber = userDto.PhoneNumber!;  
+                user.ProfileImage = userDto.ProfileImage!;
+                user.PasswordHash = userDto.PasswordHash;
+
+
+                await _dbContext.SaveChangesAsync();
+                return OperationResult.SuccessedResult(); ;
+            }
+            catch (Exception ex)
+            {
+                return  OperationResult.Failed(GetType().Name, ex);
+            }
+        }
+        public async Task<OperationResult> UpdateUserPassword(UserDto userDto)
+        {
+            try
+            {
+                var user = new User { UserId = userDto.Id };
+                _dbContext.Attach(user);
+                user.PasswordHash = userDto.PasswordHash;
+
+                await _dbContext.SaveChangesAsync();
+                return OperationResult.SuccessedResult(); ;
+            }
+            catch (Exception ex)
+            {
+                return OperationResult.Failed(GetType().Name, ex);
             }
         }
     }

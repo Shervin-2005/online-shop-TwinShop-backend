@@ -1,15 +1,20 @@
-﻿using Twin_Shop__Web_API.DTOs.Auth;
+﻿
 using Twin_Shop__Web_API.Entities;
+using TwinShop.Shared;
 using TwinShop.Shared.DTOS.Auth;
+using TwinShop.Shared.ViewModels.UserViewModels;
 
 
 namespace Twin_Shop__Web_API.Services.Interfaces
 {
     public interface IAuthService
     {
-        Task <string> RegisterAsync(RegisterDto dto);
-        Task<bool> LoginAsync(LoginDto dto);
-        Task<UserDto> GetByEmailAsync(string email);
-        Task<UserDto> GetByPhoneAsync(string phoneNumber);
+        Task<OperationResult> RegisterAsync(RegisterUserViewModel registerUserViewModel);
+        Task<OperationResult> EditUserInfoAsync(UserInfoViewModel userInfoViewModel, string phoneNumber);
+        Task<OperationResult> LoginWithVerificationCodeAsync(UserViewModel userViewModel);
+        Task<OperationResult<LoginUserViewModel>> LoginWithPasswordAsync(LoginUserViewModel LoginUserViewModel);
+        Task<OperationResult<UserInfoViewModel>> GetByEmailAsync(string email);
+        Task<OperationResult<UserInfoViewModel>> GetUserByPhoneAsync(string phoneNumber);
+        Task<OperationResult> ChangePasswordAsync( ChangePasswordUserViewModel changePasswordUserViewModel,string phoneNumber);
     }
 }

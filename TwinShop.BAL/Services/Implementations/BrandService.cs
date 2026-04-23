@@ -1,69 +1,199 @@
 ﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 using Twin_Shop__Web_API.DTOs.Brand;
+using Twin_Shop__Web_API.DTOs.Category;
+using Twin_Shop__Web_API.DTOs.Product;
 using Twin_Shop__Web_API.Entities;
 using Twin_Shop__Web_API.Services.Interfaces;
+using TwinShop.BLL.Services.Interfaces;
+using TwinShop.DAL.Repositories.Implementations;
 using TwinShop.DAL.Repositories.Interfaces;
+using TwinShop.Shared;
+using TwinShop.Shared.DTOS;
+using TwinShop.Shared.ErrorHandling;
+using TwinShop.Shared.Mappers;
+using TwinShop.Shared.ViewModels;
 namespace Twin_Shop__Web_API.Services.Implementations
 {
     public class BrandService : IBrandService
     {
         private readonly IBrandRepository _brandRepository;
-        private readonly IMapper _mapper;
+        private readonly IErrorService _errorService;
+        private readonly ICategoryRepository _categoryRepository;
 
-
-        public BrandService(IBrandRepository brandRepository, IMapper mapper)
+        public BrandService(IErrorService errorService, IBrandRepository brandRepository, ICategoryRepository categoryRepository)
         {
             _brandRepository = brandRepository;
-            _mapper = mapper;
+            _errorService = errorService;
+            _categoryRepository = categoryRepository;
         }
 
-        public async Task<List<BrandDto>> GetAllBrandsAsync()
+        public async Task<OperationResult<List<BrandViewModel>>> GetAllBrandsAsync()
         {
-            var brands = await _brandRepository.GetAllAsync();
-            return _mapper.Map<List<BrandDto>>(brands);
+            var brandsResult = await _brandRepository.GetAllAsync();
+            if (!brandsResult.Success)
+            {
+                var error = brandsResult.Exception!.ExceptionToErrorDTO(brandsResult.Message!);
+                var errorLog = await _errorService.LogErrorAsync(error);
+                return OperationResult<List<BrandViewModel>>.Failed(errorLog.Message!.ErrorMessage());
+            }
+            var brands = BrandMapper.BrandDTOToBrandViewModel(brandsResult.Data);
+            return OperationResult<List<BrandViewModel>>.SuccessedResult(brands);
         }
 
-        public async Task<BrandDto> GetBrandByIdAsync(int id)
+        public async Task<OperationResult<BrandDto>> GetBrandByIdAsync(int id)
         {
-            var brand = await _brandRepository.GetByIdAsync(id);
-            if (brand == null) return null;
+            var result = await _brandRepository.GetByIdAsync(id);
+            if (!result.Success)
+            {
+                var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
+                var resultError = await _errorService.LogErrorAsync(error);
+                return OperationResult<BrandDto>.Failed(resultError.Message!.ErrorMessage());
+            }
+            return result;
+        }
+        
 
-            return _mapper.Map<BrandDto>(brand);
+        public async Task<OperationResult> CreateBrandAsync(BrandViewModel brandViewModel)
+        {
+            if (!brandViewModel.IsValid)
+                return OperationResult.Failed(brandViewModel.ErrorMessage);
+
+            var isNameExist = await _brandRepository
+                                        .BrandNameExist(brandViewModel.BrandName!);
+            if (isNameExist.Success)
+            {
+                return OperationResult.Failed(MessagesAndConsts.BrandNameAlreadyExist);
+            }
+
+            if (!brandViewModel.MainImage!.Contains(MessagesAndConsts.Url))
+            {
+                using var savePhoto = new SavePhoto();
+                var savingPhoto = await savePhoto.SaveBrandMainAsync(brandViewModel.MainImage!, brandViewModel.BrandName!);
+                if (!savingPhoto.Success)
+                {
+                    var error = savingPhoto.Exception!.ExceptionToErrorDTO(savingPhoto.Message!);
+                    var errorLog = await _errorService.LogErrorAsync(error);
+                    return OperationResult.Failed(errorLog.Message!.ErrorMessage());
+                }
+
+                brandViewModel.MainImage = savingPhoto.Message;
+            }
+            var isCategoryExist= await _categoryRepository.CategoryNameExist(brandViewModel.CategoryName!);
+            if (!isCategoryExist.Success)
+            {
+                return OperationResult.Failed(MessagesAndConsts.CategoryNameNotExisted);
+            }
+            var CategoryIdResult = await _categoryRepository.GetCateogryByNameAsync(brandViewModel.CategoryName!);
+
+            brandViewModel.CategoryId = CategoryIdResult.Data;
+
+            BrandDto brandDto = brandViewModel.BrandViewModelToBrandDTO();
+            var result = await _brandRepository.InsertAsync(brandDto);
+            if (!result.Success)
+            {
+                var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
+                var result1 = await _errorService.LogErrorAsync(error);
+                return OperationResult.Failed(result1.Message!.ErrorMessage());
+            }
+            return OperationResult.SuccessedResult(true, MessagesAndConsts.BrandAdded);
+        }
+        public async Task<OperationResult> DeleteBrandAsync(int id)
+        {
+            var result = await _brandRepository.DeleteAsync(id);
+            if (!result.Success)
+            {
+                var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
+                var errorResult = await _errorService.LogErrorAsync(error);
+                return OperationResult.Failed(errorResult.Message!.ErrorMessage());
+            }
+            return OperationResult.SuccessedResult(true, MessagesAndConsts.DeleteBrand);
         }
 
-        public async Task<BrandDto> CreateBrandAsync(CreateBrandDto dto)
+        public async Task<OperationResult> UpdateBrandAsync(BrandViewModel brandViewModel,int id)
         {
-            var brand = _mapper.Map<Brand>(dto);
-            await _brandRepository.InsertAsync(brand);
-            return _mapper.Map<BrandDto>(brand);
+             if (!brandViewModel.IsValid)
+                return OperationResult.Failed(brandViewModel.ErrorMessage);
+
+            var isNameExist = await _brandRepository
+                                        .BrandNameExist(brandViewModel.BrandName!);
+
+            if (isNameExist.Success)
+            {
+                return OperationResult.Failed(MessagesAndConsts.BrandNameAlreadyExist);
+            }
+
+            if (!brandViewModel.MainImage!.Contains(MessagesAndConsts.Url))
+            {
+                using var savePhoto = new SavePhoto();
+                var savingPhoto = await savePhoto.SaveBrandMainAsync(brandViewModel.MainImage!, brandViewModel.BrandName!);
+                if (!savingPhoto.Success)
+                {
+                    var error = savingPhoto.Exception!.ExceptionToErrorDTO(savingPhoto.Message!);
+                    var result = await _errorService.LogErrorAsync(error);
+                    return OperationResult.Failed(result.Message!.ErrorMessage());
+                }
+                brandViewModel.MainImage = savingPhoto.Message;
+            }
+            var isCategoryExist = await _categoryRepository.CategoryNameExist(brandViewModel.CategoryName!);
+            if (!isCategoryExist.Success)
+            {
+                return OperationResult.Failed(MessagesAndConsts.CategoryNameNotExisted);
+            }
+            var CategoryIdResult = await _categoryRepository.GetCateogryByNameAsync(brandViewModel.CategoryName!);
+
+            brandViewModel.CategoryId = CategoryIdResult.Data;
+
+            BrandDto brandDto = brandViewModel.BrandViewModelToBrandDTO();
+                var resultUpdate = await _brandRepository.UpdateAsync(brandDto, id);
+                if (!resultUpdate.Success)
+                {
+                    var error = resultUpdate.Exception!.ExceptionToErrorDTO(resultUpdate.Message!);
+                    var eroorResult = await _errorService.LogErrorAsync(error);
+                    return eroorResult;
+                }
+                return OperationResult.SuccessedResult(true, MessagesAndConsts.update);
         }
 
-        public async Task<bool> DeleteBrandAsync(int id)
+        public async Task<OperationResult<List<BrandDto>>> GetBrandsByNameAsync(string name)
         {
-            var brand = await _brandRepository.GetByIdAsync(id);
-            if (brand == null)
-                return false;
-
-            return await _brandRepository.DeleteAsync(id);
+            var result = await _brandRepository.GetBrandsByNameAsync(name);
+            if (!result.Success)
+            {
+                var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
+                var errorResult = await _errorService.LogErrorAsync(error);
+                return OperationResult<List<BrandDto>>.Failed(errorResult.Message!.ErrorMessage());
+            }
+            return OperationResult<List<BrandDto>>.SuccessedResult(result.Data);
         }
 
-        public async Task<bool> UpdateBrandAsync(UpdateBrandDto updateBrandDto)
+        public async Task<OperationResult<List<BrandDto>>> GetBrandsByCategoryNameAsync(string categoryName)
         {
-            var brand= _mapper.Map<Brand>(updateBrandDto);
-            return await _brandRepository.UpdateAsync(brand);
+            var result = await _brandRepository.GetBrandsByCategoryNameAsync(categoryName);
+            if (!result.Success)
+            {
+                var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
+                var errorResult = await _errorService.LogErrorAsync(error);
+                return OperationResult<List<BrandDto>>.Failed(errorResult.Message!.ErrorMessage());
+            }
+            return OperationResult<List<BrandDto>>.SuccessedResult(result.Data);
         }
-
-        public async Task<List<BrandDto?>> GetBrandByNameAsync(string name)
+        public async Task<OperationResult<List<BrandViewModel>>> SearchBrandsAsync(string searchTerm)
         {
-           var brands= await _brandRepository.GetBrandsByNameAsync(name);
-            return _mapper.Map<List<BrandDto>>(brands)!;
-        }
+            if (string.IsNullOrWhiteSpace(searchTerm))
+                return await GetAllBrandsAsync ();
 
-        public async Task<List<BrandDto?>> GetBrandsByCategoryNameAsync(string categoryName)
-        {
-            var brands=await _brandRepository.GetBrandsByCategoryNameAsync(categoryName);
-            return _mapper.Map<List<BrandDto>>(brands)!;
+            var result = await _brandRepository.SearhBrandByName(searchTerm);
+            if (!result.Success)
+            {
+                var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
+                var errorLog = await _errorService.LogErrorAsync(error);
+                return OperationResult<List<BrandViewModel>>.Failed(errorLog.Message!.ErrorMessage());
+            }
+
+            var brands = BrandMapper.BrandDTOToBrandViewModel(result.Data);
+            return OperationResult<List<BrandViewModel>>.SuccessedResult(brands);
         }
     }
 

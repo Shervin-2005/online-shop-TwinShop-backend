@@ -1,7 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Twin_Shop__Web_API.Data;
+using Microsoft.Extensions.Logging;
+using Twin_Shop__Web_API.DTOs.Brand;
+using Twin_Shop__Web_API.DTOs.Category;
+using Twin_Shop__Web_API.DTOs.Product;
 using Twin_Shop__Web_API.Entities;
+using TwinShop.DAL.Data;
 using TwinShop.DAL.Repositories.Interfaces;
+using TwinShop.Shared;
+using TwinShop.Shared.DTOS.Auth;
 
 namespace TwinShop.DAL.Repositories.Implementations
 {
@@ -14,71 +20,190 @@ namespace TwinShop.DAL.Repositories.Implementations
             _dbContext = dbContext;
         }
 
-        public async Task<bool> DeleteAsync(int id)
-        {
-            var brand = await _dbContext.Brands.FindAsync(id);
-            if (brand == null)
-                return false;
-
-            brand.IsDeleted = true;
-
-            _dbContext.Entry(brand).Property(c => c.IsDeleted).IsModified = true;
-
-            await _dbContext.SaveChangesAsync();
-            return true;
-        }
-
-        public async Task<Brand> GetByIdAsync(int brandId)
-        {
-            var brand = await _dbContext.Brands.Where(x => x.BrandId == brandId && !x.IsDeleted).FirstOrDefaultAsync();
-            return brand;
-        }
-
-        public async Task<bool> InsertAsync(Brand brand)
+        public async Task<OperationResult> DeleteAsync(int id)
         {
             try
             {
+                var brand = new Brand { BrandId = id };
+                _dbContext.Attach(brand);
+                brand.IsDeleted = true;
+                _dbContext.Entry(brand).Property(b => b.IsDeleted).IsModified = true;
+                await _dbContext.SaveChangesAsync();
+                return OperationResult.SuccessedResult();
+            }
+            catch (Exception ex)
+            {
+                return OperationResult.Failed(GetType().Name, ex);
+            }
+        }
+
+        public async Task<OperationResult<BrandDto>> GetByIdAsync(int brandId)
+        {
+            try
+            {
+                var brand = await _dbContext.Brands.AsNoTracking().Where(b => b.BrandId == brandId && b.IsDeleted == false).
+                    Select(b => new BrandDto
+                    {
+                       BrandName = b.BrandName,
+                       MainImage = b.MainImage,
+                       CategoryName = b.CategoryName,
+                       CategoryId = b.CategoryId,
+                    }).FirstAsync();
+                return OperationResult<BrandDto>.SuccessedResult(brand);
+            }
+            catch (Exception ex)
+            {
+                return OperationResult<BrandDto>.Failed(GetType().Name, ex);
+            }
+        }
+
+        public async Task<OperationResult> InsertAsync(BrandDto brandDto)
+        {
+            try
+            {
+                Brand brand = new Brand
+                {
+                    BrandName = brandDto.BrandName!,
+                    MainImage = brandDto.MainImage!,
+                    CategoryName = brandDto.CategoryName!,
+                    CategoryId =brandDto.CategoryId,
+                };
                 _dbContext.Brands.Add(brand);
                 await _dbContext.SaveChangesAsync();
-                return true;
+                return OperationResult.SuccessedResult();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return false;
+                return OperationResult.Failed(GetType().Name, ex);
             }
         }
 
-        public async Task<bool> UpdateAsync(Brand brand)
+        public async Task<OperationResult> UpdateAsync(BrandDto brandDto, int id)
         {
-                var existing = await _dbContext.Brands.FindAsync(brand.BrandId);
-                if (existing == null) return false;
+            try
+            {
+                var existing = await _dbContext.Brands.Where(b => b.BrandId == id).FirstAsync();
 
-                existing.BrandName = brand.BrandName;
-                existing.CategoryId = brand.CategoryId;
+                existing.BrandName = brandDto.BrandName!;
+                existing.MainImage = brandDto.MainImage!;
+                existing.CategoryName = brandDto.CategoryName!;
+                existing.CategoryId = brandDto.CategoryId;
                 await _dbContext.SaveChangesAsync();
-                return true;
-        }
-
-        public async Task<List<Brand>>GetAllAsync()
-        {
-            return await _dbContext.Brands.ToListAsync();
-        }
-
-        public async Task<List<Brand?>> GetBrandsByCategoryNameAsync(string categoryName)
-        {
-            var brands = await _dbContext.Brands.Where(x => x.CategoryName == categoryName).ToListAsync();
-            return brands;
-        }
-
-        public async Task<List<Brand?>>GetBrandsByNameAsync(string brandName)
-        {
-            var brands = await _dbContext.Brands.Where(x => x.BrandName.Contains(brandName) && x.IsDeleted == false).Select(x => new Brand
+                return OperationResult.SuccessedResult(); ;
+            }
+            catch (Exception ex)
             {
-                BrandName = x.BrandName,
-                Category = x.Category, 
-                CategoryId = x.CategoryId
-            }).ToListAsync();
-            return brands;
+                return OperationResult.Failed(GetType().Name, ex);
+            }
+        }
+
+        public async Task<OperationResult<List<BrandDto>>> GetAllAsync()
+        {
+            try
+            {
+                var brands = await _dbContext.Brands.AsNoTracking()
+                    .Where(b => b.IsDeleted == false).Select(b => new BrandDto
+                    {
+                        BrandId = b.BrandId,
+                        BrandName = b.BrandName,
+                        MainImage = b.MainImage,
+                        CategoryName = b.CategoryName,
+                        CategoryId = b.CategoryId,
+                    }).ToListAsync();
+                return OperationResult<List<BrandDto>>.SuccessedResult(brands);
+            }
+            catch (Exception ex)
+            {
+                return OperationResult<List<BrandDto>>.Failed(GetType().Name, ex);
+            }
+        }
+
+        public async Task<OperationResult<List<BrandDto>>> GetBrandsByCategoryNameAsync(string categoryName)
+        {
+            try
+            {
+                var brands = await _dbContext.Brands.AsNoTracking().Where(b => b.CategoryName == categoryName && b.IsDeleted == false)
+                   .Select(b => new BrandDto
+                   {
+                       BrandName = b.BrandName,
+                       MainImage = b.MainImage,
+                       CategoryName = b.CategoryName,
+                       CategoryId = b.CategoryId,
+                   }).ToListAsync();
+                return OperationResult<List<BrandDto>>.SuccessedResult(brands);
+            }
+            catch (Exception ex)
+            {
+                return OperationResult<List<BrandDto>>.Failed(GetType().Name, ex);
+            }
+        }
+
+        public async Task<OperationResult<List<BrandDto>>> GetBrandsByNameAsync(string brandName)
+        {
+
+            try
+            {
+                var brands = await _dbContext.Brands.AsNoTracking().Where(b => b.BrandName.Contains(brandName) && b.IsDeleted == false)
+                   .Select(b => new BrandDto
+                   {
+                       BrandName = b.BrandName,
+                       MainImage = b.MainImage,
+                       CategoryName = b.CategoryName,
+                       CategoryId = b.CategoryId,
+                   }).ToListAsync();
+                return OperationResult<List<BrandDto>>.SuccessedResult(brands);
+            }
+            catch (Exception ex)
+            {
+                return OperationResult<List<BrandDto>>.Failed(GetType().Name, ex);
+            }
+        }
+        public async Task<OperationResult<int>> GetBrandByNameAsync(string brandName)
+        {
+            try
+            {
+                var brandId = await _dbContext.Brands.AsNoTracking().
+                     Where(b => b.BrandName == brandName && b.IsDeleted == false)
+                     .Select(b => b.BrandId)
+                     .FirstOrDefaultAsync();
+                return OperationResult<int>.SuccessedResult(brandId!);
+            }
+            catch (Exception ex)
+            {
+                return OperationResult<int>.Failed(GetType().Name, ex);
+            }
+        }
+
+        public async Task<OperationResult> BrandNameExist(string Name)
+        {
+            var user = await _dbContext.Brands.Where(x => x.BrandName == Name).FirstOrDefaultAsync();
+
+            return user != null ? OperationResult.SuccessedResult() : OperationResult<UserDto>.Failed();
+        }
+        public async Task<OperationResult<List<BrandDto>>> SearhBrandByName(string searchTerm)
+        {
+            try
+            {
+                var brands = await _dbContext.Brands
+                    .AsNoTracking()
+                    .Where(c => c.IsDeleted == false &&
+                                 c.BrandName!.Contains(searchTerm))
+                    .Select(c => new BrandDto
+                    {
+                        BrandId = c.BrandId,
+                        BrandName= c.BrandName,
+                        CategoryId = c.CategoryId,
+                        CategoryName = c.CategoryName,
+                        MainImage = c.MainImage,
+                    })
+                    .ToListAsync();
+
+                return OperationResult<List<BrandDto>>.SuccessedResult(brands);
+            }
+            catch (Exception ex)
+            {
+                return OperationResult<List<BrandDto>>.Failed(GetType().Name, ex);
+            }
         }
     }
 }

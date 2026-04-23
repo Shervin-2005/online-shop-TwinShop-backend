@@ -1,16 +1,21 @@
-﻿using Twin_Shop__Web_API.Entities;
+﻿using Twin_Shop__Web_API.DTOs.Brand;
+using Twin_Shop__Web_API.Entities;
+using TwinShop.Shared;
 
 namespace TwinShop.DAL.Repositories.Interfaces
 {
     public interface IBrandRepository
     {
-        public Task<bool> InsertAsync(Brand brand);
-        public Task<bool> DeleteAsync(int id);
-        public Task<bool> UpdateAsync(Brand brand);
-        public Task<List<Brand?>> GetBrandsByNameAsync(string brandName);
-        public Task<List<Brand?>> GetBrandsByCategoryNameAsync(string categoryName);
-        public Task<Brand> GetByIdAsync(int brandId);
-        public Task<List<Brand>> GetAllAsync();
+        Task<OperationResult> InsertAsync(BrandDto brandDto);
+        Task<OperationResult> DeleteAsync(int id);
+        Task<OperationResult> UpdateAsync(BrandDto brandDto, int id);
+        Task<OperationResult<List<BrandDto>>> GetBrandsByNameAsync(string brandName);
+        Task<OperationResult<List<BrandDto>>> GetBrandsByCategoryNameAsync(string categoryName);
+        Task<OperationResult<BrandDto>> GetByIdAsync(int brandId);
+        Task<OperationResult<List<BrandDto>>> GetAllAsync();
+        Task<OperationResult> BrandNameExist(string Name);
+        Task<OperationResult<List<BrandDto>>> SearhBrandByName(string searchTerm);
+        Task<OperationResult<int>> GetBrandByNameAsync(string brandName);
 
     }
 }

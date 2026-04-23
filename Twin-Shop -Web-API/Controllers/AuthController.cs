@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Twin_Shop__Web_API.Controllers;
-using Twin_Shop__Web_API.DTOs.Auth;
 using Twin_Shop__Web_API.Services.Interfaces;
+using TwinShop.Shared;
 using TwinShop.Shared.DTOS.Auth;
+using TwinShop.Shared.ViewModels.UserViewModels;
 
 public class AuthController : BaseController
 {
@@ -14,29 +15,44 @@ public class AuthController : BaseController
     }
 
     [HttpPost]
-    public async Task<string> Register(RegisterDto dto)
+    public async Task<OperationResult> Register([FromBody]RegisterUserViewModel registerUserViewModel)
     {
-        var result = await _authService.RegisterAsync(dto);
+        var result = await _authService.RegisterAsync(registerUserViewModel);
         return result;
     }
+    [HttpPost]
+    public async Task<OperationResult> EditUserInfo([FromBody] UserInfoViewModel userInfoViewModel,string phoneNumber)
+    {
+        var result = await _authService.EditUserInfoAsync(userInfoViewModel, phoneNumber);
+        return result;
+    }
+    [HttpPost]
+    public async Task<OperationResult> ChangePassword([FromBody] ChangePasswordUserViewModel changePasswordUserViewModel, string phoneNumber)
+    {
+        var result = await _authService.ChangePasswordAsync(changePasswordUserViewModel, phoneNumber);
+        return result;
+    }
+
 
     [HttpPost]
-    public async Task<bool> Login(LoginDto dto)
+    public async Task<OperationResult> LoginWithPassword([FromBody] LoginUserViewModel loginUserViewModel)
     {
-        var result= await _authService.LoginAsync(dto);
+        var result = await _authService.LoginWithPasswordAsync(loginUserViewModel);
         return result;
     }
 
     [HttpGet]
-    public async Task<UserDto> GetbyEmail(string email)
+    public async Task<OperationResult> GetbyEmail(string email)
     {
-        var user = await _authService.GetByEmailAsync(email);
-        return user;
+        var result = await _authService.GetByEmailAsync(email);
+        return result;
     }
+
     [HttpGet]
-    public async Task<UserDto> GetbyPhoneNumber(string phoneNumber)
+    public async Task<OperationResult> GetUserbyPhoneNumber(string phoneNumber)
     {
-        var user = await _authService.GetByPhoneAsync(phoneNumber);
-        return user;
+        var result = await _authService.GetUserByPhoneAsync(phoneNumber);
+        return result;
     }
+
 }

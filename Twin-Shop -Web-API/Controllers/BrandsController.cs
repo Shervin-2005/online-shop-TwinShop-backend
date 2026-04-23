@@ -1,67 +1,74 @@
-﻿using Microsoft.AspNetCore.Components.Web;
+﻿
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Twin_Shop__Web_API.Controllers;
 using Twin_Shop__Web_API.DTOs.Brand;
-using Twin_Shop__Web_API.Entities;
 using Twin_Shop__Web_API.Services.Implementations;
 using Twin_Shop__Web_API.Services.Interfaces;
+using TwinShop.Shared;
+using TwinShop.Shared.ViewModels;
 
 public class BrandsController : BaseController
 {
     private readonly IBrandService _brandService;
-
     public BrandsController(IBrandService brandService)
     {
         _brandService = brandService;
     }
 
     [HttpGet]
-    public async Task<IEnumerable<BrandDto>> GetAll()
+    public async Task<OperationResult> GetAll()
     {
-        var brandsDto = await _brandService.GetAllBrandsAsync();
-        return brandsDto;
+       var result=await _brandService.GetAllBrandsAsync();
+        return result;
     }
 
     [HttpGet]
-    public async Task<BrandDto> GetById(int id)
+    public async Task<OperationResult> GetById(int id)
     {
-        var brandDto = await _brandService.GetBrandByIdAsync(id);
-        return brandDto!;
+        var result = await _brandService.GetBrandByIdAsync(id);
+        return result;
     }
 
     [HttpPost]
-    public async Task<BrandDto> Create(CreateBrandDto dto)
+    public async Task<OperationResult> Create([FromBody]BrandViewModel brandViewModel)
     {
-        var createdBrand = await _brandService.CreateBrandAsync(dto);
-        return createdBrand;
+        var result = await _brandService.CreateBrandAsync(brandViewModel);
+        return result;
     }
 
     [HttpDelete]
-    public async Task<bool> Delete(int id)
+    public async Task<OperationResult> Delete(int id)
     {
         var result = await _brandService.DeleteBrandAsync(id);
         return result;
     }
 
-    [HttpPut]
-    public async Task<bool> Update(UpdateBrandDto dto)
+    [HttpPost]
+    public async Task<OperationResult> Update([FromBody]BrandViewModel brandView,int id)
     {
-        var result = await _brandService.UpdateBrandAsync(dto);
+        var result = await _brandService.UpdateBrandAsync(brandView,id);
         return result;
     }
 
     [HttpGet]
-    public async Task<List<BrandDto>>GetBrandsByNameAsync(string name)
+    public async Task<OperationResult> GetBrandsByName(string name)
     {
-        var brands=await _brandService.GetBrandByNameAsync(name);
-        return brands!;
+        var result = await _brandService.GetBrandsByNameAsync(name);
+        return result;
     }
 
     [HttpGet]
-    public async Task<List<BrandDto?>> GetBrandsByCategoryNameAsync(string categoryName)
+    public async Task<OperationResult> GetBrandsByCategoryName(string categoryName)
     {
-        var brands = await _brandService.GetBrandsByCategoryNameAsync(categoryName);
-        return brands!;
+        var result = await _brandService.GetBrandsByCategoryNameAsync(categoryName);
+        return result;
+    }
+
+    [HttpGet]
+    public async Task<OperationResult> SearchBrands(string searchTerm)
+    {
+        var result= await _brandService.SearchBrandsAsync(searchTerm);
+        return result;  
     }
 }

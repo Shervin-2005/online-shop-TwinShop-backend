@@ -1,87 +1,218 @@
-﻿using System.Security.Cryptography;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using System.Security.Cryptography;
 using System.Text;
-using AutoMapper;
-using Twin_Shop__Web_API.DTOs.Auth;
-using Twin_Shop__Web_API.Entities;
+using Twin_Shop__Web_API.DTOs.Product;
 using Twin_Shop__Web_API.Services.Interfaces;
+using TwinShop.BLL;
+using TwinShop.BLL.Services.Interfaces;
+using TwinShop.DAL.Repositories.Implementations;
 using TwinShop.DAL.Repositories.Interfaces;
+using TwinShop.Shared;
+using TwinShop.Shared.DTOS;
 using TwinShop.Shared.DTOS.Auth;
+using TwinShop.Shared.ErrorHandling;
+using TwinShop.Shared.Mappers;
+using TwinShop.Shared.ViewModels.UserViewModels;
+
 namespace Twin_Shop__Web_API.Services.Implementations
 {
     public class AuthService : IAuthService
     {
-
         private readonly IUserRepository _userRepository;
-        private readonly IMapper _mapper;
+        private readonly IErrorService _errorService;
 
-
-        public AuthService(IUserRepository userRepository, IMapper mapper)
+        public AuthService(IUserRepository userRepository, IErrorService errorService)
         {
             _userRepository = userRepository;
-            _mapper = mapper;
+            _errorService = errorService;
         }
 
-        public async Task<string> RegisterAsync(RegisterDto dto)
+        public async Task<OperationResult> RegisterAsync(RegisterUserViewModel registerUserViewModel)
         {
             try
             {
-                var result = await _userRepository.PhoneExistsAsync(dto.PhoneNumber);
-                if (result)
+                if (!registerUserViewModel.IsValid)
                 {
-                    return "This phone number already exists";
+                    return OperationResult.Failed(registerUserViewModel.ErrorMessage);
                 }
-                var user = new User
+                UserDto userDto = UserMapper.RegisterViewToUserDTO(registerUserViewModel);
+                var isPhoneExist = await _userRepository.PhoneExistsAsync(userDto.PhoneNumber!);
+
+                if (isPhoneExist.Success)
                 {
-                    PhoneNumber = dto.PhoneNumber,
-                    PasswordHash = HashPassword(dto.Password),
-                    Email = dto.Email
-                };
-                await _userRepository.AddUserAsync(user);
-                return "Register Succsesfully!!";
+                    return OperationResult.Failed(MessagesAndConsts.PhoneNumberAlreadyExist);
+                }
+                var isUserAdded = await _userRepository.AddUserAsync(userDto);
+
+                if (!isUserAdded.Success)
+                {
+                    return OperationResult.Failed(MessagesAndConsts.FailedSignUp1);
+                }
+
+                return OperationResult.SuccessedResult(true, MessagesAndConsts.SuccessSignUp1);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                return "Something went wrong 😖";
+                var error = ex!.ExceptionToErrorDTO("BLL-AuthService");
+                var result = await _errorService.LogErrorAsync(error);
+                return OperationResult.Failed(result.Message!.ErrorMessage());
             }
         }
 
-        public async Task<bool> LoginAsync(LoginDto dto)
+        public async Task<OperationResult> EditUserInfoAsync(UserInfoViewModel userInfoViewModel, string phoneNumber)
         {
-            var user = await _userRepository.GetByPhoneAsync(dto.PhoneNumber);
-            if (user == null)
+            if (!userInfoViewModel.IsValid)
+                return OperationResult.Failed(userInfoViewModel.ErrorMessage);
+            if (!userInfoViewModel.ProfileImage!.Contains(MessagesAndConsts.Url))
             {
-                return false;
+                using var savePhoto = new SavePhoto();
+                var savingPhoto = await savePhoto.SaveUserProfileImageAsync(userInfoViewModel.ProfileImage!,userInfoViewModel.Id);
+                if (!savingPhoto.Success)
+                {
+                    var error = savingPhoto.Exception!.ExceptionToErrorDTO(savingPhoto.Message!);
+                    var result = await _errorService.LogErrorAsync(error);
+                    return OperationResult.Failed(result.Message!.ErrorMessage());
+                }
+
+                userInfoViewModel.ProfileImage = savingPhoto.Message;
             }
-            var result = VerifyPassword(dto.Password, user.PasswordHash);
-            if (!result)
+
+            if (phoneNumber != userInfoViewModel.PhoneNumber)
             {
-                return false;
+                var isPhoneExist = await _userRepository
+                                         .PhoneExistsAsync(userInfoViewModel.PhoneNumber!);
+                if (isPhoneExist.Success)
+                {
+                    return OperationResult.Failed(MessagesAndConsts.PhoneNumberAlreadyExist);
+                }
             }
-            return true;
+                    UserDto userDto = UserMapper.UserInfoViewToUserDTO(userInfoViewModel);
+                    var updateUser = await _userRepository.UpdateUserAsync(userDto);
+                    if (!updateUser.Success)
+                    {
+                        var error = updateUser.Exception!.ExceptionToErrorDTO(updateUser.Message!);
+                        var result2 = await _errorService.LogErrorAsync(error);
+                        return OperationResult.Failed(result2.Message!.ErrorMessage());
+                    }
+                
+                return OperationResult.SuccessedResult(true, MessagesAndConsts.update);
+            
+        }
+        public async Task<OperationResult<LoginUserViewModel>> LoginWithPasswordAsync(LoginUserViewModel loginUserViewModel)
+        {
+            try
+            {
+                var user = await _userRepository.GetUserByPhoneAsync(loginUserViewModel.PhoneNumber!);
+
+                if (!user!.Success)
+                {
+                    return OperationResult<LoginUserViewModel>.Failed(MessagesAndConsts.userNotLoginWithThisPhoneNumber);
+                }
+
+                loginUserViewModel.Id=user.Data.Id;
+
+                var isVerified = await _userRepository
+                    .VerifyPassword(user.Data.PasswordHash!, UserMapper.HashPassword(loginUserViewModel.Password!));
+
+                if (!isVerified.Success)
+                {
+                    return OperationResult<LoginUserViewModel>.Failed(MessagesAndConsts.FailedLogin);
+                }
+                return OperationResult<LoginUserViewModel>.SuccessedResult(loginUserViewModel, MessagesAndConsts.LoginText);
+              
+            }
+            catch(Exception ex)
+            {
+                var error = ex!.ExceptionToErrorDTO("BLL-AuthService");
+                var result = await _errorService.LogErrorAsync(error);
+                return OperationResult<LoginUserViewModel>.Failed(result.Message!);
+            }
+    }
+
+        public async Task<OperationResult> LoginWithVerificationCodeAsync(UserViewModel userView)
+        {
+            var user = await _userRepository.GetUserByPhoneAsync(userView.PhoneNumber!);
+
+            if (!user.Success)
+            {
+                return OperationResult.Failed(MessagesAndConsts.userNotLoginWithThisPhoneNumber);
+            }
+            //باید sms بیاد
+            var isVerified = await _userRepository
+                .VerifyPassword(user.Data.PasswordHash!, UserMapper.HashPassword(userView.Password!));
+
+            if (!isVerified.Success)
+            {
+                if (!isVerified.Success)
+                {
+                    var error = isVerified.Exception!.ExceptionToErrorDTO(isVerified.Message!);
+                    var result = await _errorService.LogErrorAsync(error);
+                    return OperationResult.Failed(result.Message!.ErrorMessage());
+                }
+                return OperationResult.Failed(MessagesAndConsts.userNotLoginWithThisPhoneNumber);
+            }
+            return OperationResult.SuccessedResult();
+        }
+       
+
+     
+
+        public async Task<OperationResult<UserInfoViewModel>> GetByEmailAsync(string email)
+        {
+            var result = await _userRepository.GetByEmailAsync(email);
+            if (!result!.Success)
+            {
+                if (!result.Success)
+                {
+                    var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
+                    var result1 = await _errorService.LogErrorAsync(error);
+                    return OperationResult<UserInfoViewModel>.Failed(result1.Message!.ErrorMessage());
+                }
+                return OperationResult<UserInfoViewModel>.Failed();
+            }
+            return OperationResult<UserInfoViewModel>.SuccessedResult(result.Data.UserDTOToUserInfoViewModel());
+
         }
 
-        private string HashPassword(string password)
+        public async Task<OperationResult<UserInfoViewModel>> GetUserByPhoneAsync(string phoneNumber)
         {
-            using var sha256 = SHA256.Create();
-            var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-            return Convert.ToBase64String(bytes);
+            var result = await _userRepository.GetUserByPhoneAsync(phoneNumber);         
+                if (!result!.Success)
+                {
+                    var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
+                    var errorLog = await _errorService.LogErrorAsync(error);
+                    return OperationResult<UserInfoViewModel>.Failed(errorLog.Message!.ErrorMessage());
+                }
+            return OperationResult<UserInfoViewModel>.SuccessedResult(result.Data.UserDTOToUserInfoViewModel());
         }
 
-        private bool VerifyPassword(string password, string hash)
+        public async Task<OperationResult> ChangePasswordAsync(ChangePasswordUserViewModel changePasswordUserViewModel, string phoneNumber)
         {
-            return HashPassword(password) == hash;
-        }
+            var userResult = await _userRepository.GetUserByPhoneAsync(phoneNumber);
+            if (!userResult!.Success)
+            {
+                var error = userResult.Exception!.ExceptionToErrorDTO(userResult.Message!);
+                var errorLog = await _errorService.LogErrorAsync(error);
+                return OperationResult.Failed(errorLog.Message!.ErrorMessage());
+            }
 
-        public async Task<UserDto> GetByEmailAsync(string email)
-        {
-            var user= await _userRepository.GetByEmailAsync(email);
-            return _mapper.Map<UserDto>(user);
-        }
-        public async Task<UserDto> GetByPhoneAsync(string phoneNumber)
-        {
-            var user =await _userRepository.GetByPhoneAsync(phoneNumber);
-            return _mapper.Map<UserDto>(user);
+            var user = userResult.Data;
+
+           if(user.PasswordHash != UserMapper.HashPassword(changePasswordUserViewModel.CurrentPassword!))
+            {
+                return OperationResult.Failed(MessagesAndConsts.WrongCurrentPassword);
+            }
+
+            user.PasswordHash = UserMapper.HashPassword(changePasswordUserViewModel.Password!);
+    
+            var updateResult = await _userRepository.UpdateUserPassword(user);
+            if (!updateResult.Success)
+            {
+                var error = updateResult.Exception!.ExceptionToErrorDTO(updateResult.Message!);
+                var errorLog = await _errorService.LogErrorAsync(error);
+                return OperationResult.Failed(errorLog.Message!.ErrorMessage());
+            }
+            return OperationResult.SuccessedResult(true,MessagesAndConsts.PasswordChangedSuccess);
         }
     }
 }
-

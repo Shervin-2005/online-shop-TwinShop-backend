@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Twin_Shop__Web_API.Controllers;
-using Twin_Shop__Web_API.DTOs.Brand;
 using Twin_Shop__Web_API.DTOs.Product;
+using Twin_Shop__Web_API.Entities;
 using Twin_Shop__Web_API.Services.Implementations;
 using Twin_Shop__Web_API.Services.Interfaces;
+using TwinShop.Shared;
+using TwinShop.Shared.ViewModels;
 
 public class ProductsController : BaseController
 {
@@ -15,57 +17,64 @@ public class ProductsController : BaseController
     }
 
     [HttpGet]
-    public async Task<IEnumerable<ProductDto>> GetAll()
+    public async Task<OperationResult> GetAll()
     {
-        var productsDto = await _productService.GetAllProductsAsync();
-        return productsDto;
+        var result = await _productService.GetAllProductsAsync();
+        return result;
     }
 
     [HttpGet]
-    public async Task<ProductDto> GetById(int id)
+    public async Task<OperationResult> GetById(int id)
     {
-        var productDto = await _productService.GetProductByIdAsync(id);
-        return productDto!;
-    }
+            var result = await _productService.GetProductByIdAsync(id);
+            return result;
+    } 
 
     [HttpPost]
-    public async Task<ProductDto> Create(CreateProductDto dto)
+    public async Task<OperationResult> Create([FromBody] ProductCardViewModel productCardViewModel)
     {
-        var createdProduct = await _productService.CreateProductAsync(dto);
-        return createdProduct;
+        var result = await _productService.CreateProductAsync(productCardViewModel);
+        return result;
     }
 
     [HttpDelete]
-    public async Task<bool> Delete(int id)
+    public async Task<OperationResult> Delete(int id)
     {
         var result = await _productService.DeleteProductAsync(id);
         return result;
     }
 
-    [HttpPut]
-    public async Task<bool> Update(UpdateProductDto dto)
+    [HttpPost]
+    public async Task<OperationResult> Update([FromBody]ProductCardViewModel productView,int id)
     {
-        var result = await _productService.UpdateProductAsync(dto);
+
+        var result = await _productService.UpdateProductAsync(productView,id);
         return result;
     }
     [HttpGet]
-    public async Task<List<ProductDto>> GetProductsByNameAsync(string name)
+    public async Task<OperationResult<List<ProductDto>>> GetProductsByNameAsync(string name)
     {
-        var products = await _productService.GetProductsByNameAsync(name);
-        return products!;
+        var result = await _productService.GetProductsByNameAsync(name);
+        return result;
     }
 
     [HttpGet]
-    public async Task<List<ProductDto>> GetProductsByBrandNameAsync(string brandName)
+    public async Task<OperationResult<List<ProductDto>>> GetProductsByBrandNameAsync(string brandName)
     {
-        var products = await _productService.GetProductsByNameAsync(brandName);
-        return products!;
+        var result = await _productService.GetProductsByBrandNameAsync(brandName);
+        return result;
     }
-
+     
     [HttpGet]
-    public async Task<List<ProductDto>> GetProductsByCategoryNameAsync(string categoryName)
+    public async Task<OperationResult<List<ProductDto>>> GetProductsByCategoryNameAsync(string categoryName)
     {
-        var products = await _productService.GetProductsByCategoryNameAsync(categoryName);
-        return products!;
+        var result = await _productService.GetProductsByCategoryNameAsync(categoryName);
+        return result;
+    }
+    [HttpGet]
+    public async Task<OperationResult> SearchProducts(string searchTerm)
+    {
+        var result = await _productService.SearchProductsAsync(searchTerm);
+        return result;
     }
 }
