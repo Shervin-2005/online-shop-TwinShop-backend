@@ -29,6 +29,7 @@ namespace TwinShop.Shared.ViewModels
 
         [Required(ErrorMessage = MessagesAndConsts.ProductPhoto)]
         public string? MainImageUrl { get; set; }
+
         public List<string>? SideImageUrls { get; set; }
 
         [ProductNumberValidation]

@@ -26,6 +26,7 @@ namespace TwinShop.Shared.Mappers
                 InitialPrice = productView.InitialPrice, 
                 SecondryPrice = productView.SecondryPrice,
                 IsDeleted = productView.IsDeleted,
+                SideImageUrls = productView.SideImageUrls,
             };
         }
         public static List<ProductCardViewModel> ProductDTOToProductCardViewModel(this List<ProductDto> products)
@@ -46,6 +47,7 @@ namespace TwinShop.Shared.Mappers
                 InitialPrice = product.InitialPrice,
                 SecondryPrice = product.SecondryPrice,
                 IsDeleted = product.IsDeleted,
+                SideImageUrls = product.SideImageUrls,
             };
         }
     }

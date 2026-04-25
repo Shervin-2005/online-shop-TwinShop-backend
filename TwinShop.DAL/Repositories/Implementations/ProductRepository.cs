@@ -41,6 +41,7 @@ namespace TwinShop.DAL.Repositories.Implementations
             try
             {
                 var products= await _dbContext.Products.AsNoTracking()
+                    .Include(p => p.SideImages)
                     .Where(p=>p.IsDeleted==false).Select(p=>new ProductDto
                     {
                         ProductId=p.ProductId,
@@ -53,6 +54,10 @@ namespace TwinShop.DAL.Repositories.Implementations
                         InitialPrice=p.InitialPrice,
                         SecondryPrice=p.SecondryPrice,
                         NumberInStorage=p.NumberInStorage,
+                        SideImageUrls = p.SideImages != null
+                        ? p.SideImages.Select(si => si.SideImageUrl).ToList()!
+                        : new List<string>(),
+
                     }).ToListAsync();
                 return OperationResult<List<ProductDto>>.SuccessedResult(products);
             }
