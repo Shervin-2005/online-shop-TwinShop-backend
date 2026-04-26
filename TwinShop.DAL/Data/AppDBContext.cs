@@ -16,6 +16,7 @@ namespace TwinShop.DAL.Data
         public DbSet<User>Users { get; set; }
         public DbSet<ErrorLog> ErrorLogs { get; set; }
         public DbSet<ProductSideImage> productSideImages { get; set; }
+        public DbSet<Otp> Otps { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
