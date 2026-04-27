@@ -7,6 +7,8 @@ namespace Shop.UI.Http
         public const string BaseUrl = "https://localhost:7231/";
 
         public const string LoginRoute = "api/Auth/LoginWithPassword";
+        public const string SendOtp = "api/Auth/SendOtp";
+        public const string VerifyOtp = "api/Auth/VerifyOtp";
         public const string Register = "api/Auth/Register";
         public const string EditUserInfo = "api/Auth/EditUserInfo?phoneNumber={0}";
         public const string RegisterRoute = "api/Auth/Register";

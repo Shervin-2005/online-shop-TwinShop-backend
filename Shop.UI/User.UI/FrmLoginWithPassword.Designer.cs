@@ -34,11 +34,12 @@
             txtPassword = new TextBox();
             lblPassword = new Label();
             lblSignin = new Label();
+            lblVerificationCode = new Label();
             SuspendLayout();
             // 
             // btnLogin
             // 
-            btnLogin.Location = new Point(57, 243);
+            btnLogin.Location = new Point(69, 197);
             btnLogin.Margin = new Padding(4);
             btnLogin.Name = "btnLogin";
             btnLogin.Size = new Size(102, 41);
@@ -50,7 +51,7 @@
             // lblPhone
             // 
             lblPhone.AutoSize = true;
-            lblPhone.Location = new Point(13, 84);
+            lblPhone.Location = new Point(25, 38);
             lblPhone.Margin = new Padding(4, 0, 4, 0);
             lblPhone.Name = "lblPhone";
             lblPhone.Size = new Size(116, 21);
@@ -60,7 +61,7 @@
             // 
             // txtPhone
             // 
-            txtPhone.Location = new Point(13, 116);
+            txtPhone.Location = new Point(25, 70);
             txtPhone.Margin = new Padding(4);
             txtPhone.Name = "txtPhone";
             txtPhone.Size = new Size(208, 29);
@@ -69,7 +70,7 @@
             // 
             // txtPassword
             // 
-            txtPassword.Location = new Point(12, 186);
+            txtPassword.Location = new Point(24, 140);
             txtPassword.Margin = new Padding(4);
             txtPassword.Name = "txtPassword";
             txtPassword.Size = new Size(208, 29);
@@ -79,7 +80,7 @@
             // lblPassword
             // 
             lblPassword.AutoSize = true;
-            lblPassword.Location = new Point(13, 154);
+            lblPassword.Location = new Point(25, 108);
             lblPassword.Margin = new Padding(4, 0, 4, 0);
             lblPassword.Name = "lblPassword";
             lblPassword.Size = new Size(78, 21);
@@ -91,18 +92,31 @@
             lblSignin.AutoSize = true;
             lblSignin.Font = new Font("Segoe UI", 8F);
             lblSignin.ForeColor = Color.DodgerBlue;
-            lblSignin.Location = new Point(12, 288);
+            lblSignin.Location = new Point(24, 242);
             lblSignin.Name = "lblSignin";
             lblSignin.Size = new Size(125, 26);
             lblSignin.TabIndex = 4;
             lblSignin.Text = "don't have an acount?!\r\n sign in now";
             lblSignin.Click += label1_Click;
             // 
+            // lblVerificationCode
+            // 
+            lblVerificationCode.AutoSize = true;
+            lblVerificationCode.Font = new Font("Segoe UI", 8F);
+            lblVerificationCode.ForeColor = Color.DodgerBlue;
+            lblVerificationCode.Location = new Point(25, 173);
+            lblVerificationCode.Name = "lblVerificationCode";
+            lblVerificationCode.Size = new Size(150, 13);
+            lblVerificationCode.TabIndex = 5;
+            lblVerificationCode.Text = "Login with verification code";
+            lblVerificationCode.Click += label1_Click_1;
+            // 
             // FormLogin
             // 
             AutoScaleDimensions = new SizeF(9F, 21F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(243, 331);
+            ClientSize = new Size(243, 290);
+            Controls.Add(lblVerificationCode);
             Controls.Add(lblSignin);
             Controls.Add(txtPassword);
             Controls.Add(txtPhone);
@@ -126,5 +140,6 @@
         private TextBox txtPassword;
         private Label lblPassword;
         private Label lblSignin;
+        private Label lblVerificationCode;
     }
 }

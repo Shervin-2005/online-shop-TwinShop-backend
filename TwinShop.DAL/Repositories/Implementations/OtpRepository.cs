@@ -63,7 +63,6 @@ namespace TwinShop.DAL.Repositories.Implementations
         {
             try
             {
-                // حذف OTP قبلی اگر وجود داشته باشد
                 var existingOtp = await _dbContext.Otps
                     .FirstOrDefaultAsync(o => o.Mobile == mobile);
 
@@ -72,7 +71,6 @@ namespace TwinShop.DAL.Repositories.Implementations
                     _dbContext.Otps.Remove(existingOtp);
                 }
 
-                // ذخیره OTP جدید
                 var otp = new Otp
                 {
                     Mobile = mobile,

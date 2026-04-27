@@ -9,6 +9,7 @@ using TwinShop.DAL.Entities;
 using TwinShop.DAL.Repositories.Interfaces;
 using TwinShop.Shared;
 using TwinShop.Shared.DTOS;
+using TwinShop.Shared.ViewModels.UserViewModels;
 
 namespace TwinShop.BLL.Services.Implementations
 {
@@ -22,15 +23,15 @@ namespace TwinShop.BLL.Services.Implementations
         {
             _otp = otp;
         }
-        public async Task<OperationResult> SendOtp (string mobile)
+        public async Task<OperationResult> SendOtp(string mobile)
         {
             string code = new Random().Next(10000, 99999).ToString();
 
-           var saveOtpResult= await _otp!.SaveOtp(mobile, code, DateTime.Now.AddMinutes(2));
+            var saveOtpResult = await _otp!.SaveOtp(mobile, code, DateTime.Now.AddMinutes(2));
 
             if (!saveOtpResult.Success)
             {
-                return  OperationResult.Failed(MessagesAndConsts.FailedSendCode);
+                return OperationResult.Failed(MessagesAndConsts.FailedSendCode);
             }
             using (HttpClient httpClient = new HttpClient())
             {
@@ -54,12 +55,12 @@ namespace TwinShop.BLL.Services.Implementations
                     content
                 );
 
-                return OperationResult.SuccessedResult(true,MessagesAndConsts.SendCode);
+                return OperationResult.SuccessedResult(true, MessagesAndConsts.SendCode);
             }
         }
-        public async Task<OperationResult> VerifyOtp(string mobile, string code)
+        public async Task<OperationResult> VerifyOtp(LoginWithCodeUserViewModel loginWithCodeUserViewModel)
         {
-            var savedOtpResult = await _otp?.GetOtp(mobile)!;
+            var savedOtpResult = await _otp?.GetOtp(loginWithCodeUserViewModel.PhoneNumber!)!;
 
             if (!savedOtpResult.Success)
             {
@@ -68,16 +69,16 @@ namespace TwinShop.BLL.Services.Implementations
 
             var savedOtp = savedOtpResult.Data;
 
-            if (savedOtp == null || savedOtp.ExpireTime < DateTime.Now)
-                return OperationResult.Failed("false");
+            if (savedOtp.ExpireTime < DateTime.Now)
+                return OperationResult.Failed("کد تایید منقضی شده است. لطفاً دوباره درخواست ارسال کد دهید");
 
-            if (savedOtp.Code == code)
+            if (savedOtp.Code == loginWithCodeUserViewModel.Code)
             {
-                _otp?.DeleteOtp(mobile);
-                return OperationResult.SuccessedResult(true,"true");
+               await _otp?.DeleteOtp(loginWithCodeUserViewModel.PhoneNumber!);
+                return OperationResult.SuccessedResult(true,"ورود با موفقیت انجام شد");
                 
             }
-            return OperationResult.Failed("false code");
+            return OperationResult.Failed("کد وارد شده صحیح نیست. لطفاً دوباره تلاش کنید.");
         }   
     }
 }

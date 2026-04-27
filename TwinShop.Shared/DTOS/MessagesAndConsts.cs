@@ -17,11 +17,13 @@ namespace TwinShop.Shared.DTOS
         public const string ApplyText = "Apply";
         public const string AddText = "Add";
         public const string SaveText = "Save";
+        public const string EnterCodeText = "Enter Code";
+        public const string SendCodeText = "Send Code";
         public const string DefaultProfile = "https://s3.ir-thr-at1.arvanstorage.ir/shams1384/shams1384%2FDefault%20Images%2Fprofile.png";
         public const string UplaodImage = "https://s3.ir-thr-at1.arvanstorage.ir/shams1384/shams1384%2FDefault%20Images%2FUpload.png";
         public const string FailedSendCode = "An error in sending code!";
         public const string SendCode = "Code send to your number";
-        public const string CodeNotFound = "Code not found";
+        public const string CodeNotFound = "کدی برای این شماره ارسال نشده است";
         //======================================================================================================
         public const string SuccessSignUp1 = "Succssesfully signed in!";
         public const string FailedSignUp1 = "Your Sign in Went Wrong!!";
