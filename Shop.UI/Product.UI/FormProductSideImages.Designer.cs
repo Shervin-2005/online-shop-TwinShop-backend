@@ -35,24 +35,26 @@
             // 
             // pictureBoxMainImage
             // 
-            pictureBoxMainImage.Location = new Point(292, 12);
+            pictureBoxMainImage.Location = new Point(12, 12);
             pictureBoxMainImage.Name = "pictureBoxMainImage";
             pictureBoxMainImage.Size = new Size(186, 131);
+            pictureBoxMainImage.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBoxMainImage.TabIndex = 0;
             pictureBoxMainImage.TabStop = false;
             // 
             // flowLayoutPanelThumbnails
             // 
+            flowLayoutPanelThumbnails.AutoScroll = true;
             flowLayoutPanelThumbnails.Location = new Point(9, 149);
             flowLayoutPanelThumbnails.Name = "flowLayoutPanelThumbnails";
-            flowLayoutPanelThumbnails.Size = new Size(779, 289);
+            flowLayoutPanelThumbnails.Size = new Size(189, 289);
             flowLayoutPanelThumbnails.TabIndex = 1;
             // 
             // FormProductSideImages
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(212, 450);
             Controls.Add(flowLayoutPanelThumbnails);
             Controls.Add(pictureBoxMainImage);
             Name = "FormProductSideImages";

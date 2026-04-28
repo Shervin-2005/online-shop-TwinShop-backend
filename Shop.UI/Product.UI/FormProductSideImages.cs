@@ -14,7 +14,6 @@ namespace Shop.UI.Product.UI
     public partial class FormProductSideImages : Form
     {
         private ProductCardViewModel _product;
-        private int currentIndex = 0;
         public FormProductSideImages(ProductCardViewModel product)
         {
             InitializeComponent();

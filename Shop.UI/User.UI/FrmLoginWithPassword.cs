@@ -1,4 +1,5 @@
 ﻿using Shop.UI.Http;
+using Shop.UI.User.UI;
 using TwinShop.Shared;
 using TwinShop.Shared.DTOS;
 using TwinShop.Shared.ErrorHandling;
@@ -44,10 +45,10 @@ namespace Shop.UI
                 btnLogin.Text = MessagesAndConsts.LoginText;
                 return;
             }
-            CurrentUser.Id=result.Data.Id;
+            CurrentUser.Id = result.Data.Id;
             CurrentUser.PhoneNumber = txtPhone.Text;
-            CurrentUser.PasswordLength=txtPassword.Text.Length;
-            
+            CurrentUser.PasswordLength = txtPassword.Text.Length;
+
             ShowInfo(result.Message!);
             FormAdmin admin = new FormAdmin();
             admin.Show();
@@ -135,6 +136,12 @@ namespace Shop.UI
         private void txtPhone_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void label1_Click_1(object sender, EventArgs e)
+        {
+            LoginWithCode  loginWithCode = new LoginWithCode();
+            loginWithCode.Show();
         }
     }
 }

@@ -41,6 +41,7 @@ namespace TwinShop.DAL.Repositories.Implementations
             try
             {
                 var products= await _dbContext.Products.AsNoTracking()
+                    .Include(p => p.SideImages)
                     .Where(p=>p.IsDeleted==false).Select(p=>new ProductDto
                     {
                         ProductId=p.ProductId,
@@ -53,6 +54,10 @@ namespace TwinShop.DAL.Repositories.Implementations
                         InitialPrice=p.InitialPrice,
                         SecondryPrice=p.SecondryPrice,
                         NumberInStorage=p.NumberInStorage,
+                        SideImageUrls = p.SideImages != null
+                        ? p.SideImages.Select(si => si.SideImageUrl).ToList()!
+                        : new List<string>(),
+
                     }).ToListAsync();
                 return OperationResult<List<ProductDto>>.SuccessedResult(products);
             }
@@ -251,6 +256,22 @@ namespace TwinShop.DAL.Repositories.Implementations
             catch (Exception ex)
             {
                 return OperationResult<List<ProductDto>>.Failed(GetType().Name, ex);
+            }
+        }
+
+        public async Task<OperationResult<int>> GetProductIdByName(string productName)
+        {
+            try
+            {
+                var productId = await _dbContext.Products.AsNoTracking().
+                     Where(p => p.ProductName == productName && p.IsDeleted == false)
+                     .Select(p => p.ProductId)
+                     .FirstOrDefaultAsync();
+                return OperationResult<int>.SuccessedResult(productId!);
+            }
+            catch (Exception ex)
+            {
+                return OperationResult<int>.Failed(GetType().Name, ex);
             }
         }
     }

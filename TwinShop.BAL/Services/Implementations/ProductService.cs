@@ -89,6 +89,7 @@ public class ProductService : IProductService
 
         ProductDto productDto = productViewModel.ProductViewModelToProductDTO();
         var result = await _productRepository.InsertAsync(productDto);
+        var productIdResult = await _productRepository.GetProductIdByName(productDto.ProductName!);
         if (!result.Success)
         {
             var error = result.Exception!.ExceptionToErrorDTO(result.Message!);
@@ -97,23 +98,27 @@ public class ProductService : IProductService
         }
         if (productViewModel.SideImageUrls != null && productViewModel.SideImageUrls.Any())
         {
-            int productId = productDto.ProductId; 
+            int productId = productIdResult.Data;
+            string productName = productDto.ProductName!;
 
             using var savePhoto = new SavePhoto();
             foreach (var imagePath in productViewModel.SideImageUrls)
             {
                 if (!imagePath.Contains(MessagesAndConsts.Url))
                 {
-                    var savingResult = await savePhoto.SaveProductGalleryAsync(imagePath, productId);
-                    if (savingResult.Success)
+                    var savingResult = await savePhoto.SaveProductGalleryAsync(imagePath, productName);
+                    if (!savingResult.Success)
                     {
-                        var sideImageDto = new ProductSideImageDto
-                        {
-                            ProductId = productId,
-                            SideImageUrl = savingResult.Message
-                        };
-                        await _productSideImageRepository.InsertSideImagesAsync(sideImageDto);
+                        var error = savingResult.Exception!.ExceptionToErrorDTO(savingResult.Message!);
+                        var errorLog = await _errorService.LogErrorAsync(error);
+                        return OperationResult.Failed(errorLog.Message!.ErrorMessage());
                     }
+                    var sideImageDto = new ProductSideImageDto
+                    {
+                        ProductId = productId,
+                        SideImageUrl = savingResult.Message
+                    };
+                    await _productSideImageRepository.InsertSideImagesAsync(sideImageDto);
                 }
             }
         }
@@ -187,6 +192,33 @@ public class ProductService : IProductService
             var error = resultUpdate.Exception!.ExceptionToErrorDTO(resultUpdate.Message!);
             var eroorResult = await _errorService.LogErrorAsync(error);
             return eroorResult;
+        }
+        var productIdResult = await _productRepository.GetProductIdByName(productDto.ProductName!);
+        if (productViewModel.SideImageUrls != null && productViewModel.SideImageUrls.Any())
+        {
+            int productId = productIdResult.Data;
+            string productName = productDto.ProductName!;
+
+            using var savePhoto = new SavePhoto();
+            foreach (var imagePath in productViewModel.SideImageUrls)
+            {
+                if (!imagePath.Contains(MessagesAndConsts.Url))
+                {
+                    var savingResult = await savePhoto.SaveProductGalleryAsync(imagePath, productName);
+                    if (!savingResult.Success)
+                    {
+                        var error = savingResult.Exception!.ExceptionToErrorDTO(savingResult.Message!);
+                        var errorLog = await _errorService.LogErrorAsync(error);
+                        return OperationResult.Failed(errorLog.Message!.ErrorMessage());
+                    }
+                    var sideImageDto = new ProductSideImageDto
+                    {
+                        ProductId = productId,
+                        SideImageUrl = savingResult.Message
+                    };
+                    await _productSideImageRepository.InsertSideImagesAsync(sideImageDto);
+                }
+            }
         }
         return OperationResult.SuccessedResult(true, MessagesAndConsts.update);
     }

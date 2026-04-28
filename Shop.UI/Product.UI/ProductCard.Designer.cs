@@ -143,9 +143,9 @@
             lblSideImagesCount.AutoSize = true;
             lblSideImagesCount.Location = new Point(65, 128);
             lblSideImagesCount.Name = "lblSideImagesCount";
-            lblSideImagesCount.Size = new Size(17, 20);
+            lblSideImagesCount.Size = new Size(38, 20);
             lblSideImagesCount.TabIndex = 10;
-            lblSideImagesCount.Text = "1";
+            lblSideImagesCount.Text = "📸0";
             // 
             // ProductCard
             // 

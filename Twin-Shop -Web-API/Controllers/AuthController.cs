@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Twin_Shop__Web_API.Controllers;
 using Twin_Shop__Web_API.Services.Interfaces;
+using TwinShop.BLL.Services.Implementations;
+using TwinShop.BLL.Services.Interfaces;
 using TwinShop.Shared;
 using TwinShop.Shared.DTOS.Auth;
 using TwinShop.Shared.ViewModels.UserViewModels;
@@ -8,10 +10,11 @@ using TwinShop.Shared.ViewModels.UserViewModels;
 public class AuthController : BaseController
 {
     private readonly IAuthService _authService;
-
-    public AuthController(IAuthService authService)
+    private readonly ISmsService _smsService;
+    public AuthController(IAuthService authService, ISmsService smsService)
     {
         _authService = authService;
+        _smsService = smsService;
     }
 
     [HttpPost]
@@ -52,6 +55,20 @@ public class AuthController : BaseController
     public async Task<OperationResult> GetUserbyPhoneNumber(string phoneNumber)
     {
         var result = await _authService.GetUserByPhoneAsync(phoneNumber);
+        return result;
+    }
+
+    [HttpPost]
+    public async Task<OperationResult> SendOtp([FromBody]string phoneNumber)
+    {
+        var result = await _smsService.SendOtp(phoneNumber);
+        return result;
+    }
+
+    [HttpPost]
+    public async Task<OperationResult> VerifyOtp([FromBody]LoginWithCodeUserViewModel loginWithCodeUserViewModel)
+    {
+        var result =await _smsService.VerifyOtp(loginWithCodeUserViewModel);
         return result;
     }
 

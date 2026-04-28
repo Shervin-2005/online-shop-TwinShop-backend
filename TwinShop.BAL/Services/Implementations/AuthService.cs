@@ -4,6 +4,7 @@ using System.Text;
 using Twin_Shop__Web_API.DTOs.Product;
 using Twin_Shop__Web_API.Services.Interfaces;
 using TwinShop.BLL;
+using TwinShop.BLL.Services.Implementations;
 using TwinShop.BLL.Services.Interfaces;
 using TwinShop.DAL.Repositories.Implementations;
 using TwinShop.DAL.Repositories.Interfaces;
