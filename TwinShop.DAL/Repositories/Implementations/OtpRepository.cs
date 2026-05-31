@@ -1,91 +1,82 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TwinShop.DAL.Data;
 using TwinShop.DAL.Entities;
 using TwinShop.DAL.Repositories.Interfaces;
-using TwinShop.Shared;
+using TwinShop.Shared.Custom_Exceptions;
+using static System.Net.WebRequestMethods;
 
 namespace TwinShop.DAL.Repositories.Implementations
 {
-    public class OtpRepository : IOtpRepository
+    public class OTPRepository : IOTPRepository
     {
         private readonly AppDbContext _dbContext;
 
-        public OtpRepository(AppDbContext dbContext)
+        public OTPRepository(AppDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public async Task<OperationResult> DeleteOtp(string mobile)
+        public async Task<bool> DeleteOTP(string mobile)
         {
             try
             {
-                var otp = await _dbContext.Otps
-                    .FirstOrDefaultAsync(o => o.Mobile == mobile);
+                var otp = await _dbContext.OTPs
+                .FirstOrDefaultAsync(o => o.Mobile == mobile);
 
-                if (otp != null)
-                {
-                    _dbContext.Otps.Remove(otp);
-                    await _dbContext.SaveChangesAsync();
-                }
+                if(otp == null) return false;
 
-                return OperationResult.SuccessedResult();
+                _dbContext.OTPs.Remove(otp);
+                await _dbContext.SaveChangesAsync();
+                 
+                return true;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not AppException)
             {
-                return OperationResult.Failed(GetType().Name, ex);
+                throw new DatabaseException("Failed to delete OTP.", ex);
             }
         }
 
-        public async Task<OperationResult<Otp>> GetOtp(string mobile)
+        public async Task<OTP> GetOTP(string mobile)
         {
             try
             {
-                var otp = await _dbContext.Otps
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(o => o.Mobile == mobile);
+                var otp = await _dbContext.OTPs
+               .AsNoTracking()
+               .FirstOrDefaultAsync(o => o.Mobile == mobile);
 
-                return otp != null
-                    ? OperationResult<Otp>.SuccessedResult(otp)
-                    : OperationResult<Otp>.Failed("کد OTP یافت نشد");
+                return otp!;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not AppException)
             {
-                return OperationResult<Otp>.Failed(GetType().Name, ex);
+                throw new DatabaseException("Failed to retrieve OTP.", ex);
             }
         }
-
-        public async Task<OperationResult> SaveOtp(string mobile, string code, DateTime expireTime)
+        public async Task SaveOTP(string mobile, string code, DateTime expireTime)
         {
             try
             {
-                var existingOtp = await _dbContext.Otps
-                    .FirstOrDefaultAsync(o => o.Mobile == mobile);
+                var existingOtp = await _dbContext.OTPs
+                   .FirstOrDefaultAsync(o => o.Mobile == mobile);
 
                 if (existingOtp != null)
                 {
-                    _dbContext.Otps.Remove(existingOtp);
+                    _dbContext.OTPs.Remove(existingOtp);
                 }
 
-                var otp = new Otp
+                var otp = new OTP
                 {
                     Mobile = mobile,
                     Code = code,
                     ExpireTime = expireTime,
                 };
 
-                _dbContext.Otps.Add(otp);
-                await _dbContext.SaveChangesAsync();
+                _dbContext.OTPs.Add(otp);
 
-                return OperationResult.SuccessedResult();
+                await _dbContext.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not AppException)
             {
-                return OperationResult.Failed(GetType().Name, ex);
+                throw new DatabaseException("Failed to save OTP.", ex);
             }
         }
     }

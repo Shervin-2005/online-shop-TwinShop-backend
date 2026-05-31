@@ -17,13 +17,11 @@ namespace TwinShop.Shared.DTOS
         public const string ApplyText = "Apply";
         public const string AddText = "Add";
         public const string SaveText = "Save";
-        public const string EnterCodeText = "Enter Code";
-        public const string SendCodeText = "Send Code";
         public const string DefaultProfile = "https://s3.ir-thr-at1.arvanstorage.ir/shams1384/shams1384%2FDefault%20Images%2Fprofile.png";
         public const string UplaodImage = "https://s3.ir-thr-at1.arvanstorage.ir/shams1384/shams1384%2FDefault%20Images%2FUpload.png";
         public const string FailedSendCode = "An error in sending code!";
         public const string SendCode = "Code send to your number";
-        public const string CodeNotFound = "کدی برای این شماره ارسال نشده است";
+        public const string CodeNotFound = "Code not found";
         //======================================================================================================
         public const string SuccessSignUp1 = "Succssesfully signed in!";
         public const string FailedSignUp1 = "Your Sign in Went Wrong!!";
@@ -80,6 +78,7 @@ namespace TwinShop.Shared.DTOS
         public const string DeleteCategory = "Category deleted successfuly";
         public const string CategoryNameAlreadyExist = "You Already Have The Category!";
         public const string CategoryNameNotExisted = "This Category name does not exist!";
+        public const string CategoryNotExisted = "This Category does not exist!";
         //=================================================================================================================
         public const string BrandName = "Please enter the name of the brand";
         public const string BrandCategoryName = "Please Enter the Catgory name of the brand";
@@ -89,6 +88,7 @@ namespace TwinShop.Shared.DTOS
         public const string DeleteBrand = "Brand deleted successfuly";
         public const string BrandNameAlreadyExist = "You Already Have The Brand!";
         public const string BrandNameNotExist = "this Brand name does noot exsit!";
+        public const string BrandNotExist = "this Brand does noot exsit!";
         //=================================================================================================================
         public const string NullOrder = "سفارش پیدا نشد";
         public const string RejectedOrder = "سفارش رد شد";

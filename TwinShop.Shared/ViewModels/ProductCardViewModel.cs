@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -17,29 +18,21 @@ namespace TwinShop.Shared.ViewModels
         [Required(ErrorMessage=MessagesAndConsts.ProductName)]
         public string? ProductName { get; set; }
 
-        [Required(ErrorMessage=MessagesAndConsts.ProductBrandName)]
-        public string? BrandName { get; set; }
+        public int BrandId { get; set; }
 
-        public int? BrandId { get; set; }
-
-        [Required(ErrorMessage = MessagesAndConsts.ProductCategoryName)]
-        public string? CategoryName { get; set; }
-
-        public int? CategoryId { get; set; }
-
-        [Required(ErrorMessage = MessagesAndConsts.ProductPhoto)]
-        public string? MainImageUrl { get; set; }
-
-        public List<string>? SideImageUrls { get; set; }
+        public int CategoryId { get; set; }
 
         [ProductNumberValidation]
         public int NumberInStorage { get; set; }
 
         [InitialPriceValidation]
-        public int InitialPrice { get; set; }
+        public decimal InitialPrice { get; set; }
 
         [SecondryPriceValidationAtribute]
-        public int SecondryPrice { get; set; }
+        public decimal SecondaryPrice { get; set; }
+
+        [Required(ErrorMessage = "Please upload an image at least")]
+        public List<IFormFile> Images { get; set; } = new List<IFormFile>();
 
         [Required(ErrorMessage = MessagesAndConsts.ProductDescription)]
         [StringLength(2000, ErrorMessage = MessagesAndConsts.ProductDescriptionLength)]

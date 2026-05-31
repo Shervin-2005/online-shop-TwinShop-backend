@@ -1,10 +1,8 @@
-﻿using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Twin_Shop__Web_API.Entities;
 using TwinShop.DAL.Data;
 using TwinShop.DAL.Repositories.Interfaces;
-using TwinShop.Shared;
-using TwinShop.Shared.DTOS;
+using TwinShop.Shared.Custom_Exceptions;
 using TwinShop.Shared.DTOS.Auth;
 
 namespace TwinShop.DAL.Repositories.Implementations
@@ -18,141 +16,139 @@ namespace TwinShop.DAL.Repositories.Implementations
             _dbContext = dbContext;
         }
 
-        public async Task<OperationResult<UserDto>?> GetUserByPhoneAsync(string phone)
-        {         
-                var user = await _dbContext.Users.AsNoTracking().Where(u => u.PhoneNumber == phone)
-                    .Select(u => new UserDto
-                    {
-                        Id=u.UserId,
-                        ProfileImage =u.ProfileImage,
-                        FirstName = u.FirstName,
-                        LastName = u.LastName,
-                        PhoneNumber= u.PhoneNumber,
-                        Email = u.Email,
-                        PasswordHash = u.PasswordHash,
-                    }).FirstOrDefaultAsync();
-           
-            return user!=null ?OperationResult<UserDto>.SuccessedResult(user): OperationResult<UserDto>.Failed(MessagesAndConsts.userNotLoginWithThisPhoneNumber);
-        }
-       
-
-        public async Task<OperationResult<UserDto>?> GetByEmailAsync(string email)
+        public async Task<UserDto?> GetUserByPhoneAsync(string phone)
         {
             try
             {
-                var user = await _dbContext.Users.AsNoTracking().Where(u => u.Email == email)
-                    .Select(u => new UserDto
-                    {
-                        Id = u.UserId,
-                        ProfileImage = u.ProfileImage,
-                        FirstName = u.FirstName,
-                        LastName = u.LastName,
-                        PhoneNumber = u.PhoneNumber,
-                        Email = u.Email,
-                    }).FirstOrDefaultAsync();
-                return OperationResult<UserDto>.SuccessedResult(user!);
+                 return await _dbContext.Users
+                .AsNoTracking()
+                .Where(u => u.PhoneNumber == phone)
+                .Select(u => new UserDto
+                {
+                    Id = u.UserId,
+                    ProfileImage = u.ProfileImage,
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    PhoneNumber = u.PhoneNumber,
+                    PasswordHash = u.PasswordHash,
+                    Email = u.Email,
+                })
+                .FirstOrDefaultAsync();
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not AppException)
             {
-                return OperationResult<UserDto>.Failed(GetType().Name, ex);
+                throw new DatabaseException("Failed to retrieve user", ex);
             }
         }
-        
-        public async Task<OperationResult> PhoneExistsAsync(string phone)
-        {
-            var user= await _dbContext.Users.Where(x => x.PhoneNumber == phone).FirstOrDefaultAsync();
-
-            return user != null ? OperationResult.SuccessedResult() : OperationResult<UserDto>.Failed();
-        }
-
-        public async Task<OperationResult> EmailExistsAsync(string email)
+        public async Task<UserDto?> GetByEmailAsync(string email)
         {
             try
             {
-                await _dbContext.Users.Where(x => x.Email == email).AnyAsync();
-                return OperationResult.SuccessedResult();
+                return await _dbContext.Users
+               .AsNoTracking()
+               .Where(u => u.Email == email)
+               .Select(u => new UserDto
+               {
+                   Id = u.UserId,
+                   ProfileImage = u.ProfileImage,
+                   FirstName = u.FirstName,
+                   LastName = u.LastName,
+                   PhoneNumber = u.PhoneNumber,
+                   PasswordHash = u.PasswordHash,
+                   Email = u.Email,
+               })
+               .FirstOrDefaultAsync();
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not AppException)
             {
-                return OperationResult.Failed(GetType().Name, ex);
+                throw new DatabaseException("Failed to retrieve user", ex);
             }
         }
-
-        public async Task<OperationResult> AddUserAsync(UserDto userDto)
-        {
-
-            User user = new User
-            {
-                PhoneNumber = userDto.PhoneNumber,
-                PasswordHash = userDto.PasswordHash,
-                ProfileImage=userDto.ProfileImage,
-            };
-            _dbContext.Users.Add(user);
-            await _dbContext.SaveChangesAsync();
-                return OperationResult.SuccessedResult();
-            
-        }
-        //اشتباهه باید اصلاح بشه
-        public async Task<OperationResult>ChangePasswordAsync(UserDto userDto,string newPassword)
+        public async Task<bool> PhoneExistsAsync(string phone)
         {
             try
             {
-                var existingUser = await _dbContext.Users.FirstAsync();
+                return await _dbContext.Users.Where(x => x.PhoneNumber == phone).AnyAsync();
+            }
+            catch (Exception ex) when (ex is not AppException)
+            {
+                throw new DatabaseException("Failed to check PhoneNumber.", ex);
+            }
+        }
+        public async Task<bool> EmailExistsAsync(string email)
+        {
+            try
+            {
+                return await _dbContext.Users.Where(x => x.Email == email).AnyAsync();
+            }
+            catch (Exception ex) when (ex is not AppException)
+            {
+                throw new DatabaseException("Failed to check Email.", ex);
+            }
+        }
+        public async Task<int> AddUserAsync(UserDto userDto)
+        {
+            try
+            {
+                User user = new User
+                {
+                    PhoneNumber = userDto.PhoneNumber,
+                    PasswordHash = userDto.PasswordHash,
+                    ProfileImage = userDto.ProfileImage,
+                };
+                _dbContext.Users.Add(user);
+                await _dbContext.SaveChangesAsync();
+
+                return user.UserId;
+            }
+            catch (Exception ex) when (ex is not AppException)
+            {
+                throw new DatabaseException("Failed to create user", ex);
+            }
+
+        }
+        public async Task<bool> UpdateUserAsync(UserDto userDto, int id)
+        {
+            try
+            {
+                var existingUser = await _dbContext.Users
+                .FirstOrDefaultAsync(u => u.UserId == id);
+
+                if (existingUser == null) return false;
+
+                existingUser!.FirstName = userDto.FirstName;
+                existingUser.LastName = userDto.LastName;
+                existingUser.Email = userDto.Email;
+                existingUser.PhoneNumber = userDto.PhoneNumber!;
+                existingUser.ProfileImage = userDto.ProfileImage!;
+
+                await _dbContext.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex) when (ex is not AppException)
+            {
+                throw new DatabaseException("Failed to update user", ex);
+            }
+        }
+        public async Task<bool> UpdateUserPassword(UserDto userDto)
+        {
+            try
+            {
+                var existingUser = await _dbContext.Users
+               .FirstOrDefaultAsync(u => u.UserId == userDto.Id);
+
+                if (existingUser == null) return false;
+
                 existingUser.PasswordHash = userDto.PasswordHash;
-                await _dbContext.SaveChangesAsync();
-                return OperationResult.SuccessedResult();
-            }
-            catch (Exception ex)
-            {
-                return OperationResult.Failed(GetType().Name, ex);
-            }
-        }
-
-        public async Task<OperationResult> VerifyPassword(string passwordHashUser,string passwordHashUserDto)
-        {
-            bool result= (passwordHashUser == passwordHashUserDto);
-            if(result) return  OperationResult.SuccessedResult();
-            else return  OperationResult.Failed(MessagesAndConsts.IncorrectPhoneNumberOrPassword);
-        }
-
-        public async Task<OperationResult> UpdateUserAsync(UserDto userDto)
-        {
-            try
-            {
-               var user=new User { UserId= userDto.Id };
-                _dbContext.Attach(user);
-
-
-                user.FirstName = userDto.FirstName;
-                user.LastName = userDto.LastName;
-                user.Email = userDto.Email;
-                user.PhoneNumber = userDto.PhoneNumber!;  
-                user.ProfileImage = userDto.ProfileImage!;
-                user.PasswordHash = userDto.PasswordHash;
-
 
                 await _dbContext.SaveChangesAsync();
-                return OperationResult.SuccessedResult(); ;
-            }
-            catch (Exception ex)
-            {
-                return  OperationResult.Failed(GetType().Name, ex);
-            }
-        }
-        public async Task<OperationResult> UpdateUserPassword(UserDto userDto)
-        {
-            try
-            {
-                var user = new User { UserId = userDto.Id };
-                _dbContext.Attach(user);
-                user.PasswordHash = userDto.PasswordHash;
 
-                await _dbContext.SaveChangesAsync();
-                return OperationResult.SuccessedResult(); ;
+                return true;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not AppException)
             {
-                return OperationResult.Failed(GetType().Name, ex);
+                throw new DatabaseException("Failed to change password", ex);
             }
         }
     }

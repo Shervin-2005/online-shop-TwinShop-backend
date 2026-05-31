@@ -1,12 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Twin_Shop__Web_API.DTOs.Category;
-using Twin_Shop__Web_API.DTOs.Product;
 using Twin_Shop__Web_API.Entities;
 using TwinShop.DAL.Data;
+using TwinShop.DAL.Entities;
 using TwinShop.DAL.Repositories.Interfaces;
-using TwinShop.Shared;
-using TwinShop.Shared.DTOS.Auth;
+using TwinShop.Shared.Custom_Exceptions;
 
 namespace TwinShop.DAL.Repositories.Implementations
 {
@@ -20,156 +18,232 @@ namespace TwinShop.DAL.Repositories.Implementations
             _dbContext = dbContext;
         }
 
-        public async Task<OperationResult> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
             try
             {
-                var category = new Category { CategoryId = id };
-                _dbContext.Attach(category);
-                category.IsDeleted= true;
-                _dbContext.Entry(category).Property(c => c.IsDeleted).IsModified=true;
-                 await _dbContext.SaveChangesAsync();
-                return OperationResult.SuccessedResult();       
-            }
-           
-            catch (Exception ex)
-            {
-                return OperationResult.Failed(GetType().Name, ex);
-            }
-        }
+                var category = await _dbContext.Categories
+               .Include(bc => bc.BrandCategories)
+               .FirstOrDefaultAsync(c => c.CategoryId == id && !c.IsDeleted);
 
-        public async Task<OperationResult<List<CategoryDto>>> GetAllAsync()
-        {
-            try
-            {
-                var categories = await _dbContext.Categories.AsNoTracking()
-                    .Where(c => c.IsDeleted == false).Select(c => new CategoryDto
-                    {
-                        CategoryName = c.CategoryName,
-                        MainImage = c.MainImage,
-                        CategoryId=c.CategoryId
-                    }).ToListAsync();
-                return OperationResult<List<CategoryDto>>.SuccessedResult(categories);
-            }
-            catch (Exception ex)
-            {
-                return OperationResult<List<CategoryDto>>.Failed(GetType().Name, ex);
-            }
-        }
-        public async Task<OperationResult<CategoryDto>> GetByIdAsync(int CategoryId)
-        {
-            try
-            {
-                var category = await _dbContext.Categories.AsNoTracking().Where(c => c.CategoryId == CategoryId && c.IsDeleted == false).
-                    Select(c => new CategoryDto
-                    {
-                        CategoryName = c.CategoryName,
-                        MainImage = c.MainImage,
+                if (category == null) return false;
 
-                    }).FirstAsync();
-                return OperationResult<CategoryDto>.SuccessedResult(category);
-            }
-            catch (Exception ex)
-            {
-                return OperationResult<CategoryDto>.Failed(GetType().Name, ex);
-            }
-        }
+                category.IsDeleted = true;
 
-        public async Task<OperationResult<List<CategoryDto>>> GetCategoriesByNameAsync(string categoryName)
-        {
-            try
-            {
-                var categories = await _dbContext.Categories.AsNoTracking().Where(c => c.CategoryName == categoryName && c.IsDeleted == false)
-                    .Select(c => new CategoryDto
-                    {
-                        CategoryName = c.CategoryName,
-                        MainImage = c.MainImage,
-                    }).ToListAsync();
-                return OperationResult<List<CategoryDto>>.SuccessedResult(categories);
-            }
-            catch (Exception ex)
-            {
-                return OperationResult<List<CategoryDto>>.Failed(GetType().Name, ex);
-            }
-        }
-        public async Task<OperationResult<int>> GetCateogryByNameAsync(string categoryName)
-        {
-            try
-            {
-               var categoryId = await _dbContext.Categories.AsNoTracking().
-                    Where(c => c.CategoryName == categoryName && c.IsDeleted == false)
-                    .Select(c => c.CategoryId)
-                    .FirstOrDefaultAsync();
-                return OperationResult<int>.SuccessedResult(categoryId!);
-            }
-            catch (Exception ex)
-            {
-                return OperationResult<int>.Failed(GetType().Name, ex);
-            }
-        }
-
-        public async Task<OperationResult> InsertAsync(CategoryDto categoryDto)
-        {
-            try
-            {
-                Category category = new Category
+                if (category.BrandCategories?.Any() == true)
                 {
-                    CategoryName = categoryDto.CategoryName,
-                    MainImage = categoryDto.MainImage,
+                    foreach (var bc in category.BrandCategories.Where(bc => !bc.IsDeleted))
+                    {
+                        bc.IsDeleted = true;
+                    }
+                }
+                await _dbContext.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex) when (ex is not AppException)
+            {
+                throw new DatabaseException("Failed to delete categoty.", ex);
+            }
+        }
+
+        public async Task<List<CategoryDto>> GetAllAsync()
+        {
+            try
+            {
+                return await _dbContext.Categories
+               .AsNoTracking()
+               .Where(b => !b.IsDeleted)
+               .Select(b => new CategoryDto
+               {
+                   CategoryId = b.CategoryId,
+                   CategoryName = b.CategoryName,
+                   MainImageUrl = b.MainImageUrl,
+                   BrandIds = b.BrandCategories!
+                    .Where(bc => !bc.IsDeleted)
+                        .Select(bc => bc.BrandId)
+                        .ToList()
+               })
+               .ToListAsync();
+            }
+            catch (Exception ex) when (ex is not AppException)
+            {
+                throw new DatabaseException("Failed to retrieve categories.", ex);
+            }
+        }
+        public async Task<CategoryDto?> GetByIdAsync(int categoryId)
+        {
+            try
+            {
+                return await _dbContext.Categories
+
+               .AsNoTracking()
+               .Where(b => b.CategoryId == categoryId && !b.IsDeleted)
+               .Select(b => new CategoryDto
+               {
+                   CategoryId = b.CategoryId,
+                   CategoryName = b.CategoryName,
+                   MainImageUrl = b.MainImageUrl,
+                   BrandIds = b.BrandCategories!
+                       .Where(bc => !bc.IsDeleted)
+                       .Select(bc => bc.BrandId)
+                       .ToList()
+               })
+               .FirstOrDefaultAsync();
+            }
+            catch (Exception ex) when (ex is not AppException)
+            {
+                throw new DatabaseException("Failed to retrieve category", ex);
+            }
+
+        }
+
+        public async Task<List<CategoryDto>> SearchCategoriesAsync(string categoryName)
+        {
+            try
+            {
+                return await _dbContext.Categories
+               .AsNoTracking()
+               .Where(b => !b.IsDeleted && b.CategoryName.ToLower().Contains(categoryName.ToLower()))
+               .Select(b => new CategoryDto
+               {
+                   CategoryId = b.CategoryId,
+                   CategoryName = b.CategoryName,
+                   MainImageUrl = b.MainImageUrl,
+                   BrandIds = b.BrandCategories!
+                      .Where(bc => !bc.IsDeleted)
+                      .Select(bc => bc.BrandId)
+                      .ToList()
+               })
+               .ToListAsync();
+            }
+            catch (Exception ex) when (ex is not AppException)
+            {
+                throw new DatabaseException("Failed to search category.", ex);
+            }
+        }
+
+        public async Task<int> InsertAsync(CategoryDto categoryDto)
+        {
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            try
+            {
+                var category = new Category
+                {
+                    CategoryName = categoryDto.CategoryName!,
+                    MainImageUrl = categoryDto.MainImageUrl!,
+                    IsDeleted = false
                 };
+
                 _dbContext.Categories.Add(category);
                 await _dbContext.SaveChangesAsync();
-                return OperationResult.SuccessedResult();
+
+                if (categoryDto.BrandIds != null && categoryDto.BrandIds.Any())
+                {
+                    var brandCategories = categoryDto.BrandIds
+                        .Select(brandId => new BrandCategory
+                        {
+                            CategoryId = category.CategoryId,
+                            BrandId = brandId
+                        })
+                        .ToList();
+
+                    _dbContext.BrandCategories.AddRange(brandCategories);
+                    await _dbContext.SaveChangesAsync();
+                }
+
+                await transaction.CommitAsync();
+
+                return category.CategoryId;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not AppException)
             {
-                return OperationResult.Failed(GetType().Name, ex);
+                await transaction.RollbackAsync();
+                throw new DatabaseException("Failed to create category", ex);
             }
         }
 
-        public async Task<OperationResult> UpdateAsync(CategoryDto categoryDto,int id)
+        public async Task<bool> UpdateAsync(CategoryDto categoryDto, int id)
         {
             try
             {
-                var existing = await _dbContext.Categories.Where(c => c.CategoryId == id).FirstAsync();
+                var existingCategory = await _dbContext.Categories.Where(c => c.CategoryId == id && !c.IsDeleted)
+                .FirstOrDefaultAsync();
 
-                existing.CategoryName = categoryDto.CategoryName;
-                existing.MainImage= categoryDto.MainImage;
-                await _dbContext.SaveChangesAsync();
-                return OperationResult.SuccessedResult(); ;
-            }
-            catch (Exception ex)
-            {
-                return OperationResult.Failed(GetType().Name, ex);
-            }
-        }
-        public async Task<OperationResult> CategoryNameExist(string Name)
-        {
-            var user = await _dbContext.Categories.Where(x => x.CategoryName == Name).FirstOrDefaultAsync();
+                if (existingCategory == null) return false;
 
-            return user != null ? OperationResult.SuccessedResult() : OperationResult<UserDto>.Failed();
-        }
-        public async Task<OperationResult<List<CategoryDto>>> SearhCategoryByName(string searchTerm)
-        {
-            try
-            {
-                var categories = await _dbContext.Categories
-                    .AsNoTracking()
-                    .Where(c => c.IsDeleted == false &&
-                                 c.CategoryName!.Contains(searchTerm))
-                    .Select(c => new CategoryDto
-                    {
-                        CategoryId = c.CategoryId,
-                        CategoryName=c.CategoryName,
-                        MainImage=c.MainImage,
-                    })
+                existingCategory.CategoryName = categoryDto.CategoryName!;
+                existingCategory.MainImageUrl = categoryDto.MainImageUrl!;
+
+                var oldRelations = await _dbContext.BrandCategories
+                    .Where(bc => bc.CategoryId == id)
                     .ToListAsync();
 
-                return OperationResult<List<CategoryDto>>.SuccessedResult(categories);
+                _dbContext.BrandCategories.RemoveRange(oldRelations);
+
+                if (categoryDto.BrandIds != null && categoryDto.BrandIds.Any())
+                {
+                    var newRelations = categoryDto.BrandIds
+                        .Select(brandId => new BrandCategory
+                        {
+                            CategoryId = id,
+                            BrandId = brandId
+
+                        })
+                        .ToList();
+
+                    _dbContext.BrandCategories.AddRange(newRelations);
+                }
+
+                await _dbContext.SaveChangesAsync();
+
+                return true;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not AppException)
             {
-                return OperationResult<List<CategoryDto>>.Failed(GetType().Name, ex);
+                throw new DatabaseException("Failed to update category.", ex);
+            }
+        }
+        public async Task<bool> CategoryNameExistsAsync(string categoryName)
+        {
+            try
+            {
+                return await _dbContext.Categories
+                .AsNoTracking()
+                .AnyAsync(b => !b.IsDeleted && b.CategoryName.ToLower() == categoryName.ToLower());
+            }
+            catch (Exception ex) when (ex is not AppException)
+            {
+                throw new DatabaseException("Failed to check category name.", ex);
+            }
+        }
+
+        public async Task<int?> GetCategoryIdByNameAsync(string categoryName)
+        {
+            try
+            {
+                return await _dbContext.Categories
+                .AsNoTracking()
+                .Where(b => !b.IsDeleted && b.CategoryName.ToLower() == categoryName.ToLower())
+                .Select(b => b.CategoryId)
+                .FirstOrDefaultAsync();
+            }
+            catch (Exception ex) when (ex is not AppException)
+            {
+                throw new DatabaseException("Failed to retrieve category id.", ex);
+            }
+        }
+
+        public async Task<bool> CategoryIdExistsAsync(int categoryId)
+        {
+            try
+            {
+                return await _dbContext.Categories
+                .AsNoTracking()
+                .AnyAsync(b => !b.IsDeleted && b.CategoryId == categoryId);
+            }
+            catch (Exception ex) when (ex is not AppException)
+            {
+                throw new DatabaseException("Failed to check category id.", ex);
             }
         }
     }

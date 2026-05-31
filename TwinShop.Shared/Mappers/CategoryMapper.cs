@@ -17,7 +17,6 @@ namespace TwinShop.Shared.Mappers
             {
                 CategoryId = categoryView.CategoryId,
                 CategoryName = categoryView.CategoryName,
-                MainImage = categoryView.MainImage,
             };
         }
         public static CategoryViewModel CategoryDTOToCategoryCardViewModel(this CategoryDto categoryDto)
@@ -25,7 +24,6 @@ namespace TwinShop.Shared.Mappers
             return new CategoryViewModel
             {
                 CategoryName = categoryDto.CategoryName,
-                MainImage = categoryDto.MainImage,
                 CategoryId = categoryDto.CategoryId,
             };
         }

@@ -37,7 +37,6 @@ namespace Shop.UI.Product.UI
             pictureBoxProduct.SizeMode = PictureBoxSizeMode.Zoom;
 
             lblProductName.Text = productCardViewModel.ProductName;
-            lblBrand.Text = productCardViewModel.BrandName;
             lblCategory.Text = productCardViewModel.CategoryName;
             lblPrice.Text = $"{productCardViewModel.SecondryPrice} dollors";
             lblDescription.Text = productCardViewModel.Description;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -15,9 +16,10 @@ namespace TwinShop.Shared.ViewModels
 
         [Required(ErrorMessage = MessagesAndConsts.CategoryName)]
         public string? CategoryName { get; set; }
+        public List<int> BrandIds { get; set; } = null!;
 
         [Required(ErrorMessage = MessagesAndConsts.CategoryPhoto)]
-        public string? MainImage { get; set; }
+        public IFormFile Image { get; set; } = null!;
 
         public bool IsDeleted { get; set; }
     }

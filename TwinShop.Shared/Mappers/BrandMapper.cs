@@ -18,10 +18,8 @@ namespace TwinShop.Shared.Mappers
             {
                 BrandId = brandView.BrandId,
                 BrandName = brandView.BrandName,
-                MainImage = brandView.MainImage,
-                CategoryName = brandView.CategoryName,
                 IsDeleted = brandView.IsDeleted,
-                CategoryId = brandView.CategoryId,
+                CategoryIds = brandView.CategoryIds!,
             };
         }
         public static BrandViewModel BrandDTOToBrandViewModel(this BrandDto brand)
@@ -30,10 +28,8 @@ namespace TwinShop.Shared.Mappers
             {
                 BrandId= brand.BrandId,
                 BrandName = brand.BrandName,
-                MainImage = brand.MainImage,
-                CategoryName = brand.CategoryName,
                 IsDeleted = brand.IsDeleted,
-                CategoryId = brand.CategoryId,
+                CategoryIds = brand.CategoryIds,
             };
         }
         public static List<BrandViewModel> BrandDTOToBrandViewModel(this List<BrandDto> brands)

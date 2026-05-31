@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.CompilerServices;
+using TwinShop.DAL.Entities;
 
 namespace Twin_Shop__Web_API.Entities
 {
@@ -9,27 +8,18 @@ namespace Twin_Shop__Web_API.Entities
         [Key]
         public int BrandId { get; set; }
 
-
-        [Column(TypeName = "nvarchar")]
         [StringLength(100)]
         [Required]
-        public string BrandName { get; set; }
+        public string BrandName { get; set; } = null!;
 
-        
         [Required]
-        public string MainImage {  get; set; }
+        [StringLength(500)]
+        public string MainImageUrl { get; set; } = null!;
 
-        [StringLength(50)]
-        [Required]
-        public string CategoryName { get; set; }
+        public ICollection<BrandCategory> BrandCategories { get; set; } = null!;
 
-        public Category Category { get; set; }
+        public ICollection<Product>? Products { get; set; }
 
-        public int CategoryId { get; set; }
-
-        public ICollection<Product> Products { get; set; } = new List<Product>();
-
-        public bool IsDeleted { get; set; } = false;
-
+        public bool IsDeleted { get; set; }
     }
 }

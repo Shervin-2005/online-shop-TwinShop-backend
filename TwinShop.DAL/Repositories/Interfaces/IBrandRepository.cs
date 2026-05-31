@@ -6,16 +6,15 @@ namespace TwinShop.DAL.Repositories.Interfaces
 {
     public interface IBrandRepository
     {
-        Task<OperationResult> InsertAsync(BrandDto brandDto);
-        Task<OperationResult> DeleteAsync(int id);
-        Task<OperationResult> UpdateAsync(BrandDto brandDto, int id);
-        Task<OperationResult<List<BrandDto>>> GetBrandsByNameAsync(string brandName);
-        Task<OperationResult<List<BrandDto>>> GetBrandsByCategoryNameAsync(string categoryName);
-        Task<OperationResult<BrandDto>> GetByIdAsync(int brandId);
-        Task<OperationResult<List<BrandDto>>> GetAllAsync();
-        Task<OperationResult> BrandNameExist(string Name);
-        Task<OperationResult<List<BrandDto>>> SearhBrandByName(string searchTerm);
-        Task<OperationResult<int>> GetBrandByNameAsync(string brandName);
-
+        Task<bool> DeleteAsync(int id);
+        Task<BrandDto?> GetByIdAsync(int brandId);
+        Task<int> InsertAsync(BrandDto brandDto);
+        Task<bool> UpdateAsync(BrandDto brandDto, int id);
+        Task<List<BrandDto>> GetAllAsync();
+        Task<List<BrandDto>> GetBrandsByCategoryNameAsync(string categoryName);
+        Task<List<BrandDto>> SearchBrandsAsync(string brandName);
+        Task<int?> GetBrandIdByNameAsync(string brandName);
+        Task<bool> BrandNameExistsAsync(string brandName);
+        Task<bool> BrandIdExistsAsync(int brandId);
     }
 }

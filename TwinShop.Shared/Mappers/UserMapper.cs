@@ -30,7 +30,6 @@ namespace TwinShop.Shared.Mappers
                 LastName = userInfoViewModel.LastName,
                 PhoneNumber = userInfoViewModel.PhoneNumber,
                 Email = userInfoViewModel.Email,
-                ProfileImage = userInfoViewModel.ProfileImage,
             };
         }
         public static UserInfoViewModel UserDTOToUserInfoViewModel(this UserDto userDto)
@@ -42,7 +41,6 @@ namespace TwinShop.Shared.Mappers
                 LastName = userDto.LastName,
                 PhoneNumber = userDto.PhoneNumber,
                 Email = userDto.Email,
-                ProfileImage=userDto.ProfileImage,
             };
         }
         public static string HashPassword(string password)

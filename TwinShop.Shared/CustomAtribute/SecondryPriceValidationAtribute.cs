@@ -14,8 +14,8 @@ namespace TwinShop.Shared.CustomAtribute
         {
             if (value == null)
                 return new ValidationResult(MessagesAndConsts.ProductSecondryPrice);
-            int secondryPrice;
-            if (!int.TryParse(value.ToString(), out secondryPrice))
+            decimal secondryPrice;
+            if (!decimal.TryParse(value.ToString(), out secondryPrice))
                 return new ValidationResult(MessagesAndConsts.ValidProductPrice);
             if (secondryPrice == 0)
                 return new ValidationResult(MessagesAndConsts.ProductSecondryPrice);

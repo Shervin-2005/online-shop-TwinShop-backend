@@ -22,42 +22,25 @@ namespace TwinShop.DAL.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("TwinShop.DAL.Entities.ErrorLog", b =>
+            modelBuilder.Entity("TwinShop.DAL.Entities.BrandCategory", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("BrandId")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
-                    b.Property<string>("Curl")
-                        .HasColumnType("nvarchar(max)");
+                    b.HasKey("BrandId", "CategoryId");
 
-                    b.Property<string>("Layer")
-                        .HasColumnType("nvarchar(max)");
+                    b.HasIndex("CategoryId");
 
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Route")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Source")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StackTrace")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ErrorLogs");
+                    b.ToTable("BrandCategories");
                 });
 
-            modelBuilder.Entity("TwinShop.DAL.Entities.Otp", b =>
+            modelBuilder.Entity("TwinShop.DAL.Entities.OTP", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -66,42 +49,53 @@ namespace TwinShop.DAL.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Code")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("ExpireTime")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Mobile")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Otps");
+                    b.ToTable("OTPs");
                 });
 
-            modelBuilder.Entity("TwinShop.DAL.Entities.ProductSideImage", b =>
+            modelBuilder.Entity("TwinShop.DAL.Entities.ProductImage", b =>
                 {
-                    b.Property<int>("SideImageId")
+                    b.Property<int>("ImageId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SideImageId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ImageId"));
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsMainImage")
                         .HasColumnType("bit");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<string>("SideImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("SideImageId");
+                    b.HasKey("ImageId");
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("productSideImages");
+                    b.ToTable("ProductImages");
                 });
 
             modelBuilder.Entity("Twin_Shop__Web_API.Entities.Brand", b =>
@@ -115,26 +109,17 @@ namespace TwinShop.DAL.Migrations
                     b.Property<string>("BrandName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar");
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CategoryName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("MainImage")
+                    b.Property<string>("MainImageUrl")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.HasKey("BrandId");
-
-                    b.HasIndex("CategoryId");
 
                     b.ToTable("Brands");
                 });
@@ -150,14 +135,15 @@ namespace TwinShop.DAL.Migrations
                     b.Property<string>("CategoryName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("MainImage")
+                    b.Property<string>("MainImageUrl")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.HasKey("CategoryId");
 
@@ -172,39 +158,25 @@ namespace TwinShop.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"));
 
-                    b.Property<int>("AveScoreOfUsers")
+                    b.Property<double>("AverageUserScore")
+                        .HasColumnType("float");
+
+                    b.Property<int>("BrandId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("BrandId")
+                    b.Property<int>("CategoryId")
                         .HasColumnType("int");
-
-                    b.Property<string>("BrandName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CategoryName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(2000)
-                        .HasColumnType("nvarchar");
+                        .HasColumnType("nvarchar(2000)");
 
-                    b.Property<int>("InitialPrice")
-                        .HasColumnType("int");
+                    b.Property<decimal>("InitialPrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<string>("MainImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("NumberInStorage")
                         .HasColumnType("int");
@@ -212,10 +184,10 @@ namespace TwinShop.DAL.Migrations
                     b.Property<string>("ProductName")
                         .IsRequired()
                         .HasMaxLength(1000)
-                        .HasColumnType("nvarchar");
+                        .HasColumnType("nvarchar(1000)");
 
-                    b.Property<int>("SecondryPrice")
-                        .HasColumnType("int");
+                    b.Property<decimal>("SecondaryPrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("SoldNumber")
                         .HasColumnType("int");
@@ -223,6 +195,8 @@ namespace TwinShop.DAL.Migrations
                     b.HasKey("ProductId");
 
                     b.HasIndex("BrandId");
+
+                    b.HasIndex("CategoryId");
 
                     b.ToTable("Products");
                 });
@@ -265,10 +239,29 @@ namespace TwinShop.DAL.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("TwinShop.DAL.Entities.ProductSideImage", b =>
+            modelBuilder.Entity("TwinShop.DAL.Entities.BrandCategory", b =>
+                {
+                    b.HasOne("Twin_Shop__Web_API.Entities.Brand", "Brand")
+                        .WithMany("BrandCategories")
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Twin_Shop__Web_API.Entities.Category", "Category")
+                        .WithMany("BrandCategories")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Brand");
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("TwinShop.DAL.Entities.ProductImage", b =>
                 {
                     b.HasOne("Twin_Shop__Web_API.Entities.Product", "Product")
-                        .WithMany("SideImages")
+                        .WithMany("Images")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -276,40 +269,42 @@ namespace TwinShop.DAL.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Twin_Shop__Web_API.Entities.Brand", b =>
-                {
-                    b.HasOne("Twin_Shop__Web_API.Entities.Category", "Category")
-                        .WithMany("Brands")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-                });
-
             modelBuilder.Entity("Twin_Shop__Web_API.Entities.Product", b =>
                 {
                     b.HasOne("Twin_Shop__Web_API.Entities.Brand", "Brand")
                         .WithMany("Products")
                         .HasForeignKey("BrandId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Twin_Shop__Web_API.Entities.Category", "Category")
+                        .WithMany("Products")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Brand");
+
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("Twin_Shop__Web_API.Entities.Brand", b =>
                 {
+                    b.Navigation("BrandCategories");
+
                     b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Twin_Shop__Web_API.Entities.Category", b =>
                 {
-                    b.Navigation("Brands");
+                    b.Navigation("BrandCategories");
+
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Twin_Shop__Web_API.Entities.Product", b =>
                 {
-                    b.Navigation("SideImages");
+                    b.Navigation("Images");
                 });
 #pragma warning restore 612, 618
         }

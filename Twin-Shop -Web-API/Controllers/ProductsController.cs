@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Twin_Shop__Web_API.Controllers;
-using Twin_Shop__Web_API.DTOs.Product;
-using Twin_Shop__Web_API.Entities;
-using Twin_Shop__Web_API.Services.Implementations;
 using Twin_Shop__Web_API.Services.Interfaces;
-using TwinShop.Shared;
 using TwinShop.Shared.ViewModels;
 
 public class ProductsController : BaseController
@@ -17,64 +13,54 @@ public class ProductsController : BaseController
     }
 
     [HttpGet]
-    public async Task<OperationResult> GetAll()
+    public async Task<IActionResult> GetAll()
     {
         var result = await _productService.GetAllProductsAsync();
-        return result;
+        return Ok(result);
     }
 
-    [HttpGet]
-    public async Task<OperationResult> GetById(int id)
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetById(int id)
     {
-            var result = await _productService.GetProductByIdAsync(id);
-            return result;
+        var result = await _productService.GetProductByIdAsync(id);
+        return Ok(result);
     } 
 
     [HttpPost]
-    public async Task<OperationResult> Create([FromBody] ProductCardViewModel productCardViewModel)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> Create([FromForm] ProductCardViewModel productCardViewModel)
     {
-        var result = await _productService.CreateProductAsync(productCardViewModel);
-        return result;
+        var productId = await _productService.CreateProductAsync(productCardViewModel);
+
+        return CreatedAtAction(nameof(GetById), new {id = productId});
     }
 
-    [HttpDelete]
-    public async Task<OperationResult> Delete(int id)
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
     {
-        var result = await _productService.DeleteProductAsync(id);
-        return result;
+        await _productService.DeleteProductAsync(id);
+        return NoContent();
     }
 
-    [HttpPost]
-    public async Task<OperationResult> Update([FromBody]ProductCardViewModel productView,int id)
+    [HttpPut("{id:int}")]
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> Update([FromForm]ProductCardViewModel productViewModel, int id)
     {
+        await _productService.UpdateProductAsync(productViewModel, id);
+        return NoContent();
+    } 
 
-        var result = await _productService.UpdateProductAsync(productView,id);
-        return result;
-    }
-    [HttpGet]
-    public async Task<OperationResult<List<ProductDto>>> GetProductsByNameAsync(string name)
-    {
-        var result = await _productService.GetProductsByNameAsync(name);
-        return result;
-    }
-
-    [HttpGet]
-    public async Task<OperationResult<List<ProductDto>>> GetProductsByBrandNameAsync(string brandName)
-    {
-        var result = await _productService.GetProductsByBrandNameAsync(brandName);
-        return result;
-    }
-     
-    [HttpGet]
-    public async Task<OperationResult<List<ProductDto>>> GetProductsByCategoryNameAsync(string categoryName)
+    [HttpGet("by-category/{categoryName}")]
+    public async Task<IActionResult> GetProductsByCategoryNameAsync(string categoryName)
     {
         var result = await _productService.GetProductsByCategoryNameAsync(categoryName);
-        return result;
+        return Ok(result);
     }
-    [HttpGet]
-    public async Task<OperationResult> SearchProducts(string searchTerm)
+
+    [HttpGet("search")]
+    public async Task<IActionResult> SearchProducts([FromQuery] string searchTerm)
     {
         var result = await _productService.SearchProductsAsync(searchTerm);
-        return result;
+        return Ok(result);
     }
 }

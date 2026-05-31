@@ -16,17 +16,13 @@ namespace TwinShop.Shared.Mappers
             {
                 ProductName = productView.ProductName,
                 ProductId = productView.ProductId,
-                BrandName = productView.BrandName,
                 BrandId = productView.BrandId,
                 CategoryId = productView.CategoryId,
-                CategoryName = productView.CategoryName,
                 Description = productView.Description,
-                MainImageUrl= productView.MainImageUrl,
                 NumberInStorage = productView.NumberInStorage,
                 InitialPrice = productView.InitialPrice, 
-                SecondryPrice = productView.SecondryPrice,
+                SecondaryPrice = productView.SecondaryPrice,
                 IsDeleted = productView.IsDeleted,
-                SideImageUrls = productView.SideImageUrls,
             };
         }
         public static List<ProductCardViewModel> ProductDTOToProductCardViewModel(this List<ProductDto> products)
@@ -39,15 +35,13 @@ namespace TwinShop.Shared.Mappers
             {
                 ProductName = product.ProductName!,
                 ProductId = product.ProductId!,
-                BrandName = product.BrandName!,
-                CategoryName = product.CategoryName!,
+                BrandId= product.BrandId!,
+                CategoryId = product.CategoryId!,
                 Description = product.Description!,
-                MainImageUrl = product.MainImageUrl,
                 NumberInStorage = product.NumberInStorage,
                 InitialPrice = product.InitialPrice,
-                SecondryPrice = product.SecondryPrice,
+                SecondaryPrice = product.SecondaryPrice,
                 IsDeleted = product.IsDeleted,
-                SideImageUrls = product.SideImageUrls,
             };
         }
     }

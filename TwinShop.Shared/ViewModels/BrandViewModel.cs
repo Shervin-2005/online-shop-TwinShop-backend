@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -9,23 +10,19 @@ using TwinShop.Shared.ViewModels.Base;
 
 namespace TwinShop.Shared.ViewModels
 {
-    public class BrandViewModel:BaseValidatoin
+    public class BrandViewModel : BaseValidatoin
     {
         public int BrandId { get; set; }
 
         [Required(ErrorMessage = MessagesAndConsts.BrandName)]
         public string? BrandName { get; set; }
 
-        [Required(ErrorMessage = MessagesAndConsts.BrandPhoto)]
-        public string? MainImage { get; set; }
-
-        [Required(ErrorMessage = MessagesAndConsts.BrandCategoryName)]
-        public string? CategoryName { get; set; }
-
         public bool IsDeleted { get; set; }
 
-        [Required(ErrorMessage = MessagesAndConsts.BrandCategoryId)]
-        public int CategoryId { get; set; }
+        [Required(ErrorMessage = MessagesAndConsts.BrandPhoto)]
+        public IFormFile Image { get; set; } = null!;
 
+        // تغییر از CategoryId و CategoryName تکی به لیست CategoryIds
+        public List<int>? CategoryIds { get; set; }
     }
 }

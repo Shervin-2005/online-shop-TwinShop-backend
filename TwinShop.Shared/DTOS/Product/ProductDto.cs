@@ -7,16 +7,12 @@ namespace Twin_Shop__Web_API.DTOs.Product
     {
         public int ProductId { get; set; }
         public string? ProductName { get; set; }
-        public string? BrandName { get; set; }
-        public int? BrandID { get; set; }
-        public int? BrandId { get; set; }
-        public string? CategoryName { get; set; }
-        public int? CategoryId { get; set; }
-        public string? MainImageUrl { get; set; }
-        public List<string>? SideImageUrls { get; set; }
+        public int BrandId { get; set; }
+        public int CategoryId { get; set; }
+        public List<string>? ImageUrls { get; set; }
         public int NumberInStorage { get; set; }
-        public int InitialPrice { get; set; }
-        public int SecondryPrice { get; set; }
+        public decimal InitialPrice { get; set; }
+        public decimal SecondaryPrice { get; set; }
         public string? Description { get; set; }
         public bool IsDeleted { get; set; } = false;
         

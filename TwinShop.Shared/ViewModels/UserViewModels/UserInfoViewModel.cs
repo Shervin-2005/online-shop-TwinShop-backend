@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -23,10 +24,10 @@ namespace TwinShop.Shared.ViewModels.UserViewModels
 
         public string? LastName { get; set; }
 
-        public string? ProfileImage { get; set; }
-
         [PhoneNumberValidationAtribute]
         public string? PhoneNumber { get; set; }
+
+        public IFormFile Image { get; set; }
 
         //   [OptionalEmailAtribute]
         public string? Email { get; set; }

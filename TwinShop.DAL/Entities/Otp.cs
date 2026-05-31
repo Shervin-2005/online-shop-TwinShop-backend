@@ -1,18 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace TwinShop.DAL.Entities
 {
-    public class Otp
+    public class OTP
     {
-        [Key]
         public int Id { get; set; }
-        public string? Mobile { get; set; }
-        public string? Code { get; set; }
+
+        [Required]
+        public string Mobile { get; set; } = null!;
+
+        [Required]
+        public string Code { get; set; } = null!;
+
         public DateTime ExpireTime { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

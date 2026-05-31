@@ -13,26 +13,44 @@ namespace TwinShop.DAL.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<User>Users { get; set; }
-        public DbSet<ErrorLog> ErrorLogs { get; set; }
-        public DbSet<ProductSideImage> productSideImages { get; set; }
-        public DbSet<Otp> Otps { get; set; }
+        public DbSet<BrandCategory> BrandCategories { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<ProductImage> ProductImages { get; set; }
+        public DbSet<OTP> OTPs { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Brand>()
-                .HasOne(b => b.Category)
-                .WithMany(c => c.Brands)
-                .HasForeignKey(b => b.CategoryId)
+            modelBuilder.Entity<BrandCategory>()
+                .HasKey(b => new { b.BrandId, b.CategoryId });
+
+            modelBuilder.Entity<BrandCategory>()
+                .HasOne(bc => bc.Brand)
+                .WithMany(b => b.BrandCategories)
+                .HasForeignKey(bc => bc.BrandId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<BrandCategory>()
+             .HasOne(bc => bc.Category)
+             .WithMany(b => b.BrandCategories)
+             .HasForeignKey(bc => bc.CategoryId)
+             .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Product>()
+                .HasOne(b => b.Brand)
+                .WithMany(p => p.Products)
+                .HasForeignKey(b => b.BrandId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Product>()
-                .HasOne(p => p.Brand)
-                .WithMany(b => b.Products)
-                .HasForeignKey(p => p.BrandId)
-                .OnDelete(DeleteBehavior.Restrict);
+               .HasOne(c => c.Category)
+               .WithMany(p => p.Products)
+               .HasForeignKey(c => c.CategoryId)
+               .OnDelete(DeleteBehavior.Restrict);
         }
+
+
     }
 }
